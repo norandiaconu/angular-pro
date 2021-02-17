@@ -1,22 +1,21 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit } from "@angular/core";
 
 interface User {
-  address: string,
-  password: string
+  address: string;
+  password: string;
 }
 
 @Component({
-  selector: 'advanced-components',
-  templateUrl: './advanced-components.component.html',
-  styleUrls: ['./advanced-components.component.css']
+  selector: "advanced-components",
+  templateUrl: "./advanced-components.component.html",
+  styleUrls: ["./advanced-components.component.scss"]
 })
 export class AdvancedComponentsComponent implements OnInit {
   rememberMe: boolean = false;
 
-  constructor() { }
+  constructor() {}
 
-  ngOnInit() {
-  }
+  ngOnInit() {}
 
   createUser(user: User) {
     console.log("Create Account", user);
@@ -28,5 +27,4 @@ export class AdvancedComponentsComponent implements OnInit {
   rememberUser(remember: boolean) {
     this.rememberMe = remember;
   }
-
 }
