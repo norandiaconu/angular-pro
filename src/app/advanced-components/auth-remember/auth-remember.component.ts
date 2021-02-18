@@ -10,9 +10,9 @@ export class AuthRememberComponent implements OnInit {
 
   constructor() {}
 
-  ngOnInit() {}
+  ngOnInit(): void {}
 
-  onChecked(value: boolean) {
+  onChecked(value: boolean): void {
     this.checked.emit(value);
   }
 }

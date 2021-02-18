@@ -1,4 +1,12 @@
-import { Component, OnInit } from "@angular/core";
+import {
+  AfterContentInit,
+  Component,
+  ComponentFactoryResolver,
+  OnInit,
+  ViewChild,
+  ViewContainerRef
+} from "@angular/core";
+import { AuthFormComponent } from "./auth-form/auth-form.component";
 
 interface User {
   address: string;
@@ -10,12 +18,23 @@ interface User {
   templateUrl: "./advanced-components.component.html",
   styleUrls: ["./advanced-components.component.scss"]
 })
-export class AdvancedComponentsComponent implements OnInit {
+export class AdvancedComponentsComponent implements OnInit, AfterContentInit {
+  @ViewChild("entry", { read: ViewContainerRef }) entry: ViewContainerRef;
+
   rememberMe: boolean = false;
 
-  constructor() {}
+  constructor(private resolver: ComponentFactoryResolver) {}
 
   ngOnInit() {}
+
+  ngAfterContentInit() {
+    const authFormFactory = this.resolver.resolveComponentFactory(
+      AuthFormComponent
+    );
+    const component = this.entry.createComponent(authFormFactory);
+    component.instance.title = "Dynamic Create";
+    component.instance.submitted.subscribe(this.createUser);
+  }
 
   createUser(user: User) {
     console.log("Create Account", user);

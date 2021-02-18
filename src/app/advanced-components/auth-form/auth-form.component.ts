@@ -5,11 +5,13 @@ import {
   Component,
   ContentChild,
   ContentChildren,
+  ElementRef,
   EventEmitter,
   OnDestroy,
   OnInit,
   Output,
   QueryList,
+  Renderer2,
   ViewChild,
   ViewChildren
 } from "@angular/core";
@@ -36,27 +38,38 @@ export class AuthFormComponent
   >;
   @ViewChild(AuthMessageComponent) message: AuthMessageComponent;
   @ViewChildren(AuthMessageComponent) messages: QueryList<AuthMessageComponent>;
+  @ViewChild("email") email: ElementRef;
+  @ViewChild("password") password: ElementRef;
+  @ViewChild("createButton") createButton: ElementRef;
+
   showMessage: boolean;
   subscription: Subscription;
+  useRenderer: boolean;
+  title: string;
 
-  constructor(private changeDetector: ChangeDetectorRef) {
+  constructor(
+    private changeDetector: ChangeDetectorRef,
+    private renderer: Renderer2
+  ) {
     this.showMessage = false;
     this.subscription = new Subscription();
+    this.useRenderer = false;
+    this.title = "";
   }
 
-  ngOnInit() {}
+  ngOnInit(): void {}
 
-  ngAfterContentInit() {
+  ngAfterContentInit(): void {
     let tempSub: Subscription;
     if (this.remember) {
-      console.log(this.remember);
+      console.log("afterContentInit remember", this.remember);
       tempSub = this.remember.checked.subscribe((checked: boolean) => {
         this.showMessage = checked;
       });
       this.subscription.add(tempSub);
     }
     if (this.rememberList) {
-      console.log(this.rememberList);
+      console.log("afterContentInit rememberList", this.rememberList);
       this.rememberList.forEach(item => {
         tempSub = item.checked.subscribe(
           (checked: boolean) => (this.showMessage = checked)
@@ -69,13 +82,30 @@ export class AuthFormComponent
     }
   }
 
-  ngAfterViewInit() {
+  ngAfterViewInit(): void {
+    this.email.nativeElement.setAttribute(
+      "placeholder",
+      "Enter your email address"
+    );
+    this.email.nativeElement.classList.add("email");
+    this.renderer.setAttribute(
+      this.password.nativeElement,
+      "placeholder",
+      "Enter your password"
+    );
+    this.renderer.addClass(this.password.nativeElement, "password");
+    this.password.nativeElement["focus"].apply(this.password.nativeElement);
+    this.email.nativeElement.focus();
+    console.log("afterViewInit email", this.email.nativeElement);
     if (this.message) {
-      console.log(this.message);
+      console.log("afterViewInit message", this.message);
       this.messages.forEach(oneMessage => {
         oneMessage.days = 30;
       });
       this.changeDetector.detectChanges();
+    }
+    if (this.createButton) {
+      this.createButton.nativeElement.classList.add("createButton");
     }
   }
 
@@ -83,7 +113,7 @@ export class AuthFormComponent
     this.submitted.emit(value);
   }
 
-  ngOnDestroy() {
+  ngOnDestroy(): void {
     this.subscription.unsubscribe();
   }
 }

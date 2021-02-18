@@ -18,6 +18,7 @@ import { AuthMessageComponent } from "./advanced-components/auth-message/auth-me
   ],
   imports: [BrowserModule, FormsModule],
   providers: [],
-  bootstrap: [AppComponent]
+  bootstrap: [AppComponent],
+  entryComponents: [AuthFormComponent]
 })
 export class AppModule {}
