@@ -2,10 +2,14 @@ import {
   AfterContentInit,
   Component,
   ComponentFactoryResolver,
+  ComponentRef,
+  OnDestroy,
   OnInit,
+  TemplateRef,
   ViewChild,
   ViewContainerRef
 } from "@angular/core";
+import { Subscription } from "rxjs";
 import { AuthFormComponent } from "./auth-form/auth-form.component";
 
 interface User {
@@ -18,32 +22,51 @@ interface User {
   templateUrl: "./advanced-components.component.html",
   styleUrls: ["./advanced-components.component.scss"]
 })
-export class AdvancedComponentsComponent implements OnInit, AfterContentInit {
+export class AdvancedComponentsComponent
+  implements OnInit, AfterContentInit, OnDestroy {
   @ViewChild("entry", { read: ViewContainerRef }) entry: ViewContainerRef;
+  @ViewChild("template") template: TemplateRef<any>;
 
-  rememberMe: boolean = false;
+  rememberMe = false;
+  subscription: Subscription;
+  component: ComponentRef<AuthFormComponent>;
 
   constructor(private resolver: ComponentFactoryResolver) {}
 
-  ngOnInit() {}
+  ngOnInit(): void {}
 
-  ngAfterContentInit() {
+  ngAfterContentInit(): void {
     const authFormFactory = this.resolver.resolveComponentFactory(
       AuthFormComponent
     );
-    const component = this.entry.createComponent(authFormFactory);
-    component.instance.title = "Dynamic Create";
-    component.instance.submitted.subscribe(this.createUser);
+    this.entry.createComponent(authFormFactory);
+    this.component = this.entry.createComponent(authFormFactory, 0);
+    this.component.instance.title = "Dynamic Create";
+    this.subscription = this.component.instance.submitted.subscribe(
+      this.createUser
+    );
   }
 
-  createUser(user: User) {
+  ngOnDestroy(): void {
+    this.subscription.unsubscribe();
+  }
+
+  createUser(user: User): void {
     console.log("Create Account", user);
   }
-  loginUser(user: User) {
+  loginUser(user: User): void {
     console.log("Login Account", user, this.rememberMe);
   }
 
-  rememberUser(remember: boolean) {
+  rememberUser(remember: boolean): void {
     this.rememberMe = remember;
+  }
+
+  destroyComponent(): void {
+    this.component.destroy();
+  }
+
+  moveComponent(): void {
+    this.entry.move(this.component.hostView, 1);
   }
 }

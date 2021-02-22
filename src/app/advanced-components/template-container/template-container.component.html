@@ -1,0 +1,13 @@
+<div>
+  <hr />
+  <h2>ng-template / ng-container</h2>
+  <div #entry></div>
+  <br />
+  <ng-container
+    [ngTemplateOutlet]="template"
+    [ngTemplateOutletContext]="context"
+  ></ng-container>
+  <ng-template #template let-name let-location="location"
+    >{{ name }} : {{ location }}</ng-template
+  >
+</div>

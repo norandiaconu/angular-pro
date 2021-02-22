@@ -6,9 +6,9 @@ import { Component, OnInit } from "@angular/core";
   styleUrls: ["./auth-message.component.scss"]
 })
 export class AuthMessageComponent implements OnInit {
-  days: number = 7;
+  days = 7;
 
   constructor() {}
 
-  ngOnInit() {}
+  ngOnInit(): void {}
 }

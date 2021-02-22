@@ -19,9 +19,7 @@
     >
       Dynamic Create
     </button>
-    <div *ngIf="showMessage">
-      ngIf: You will be logged in for 30 days
-    </div>
+    <div *ngIf="showMessage">ngIf: You will be logged in for 30 days</div>
     <auth-message
       [style.display]="showMessage ? 'inherit' : 'none'"
     ></auth-message>
