@@ -1,0 +1,54 @@
+<div>
+  <hr />
+  <h2>Directives</h2>
+  <label>
+    Credit Card Number&nbsp;
+    <input
+      name="credit-card"
+      type="text"
+      placeholder="Enter your 16-digit card number"
+      credit-card
+    />
+  </label>
+  <br />
+  <label>
+    Enter your security code&nbsp;
+    <input type="text" />&nbsp;
+    <div class="myTooltip" tooltip="" #myTooltip="tooltip">
+      <span (mouseover)="myTooltip.show()" (mouseout)="myTooltip.hide()"
+        >(?)&nbsp;
+        <label
+          class="myTooltip"
+          tooltip="3 digits, back of your card"
+          *ngIf="myTooltip.getVisible()"
+        ></label
+      ></span>
+    </div>
+  </label>
+  <ul>
+    <div>
+      Normal For
+      <li *ngFor="let item of items; let i = index">
+        {{ i }} Member: {{ item.name | json }}
+      </li>
+    </div>
+    <div>
+      Normal ForOf
+      <ng-template ngFor [ngForOf]="items" let-item let-i="index">
+        <li>{{ i }} Member: {{ item.name | json }}</li>
+      </ng-template>
+    </div>
+    <div>
+      My For
+      <li *myFor="let item of items; let i = index">
+        {{ i }} Member: {{ item.name | json }}
+      </li>
+    </div>
+    <div>
+      My ForOf
+      <ng-template myFor [myForOf]="items" let-item let-i="index">
+        <li>{{ i }} Member: {{ item.name | json }}</li>
+      </ng-template>
+    </div>
+  </ul>
+</div>

@@ -15,6 +15,10 @@ import { ExampleThreeComponent } from "./advanced-components/view-encapsulation/
 import { ChangeDetectionComponent } from "./advanced-components/change-detection/change-detection.component";
 import { Example1Component } from "./advanced-components/change-detection/example-1/example-1.component";
 import { Example2Component } from "./advanced-components/change-detection/example-2/example-2.component";
+import { DirectivesComponent } from "./directives/directives.component";
+import { CreditCardDirective } from "./directives/credit-card/credit-card.directive";
+import { TooltipDirective } from "./directives/tooltip/tooltip.directive";
+import { MyForDirective } from "./directives/my-for/my-for.directive";
 
 @NgModule({
   declarations: [
@@ -30,7 +34,11 @@ import { Example2Component } from "./advanced-components/change-detection/exampl
     ExampleThreeComponent,
     ChangeDetectionComponent,
     Example1Component,
-    Example2Component
+    Example2Component,
+    DirectivesComponent,
+    CreditCardDirective,
+    TooltipDirective,
+    MyForDirective
   ],
   imports: [BrowserModule, FormsModule],
   providers: [],
