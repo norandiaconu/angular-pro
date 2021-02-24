@@ -27,25 +27,25 @@
   </label>
   <ul>
     <div>
-      Normal For
+      <strong>Normal For</strong>
       <li *ngFor="let item of items; let i = index">
         {{ i }} Member: {{ item.name | json }}
       </li>
     </div>
     <div>
-      Normal ForOf
+      <strong>Normal ForOf</strong>
       <ng-template ngFor [ngForOf]="items" let-item let-i="index">
         <li>{{ i }} Member: {{ item.name | json }}</li>
       </ng-template>
     </div>
     <div>
-      My For
+      <strong>My For</strong>
       <li *myFor="let item of items; let i = index">
         {{ i }} Member: {{ item.name | json }}
       </li>
     </div>
     <div>
-      My ForOf
+      <strong>My ForOf</strong>
       <ng-template myFor [myForOf]="items" let-item let-i="index">
         <li>{{ i }} Member: {{ item.name | json }}</li>
       </ng-template>

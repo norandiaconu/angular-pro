@@ -1,0 +1,18 @@
+<div>
+  <hr />
+  <h2>Custom Pipes</h2>
+  <div class="transform">
+    <div class="files">
+      <strong>Normal Transform</strong>
+      <div *ngFor="let file of files">
+        <div>{{ file.name }}:&nbsp;{{ file.size | filesize: " MB" }}</div>
+      </div>
+    </div>
+    <div class="files">
+      <strong>Mapped Transform</strong>
+      <div *ngFor="let file of mapped">
+        <div>{{ file.name }}:&nbsp;{{ file.size }}</div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -19,6 +19,8 @@ import { DirectivesComponent } from "./directives/directives.component";
 import { CreditCardDirective } from "./directives/credit-card/credit-card.directive";
 import { TooltipDirective } from "./directives/tooltip/tooltip.directive";
 import { MyForDirective } from "./directives/my-for/my-for.directive";
+import { CustomPipesComponent } from "./custom-pipes/custom-pipes.component";
+import { FilesizePipe } from "./custom-pipes/filesize.pipe";
 
 @NgModule({
   declarations: [
@@ -38,10 +40,12 @@ import { MyForDirective } from "./directives/my-for/my-for.directive";
     DirectivesComponent,
     CreditCardDirective,
     TooltipDirective,
-    MyForDirective
+    MyForDirective,
+    CustomPipesComponent,
+    FilesizePipe
   ],
   imports: [BrowserModule, FormsModule],
-  providers: [],
+  providers: [FilesizePipe],
   bootstrap: [AppComponent],
   entryComponents: [AuthFormComponent]
 })
