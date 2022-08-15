@@ -24,8 +24,8 @@ interface User {
 })
 export class AdvancedComponentsComponent
   implements OnInit, AfterContentInit, OnDestroy {
-  @ViewChild("entry", { read: ViewContainerRef }) entry: ViewContainerRef;
-  @ViewChild("template") template: TemplateRef<any>;
+  @ViewChild("entry", { read: ViewContainerRef, static: true }) entry: ViewContainerRef;
+  @ViewChild("template", { static: false }) template: TemplateRef<any>;
 
   rememberMe = false;
   subscription: Subscription;
