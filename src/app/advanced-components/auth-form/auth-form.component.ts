@@ -32,9 +32,7 @@ interface User {
 export class AuthFormComponent
   implements OnInit, AfterContentInit, AfterViewInit, OnDestroy {
   @Output() submitted: EventEmitter<User> = new EventEmitter<User>();
-  @ContentChild(AuthRememberComponent, {
-    static: false
-  })
+  @ContentChild(AuthRememberComponent)
   remember: AuthRememberComponent;
   @ContentChildren(AuthRememberComponent) rememberList: QueryList<
     AuthRememberComponent
@@ -44,7 +42,7 @@ export class AuthFormComponent
   @ViewChildren(AuthMessageComponent) messages: QueryList<AuthMessageComponent>;
   @ViewChild("email", { static: true }) email: ElementRef;
   @ViewChild("password", { static: true }) password: ElementRef;
-  @ViewChild("createButton", { static: false }) createButton: ElementRef;
+  @ViewChild("createButton") createButton: ElementRef;
 
   showMessage: boolean;
   subscription: Subscription;
