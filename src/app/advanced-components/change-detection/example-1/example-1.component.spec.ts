@@ -15,6 +15,7 @@ describe("Example1Component", () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(Example1Component);
     component = fixture.componentInstance;
+    component.user = {};
     fixture.detectChanges();
   });
 
