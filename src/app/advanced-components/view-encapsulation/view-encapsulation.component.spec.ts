@@ -1,4 +1,7 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
+import { ExampleOneComponent } from './example-one/example-one.component';
+import { ExampleThreeComponent } from './example-three/example-three.component';
+import { ExampleTwoComponent } from './example-two/example-two.component';
 
 import { ViewEncapsulationComponent } from './view-encapsulation.component';
 
@@ -6,9 +9,9 @@ describe('ViewEncapsulationComponent', () => {
   let component: ViewEncapsulationComponent;
   let fixture: ComponentFixture<ViewEncapsulationComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      declarations: [ ViewEncapsulationComponent ]
+      declarations: [ ViewEncapsulationComponent, ExampleOneComponent, ExampleTwoComponent, ExampleThreeComponent ]
     })
     .compileComponents();
   }));

@@ -1,14 +1,16 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import { DirectivesComponent } from './directives.component';
+import { TooltipDirective } from './tooltip/tooltip.directive';
 
 describe('DirectivesComponent', () => {
   let component: DirectivesComponent;
   let fixture: ComponentFixture<DirectivesComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      declarations: [ DirectivesComponent ]
+      declarations: [ DirectivesComponent, TooltipDirective ],
+      providers: [ TooltipDirective ]
     })
     .compileComponents();
   }));

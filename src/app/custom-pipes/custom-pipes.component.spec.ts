@@ -1,14 +1,16 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import { CustomPipesComponent } from './custom-pipes.component';
+import { FilesizePipe } from './filesize.pipe';
 
 describe('CustomPipesComponent', () => {
   let component: CustomPipesComponent;
   let fixture: ComponentFixture<CustomPipesComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      declarations: [ CustomPipesComponent ]
+      declarations: [ CustomPipesComponent, FilesizePipe ],
+      providers: [ FilesizePipe ]
     })
     .compileComponents();
   }));
