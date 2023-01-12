@@ -1,12 +1,10 @@
-import { Component, OnInit } from "@angular/core";
+import { Component } from "@angular/core";
 
 @Component({
   selector: "view-encapsulation",
   templateUrl: "./view-encapsulation.component.html",
   styleUrls: ["./view-encapsulation.component.scss"]
 })
-export class ViewEncapsulationComponent implements OnInit {
+export class ViewEncapsulationComponent {
   constructor() {}
-
-  ngOnInit(): void {}
 }

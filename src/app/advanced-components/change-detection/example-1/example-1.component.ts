@@ -2,7 +2,6 @@ import {
   ChangeDetectionStrategy,
   Component,
   Input,
-  OnInit
 } from "@angular/core";
 
 @Component({
@@ -11,12 +10,10 @@ import {
   templateUrl: "./example-1.component.html",
   styleUrls: ["./example-1.component.scss"]
 })
-export class Example1Component implements OnInit {
+export class Example1Component {
   @Input() user;
 
   constructor() {}
-
-  ngOnInit(): void {}
 
   update(): void {
     this.user.name = "Matt Skiba";

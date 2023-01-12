@@ -1,11 +1,11 @@
-import { Component, OnInit } from "@angular/core";
+import { Component } from "@angular/core";
 
 @Component({
   selector: "directives",
   templateUrl: "./directives.component.html",
   styleUrls: ["./directives.component.scss"]
 })
-export class DirectivesComponent implements OnInit {
+export class DirectivesComponent {
   items = [
     { name: "Mark Hoppus", age: 48, location: "California" },
     { name: "Tom Delonge", age: 45, location: "California" },
@@ -24,6 +24,4 @@ export class DirectivesComponent implements OnInit {
       ];
     }, 5000);
   }
-
-  ngOnInit(): void {}
 }

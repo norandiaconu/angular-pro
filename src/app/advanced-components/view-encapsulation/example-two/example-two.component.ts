@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewEncapsulation } from "@angular/core";
+import { Component, ViewEncapsulation } from "@angular/core";
 
 @Component({
   selector: "example-two",
@@ -6,8 +6,6 @@ import { Component, OnInit, ViewEncapsulation } from "@angular/core";
   templateUrl: "./example-two.component.html",
   styleUrls: ["./example-two.component.scss"]
 })
-export class ExampleTwoComponent implements OnInit {
+export class ExampleTwoComponent {
   constructor() {}
-
-  ngOnInit(): void {}
 }

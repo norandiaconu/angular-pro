@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, OnInit } from "@angular/core";
+import { ChangeDetectionStrategy, Component } from "@angular/core";
 
 @Component({
   selector: "change-detection",
@@ -6,7 +6,7 @@ import { ChangeDetectionStrategy, Component, OnInit } from "@angular/core";
   templateUrl: "./change-detection.component.html",
   styleUrls: ["./change-detection.component.scss"]
 })
-export class ChangeDetectionComponent implements OnInit {
+export class ChangeDetectionComponent {
   user: any = {
     name: "Mark Hoppus",
     age: 48,
@@ -14,8 +14,6 @@ export class ChangeDetectionComponent implements OnInit {
   };
 
   constructor() {}
-
-  ngOnInit(): void {}
 
   addProp(): void {
     this.user.email = "blink-182.net";

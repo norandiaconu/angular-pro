@@ -8,7 +8,6 @@ import {
   ElementRef,
   EventEmitter,
   OnDestroy,
-  OnInit,
   Output,
   QueryList,
   Renderer2,
@@ -30,7 +29,7 @@ interface User {
   styleUrls: ["./auth-form.component.scss"]
 })
 export class AuthFormComponent
-  implements OnInit, AfterContentInit, AfterViewInit, OnDestroy {
+  implements AfterContentInit, AfterViewInit, OnDestroy {
   @Output() submitted: EventEmitter<User> = new EventEmitter<User>();
   @ContentChild(AuthRememberComponent)
   remember: AuthRememberComponent;
@@ -58,8 +57,6 @@ export class AuthFormComponent
     this.useRenderer = false;
     this.title = "";
   }
-
-  ngOnInit(): void {}
 
   ngAfterContentInit(): void {
     let tempSub: Subscription;

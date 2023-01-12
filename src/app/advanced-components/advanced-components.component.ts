@@ -4,7 +4,6 @@ import {
   ComponentFactoryResolver,
   ComponentRef,
   OnDestroy,
-  OnInit,
   TemplateRef,
   ViewChild,
   ViewContainerRef
@@ -23,7 +22,7 @@ interface User {
   styleUrls: ["./advanced-components.component.scss"]
 })
 export class AdvancedComponentsComponent
-  implements OnInit, AfterContentInit, OnDestroy {
+  implements AfterContentInit, OnDestroy {
   @ViewChild("entry", { read: ViewContainerRef, static: true }) entry: ViewContainerRef;
   @ViewChild("template") template: TemplateRef<any>;
 
@@ -32,8 +31,6 @@ export class AdvancedComponentsComponent
   component: ComponentRef<AuthFormComponent>;
 
   constructor(private resolver: ComponentFactoryResolver) {}
-
-  ngOnInit(): void {}
 
   ngAfterContentInit(): void {
     const authFormFactory = this.resolver.resolveComponentFactory(

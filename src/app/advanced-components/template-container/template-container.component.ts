@@ -2,7 +2,6 @@ import {
   AfterContentInit,
   Component,
   ComponentFactoryResolver,
-  OnInit,
   TemplateRef,
   ViewChild,
   ViewContainerRef
@@ -13,7 +12,7 @@ import {
   templateUrl: "./template-container.component.html",
   styleUrls: ["./template-container.component.scss"]
 })
-export class TemplateContainerComponent implements OnInit, AfterContentInit {
+export class TemplateContainerComponent implements AfterContentInit {
   @ViewChild("entry", { read: ViewContainerRef, static: true }) entry: ViewContainerRef;
   @ViewChild("template", { static: true }) template: TemplateRef<any>;
 
@@ -23,8 +22,6 @@ export class TemplateContainerComponent implements OnInit, AfterContentInit {
   };
 
   constructor(private resolver: ComponentFactoryResolver) {}
-
-  ngOnInit(): void {}
 
   ngAfterContentInit(): void {
     this.entry.createEmbeddedView(this.template, {
