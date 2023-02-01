@@ -1,11 +1,17 @@
 import { TestBed, waitForAsync } from '@angular/core/testing';
 import { AppComponent } from './app.component';
+import { DirectivesComponent } from './directives/directives.component';
+import { MyForDirective } from './directives/my-for/my-for.directive';
+import { TooltipDirective } from './directives/tooltip/tooltip.directive';
 
 describe('AppComponent', () => {
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [
-        AppComponent
+        AppComponent,
+        DirectivesComponent,
+        MyForDirective,
+        TooltipDirective
       ],
     }).compileComponents();
   }));

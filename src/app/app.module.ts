@@ -23,30 +23,29 @@ import { CustomPipesComponent } from "./custom-pipes/custom-pipes.component";
 import { FilesizePipe } from "./custom-pipes/filesize.pipe";
 
 @NgModule({
-  declarations: [
-    AppComponent,
-    AuthFormComponent,
-    AdvancedComponentsComponent,
-    AuthRememberComponent,
-    AuthMessageComponent,
-    TemplateContainerComponent,
-    ViewEncapsulationComponent,
-    ExampleOneComponent,
-    ExampleTwoComponent,
-    ExampleThreeComponent,
-    ChangeDetectionComponent,
-    Example1Component,
-    Example2Component,
-    DirectivesComponent,
-    CreditCardDirective,
-    TooltipDirective,
-    MyForDirective,
-    CustomPipesComponent,
-    FilesizePipe
-  ],
-  imports: [BrowserModule, FormsModule],
-  providers: [FilesizePipe],
-  bootstrap: [AppComponent],
-  entryComponents: [AuthFormComponent]
+    declarations: [
+        AppComponent,
+        AuthFormComponent,
+        AdvancedComponentsComponent,
+        AuthRememberComponent,
+        AuthMessageComponent,
+        TemplateContainerComponent,
+        ViewEncapsulationComponent,
+        ExampleOneComponent,
+        ExampleTwoComponent,
+        ExampleThreeComponent,
+        ChangeDetectionComponent,
+        Example1Component,
+        Example2Component,
+        DirectivesComponent,
+        CreditCardDirective,
+        TooltipDirective,
+        MyForDirective,
+        CustomPipesComponent,
+        FilesizePipe
+    ],
+    imports: [BrowserModule, FormsModule],
+    providers: [FilesizePipe],
+    bootstrap: [AppComponent]
 })
 export class AppModule {}
