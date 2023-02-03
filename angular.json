@@ -100,7 +100,9 @@
               "src/assets"
             ],
             "codeCoverage": true,
-            "codeCoverageExclude": ["src/polyfills.ts"]
+            "codeCoverageExclude": [
+              "src/polyfills.ts"
+            ]
           }
         },
         "lint": {
@@ -145,6 +147,8 @@
   },
   "defaultProject": "angular-pro",
   "cli": {
-    "defaultCollection": "@angular-eslint/schematics"
+    "schematicCollections": [
+      "@angular-eslint/schematics"
+    ]
   }
 }
