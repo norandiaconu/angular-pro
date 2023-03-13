@@ -24,4 +24,9 @@ describe('ChangeDetectionComponent', () => {
   it('should create', () => {
     expect(component).toBeTruthy();
   });
+
+  it('should add email property', () => {
+    component.addProp();
+    expect(component.user.email).toBe("blink-182.net");
+  });
 });
