@@ -1,7 +1,7 @@
 import { BrowserModule } from "@angular/platform-browser";
 import { NgModule } from "@angular/core";
 import { FormsModule } from "@angular/forms";
-
+import { RouterModule, Routes } from '@angular/router';
 import { AppComponent } from "./app.component";
 import { AuthFormComponent } from "./advanced-components/auth-form/auth-form.component";
 import { AdvancedComponentsComponent } from "./advanced-components/advanced-components.component";
@@ -21,6 +21,12 @@ import { TooltipDirective } from "./directives/tooltip/tooltip.directive";
 import { MyForDirective } from "./directives/my-for/my-for.directive";
 import { CustomPipesComponent } from "./custom-pipes/custom-pipes.component";
 import { FilesizePipe } from "./custom-pipes/filesize.pipe";
+import { HighlightDirective } from './directives/highlight/highlight.directive';
+import { RoutesComponent } from './routes/routes.component';
+
+const routes: Routes = [
+    { path: "route", component: RoutesComponent }
+];
 
 @NgModule({
     declarations: [
@@ -42,9 +48,11 @@ import { FilesizePipe } from "./custom-pipes/filesize.pipe";
         TooltipDirective,
         MyForDirective,
         CustomPipesComponent,
-        FilesizePipe
+        FilesizePipe,
+        HighlightDirective,
+        RoutesComponent
     ],
-    imports: [BrowserModule, FormsModule],
+    imports: [BrowserModule, FormsModule, RouterModule.forRoot(routes)],
     providers: [FilesizePipe],
     bootstrap: [AppComponent]
 })

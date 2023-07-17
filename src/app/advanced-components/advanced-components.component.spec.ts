@@ -47,4 +47,21 @@ describe("AdvancedComponentsComponent", () => {
   it("should create", () => {
     expect(component).toBeTruthy();
   });
+
+  it("should create user", () => {
+    spyOn(window.console, "log");
+    component.createUser({ address: "address", password: "password" });
+    expect(window.console.log).toHaveBeenCalledWith("Create Account", { address: "address", password: "password" });
+  });
+
+  it("should login user", () => {
+    spyOn(window.console, "log");
+    component.loginUser({ address: "address", password: "password" });
+    expect(window.console.log).toHaveBeenCalledWith("Login Account", { address: "address", password: "password" }, false);
+  });
+
+  it("should remember user", () => {
+    component.rememberUser(true);
+    expect(component.rememberMe).toBe(true);
+  });
 });
