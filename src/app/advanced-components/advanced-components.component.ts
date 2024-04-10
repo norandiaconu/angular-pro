@@ -10,11 +10,7 @@ import {
 } from "@angular/core";
 import { Subscription } from "rxjs";
 import { AuthFormComponent } from "./auth-form/auth-form.component";
-
-interface User {
-  address: string;
-  password: string;
-}
+import { User } from "./advanced-components.interface";
 
 @Component({
   selector: "advanced-components",

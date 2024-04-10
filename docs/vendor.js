@@ -3614,7 +3614,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @angular/core */ 2560);
 /**
- * @license Angular v15.2.9
+ * @license Angular v15.2.10
  * (c) 2010-2022 Google LLC. https://angular.io/
  * License: MIT
  */
@@ -9232,7 +9232,7 @@ function isPlatformWorkerUi(platformId) {
 /**
  * @publicApi
  */
-const VERSION = new _angular_core__WEBPACK_IMPORTED_MODULE_0__.Version('15.2.9');
+const VERSION = new _angular_core__WEBPACK_IMPORTED_MODULE_0__.Version('15.2.10');
 
 /**
  * Defines a scroll position manager. Implemented by `BrowserViewportScroller`.
@@ -11183,7 +11183,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var rxjs__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! rxjs */ 8623);
 /* harmony import */ var rxjs_operators__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! rxjs/operators */ 4514);
 /**
- * @license Angular v15.2.9
+ * @license Angular v15.2.10
  * (c) 2010-2022 Google LLC. https://angular.io/
  * License: MIT
  */
@@ -19264,7 +19264,7 @@ class Version {
 /**
  * @publicApi
  */
-const VERSION = new Version('15.2.9');
+const VERSION = new Version('15.2.10');
 
 // This default value is when checking the hierarchy for a token.
 //
@@ -38202,7 +38202,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var rxjs__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! rxjs */ 4350);
 /* harmony import */ var rxjs_operators__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! rxjs/operators */ 6942);
 /**
- * @license Angular v15.2.9
+ * @license Angular v15.2.10
  * (c) 2010-2022 Google LLC. https://angular.io/
  * License: MIT
  */
@@ -46109,7 +46109,7 @@ UntypedFormBuilder.ɵprov = /* @__PURE__ */_angular_core__WEBPACK_IMPORTED_MODUL
 /**
  * @publicApi
  */
-const VERSION = new _angular_core__WEBPACK_IMPORTED_MODULE_0__.Version('15.2.9');
+const VERSION = new _angular_core__WEBPACK_IMPORTED_MODULE_0__.Version('15.2.10');
 
 /**
  * Exports the required providers and directives for template-driven forms,
@@ -46296,7 +46296,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _angular_common__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @angular/common */ 4666);
 /* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @angular/core */ 2560);
 /**
- * @license Angular v15.2.9
+ * @license Angular v15.2.10
  * (c) 2010-2022 Google LLC. https://angular.io/
  * License: MIT
  */
@@ -48597,7 +48597,7 @@ DomSanitizerImpl.ɵprov = /* @__PURE__ */_angular_core__WEBPACK_IMPORTED_MODULE_
 /**
  * @publicApi
  */
-const VERSION = new _angular_core__WEBPACK_IMPORTED_MODULE_1__.Version('15.2.9');
+const VERSION = new _angular_core__WEBPACK_IMPORTED_MODULE_1__.Version('15.2.10');
 
 /**
  * @module
@@ -48728,7 +48728,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var rxjs_operators__WEBPACK_IMPORTED_MODULE_34__ = __webpack_require__(/*! rxjs/operators */ 6675);
 /* harmony import */ var _angular_platform_browser__WEBPACK_IMPORTED_MODULE_32__ = __webpack_require__(/*! @angular/platform-browser */ 4497);
 /**
- * @license Angular v15.2.9
+ * @license Angular v15.2.10
  * (c) 2010-2022 Google LLC. https://angular.io/
  * License: MIT
  */
@@ -56054,7 +56054,7 @@ function provideRouterInitializer() {
 /**
  * @publicApi
  */
-const VERSION = new _angular_core__WEBPACK_IMPORTED_MODULE_0__.Version('15.2.9');
+const VERSION = new _angular_core__WEBPACK_IMPORTED_MODULE_0__.Version('15.2.10');
 
 /**
  * @module

@@ -17,11 +17,7 @@ import {
 import { Subscription } from "rxjs";
 import { AuthMessageComponent } from "../auth-message/auth-message.component";
 import { AuthRememberComponent } from "../auth-remember/auth-remember.component";
-
-interface User {
-  email: string;
-  password: string;
-}
+import { User } from "../advanced-components.interface";
 
 @Component({
   selector: "auth-form",
