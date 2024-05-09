@@ -1,6 +1,5 @@
 import { ComponentFixture, TestBed, waitForAsync } from "@angular/core/testing";
 import { FormsModule } from "@angular/forms";
-
 import { AdvancedComponentsComponent } from "./advanced-components.component";
 import { AuthFormComponent } from "./auth-form/auth-form.component";
 import { AuthMessageComponent } from "./auth-message/auth-message.component";
@@ -13,6 +12,7 @@ import { ExampleOneComponent } from "./view-encapsulation/example-one/example-on
 import { ExampleThreeComponent } from "./view-encapsulation/example-three/example-three.component";
 import { ExampleTwoComponent } from "./view-encapsulation/example-two/example-two.component";
 import { ViewEncapsulationComponent } from "./view-encapsulation/view-encapsulation.component";
+import { RouterOutlet } from "@angular/router";
 
 describe("AdvancedComponentsComponent", () => {
   let component: AdvancedComponentsComponent;
@@ -34,14 +34,14 @@ describe("AdvancedComponentsComponent", () => {
         TemplateContainerComponent,
         ViewEncapsulationComponent,
       ],
-      imports: [FormsModule],
+      imports: [FormsModule, RouterOutlet],
     }).compileComponents();
   }));
 
   beforeEach(() => {
     fixture = TestBed.createComponent(AdvancedComponentsComponent);
     component = fixture.componentInstance;
-    fixture.detectChanges();
+    component.ngAfterContentInit();
   });
 
   it("should create", () => {
@@ -49,15 +49,15 @@ describe("AdvancedComponentsComponent", () => {
   });
 
   it("should create user", () => {
-    spyOn(window.console, "log");
-    component.createUser({ address: "address", password: "password" });
-    expect(window.console.log).toHaveBeenCalledWith("Create Account", { address: "address", password: "password" });
+    jest.spyOn(window.console, "log");
+    component.createUser({ email: "email", password: "password" });
+    expect(window.console.log).toHaveBeenCalledWith("Create Account", { email: "email", password: "password" });
   });
 
   it("should login user", () => {
-    spyOn(window.console, "log");
-    component.loginUser({ address: "address", password: "password" });
-    expect(window.console.log).toHaveBeenCalledWith("Login Account", { address: "address", password: "password" }, false);
+    jest.spyOn(window.console, "log");
+    component.loginUser({ email: "email", password: "password" });
+    expect(window.console.log).toHaveBeenCalledWith("Login Account", { email: "email", password: "password" }, false);
   });
 
   it("should remember user", () => {
