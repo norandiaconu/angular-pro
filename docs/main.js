@@ -556,7 +556,12 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @angular/core */ 1699);
 
 class Example1Component {
-  constructor() {}
+  constructor() {
+    this.user = {
+      email: "",
+      password: ""
+    };
+  }
   update() {
     this.user.name = "Matt Skiba";
   }
@@ -628,7 +633,12 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @angular/core */ 1699);
 
 class Example2Component {
-  constructor() {}
+  constructor() {
+    this.user = {
+      email: "",
+      password: ""
+    };
+  }
   update() {
     this.user.name = "Matt Skiba";
   }
@@ -714,8 +724,7 @@ function TemplateContainerComponent_ng_template_8_Template(rf, ctx) {
   }
 }
 class TemplateContainerComponent {
-  constructor(resolver) {
-    this.resolver = resolver;
+  constructor() {
     this.context = {
       $implicit: "Noran Diaconu",
       location: "North Carolina"
@@ -728,7 +737,7 @@ class TemplateContainerComponent {
     });
   }
   static #_ = this.ɵfac = function TemplateContainerComponent_Factory(t) {
-    return new (t || TemplateContainerComponent)(_angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdirectiveInject"](_angular_core__WEBPACK_IMPORTED_MODULE_0__.ComponentFactoryResolver));
+    return new (t || TemplateContainerComponent)();
   };
   static #_2 = this.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdefineComponent"]({
     type: TemplateContainerComponent,
@@ -1108,6 +1117,8 @@ function CustomPipesComponent_div_12_Template(rf, ctx) {
 class CustomPipesComponent {
   constructor(fileSizePipe) {
     this.fileSizePipe = fileSizePipe;
+    this.files = [];
+    this.mapped = [];
   }
   ngOnInit() {
     this.files = [{
@@ -1214,7 +1225,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @angular/core */ 1699);
 
 class CreditCardDirective {
-  constructor() {}
+  constructor() {
+    this.border = "";
+  }
   onKeyDown(event) {
     const input = event.target;
     // better regex: /\D+/g
@@ -1461,6 +1474,7 @@ class HighlightDirective {
   constructor(el) {
     this.el = el;
     this.el.nativeElement.style.backgroundColor = "yellow";
+    this.el.nativeElement.style.color = "red";
   }
   static #_ = this.ɵfac = function HighlightDirective_Factory(t) {
     return new (t || HighlightDirective)(_angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdirectiveInject"](_angular_core__WEBPACK_IMPORTED_MODULE_0__.ElementRef));

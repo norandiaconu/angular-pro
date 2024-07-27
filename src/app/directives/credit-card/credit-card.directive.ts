@@ -5,7 +5,7 @@ import { Directive, HostBinding, HostListener } from "@angular/core";
 })
 export class CreditCardDirective {
   @HostBinding("style.border")
-  border: string;
+  border: string = "";
 
   constructor() {}
 

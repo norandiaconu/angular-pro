@@ -18,8 +18,8 @@ interface FileStringSize {
   styleUrls: ["./custom-pipes.component.scss"]
 })
 export class CustomPipesComponent implements OnInit {
-  files: File[];
-  mapped: FileStringSize[];
+  files: File[] = [];
+  mapped: FileStringSize[] = [];
   fileProperty: any;
 
   constructor(private fileSizePipe: FilesizePipe) {}
@@ -42,7 +42,7 @@ export class CustomPipesComponent implements OnInit {
         type: "image/png"
       }
     ];
-    this.mapped = this.files.map(file => {
+    this.mapped = this.files.map((file) => {
       console.log("size", file.size);
       return {
         name: file.name,

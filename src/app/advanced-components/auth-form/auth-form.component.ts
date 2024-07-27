@@ -24,30 +24,24 @@ import { User } from "../advanced-components.interface";
   templateUrl: "./auth-form.component.html",
   styleUrls: ["./auth-form.component.scss"]
 })
-export class AuthFormComponent
-  implements AfterContentInit, AfterViewInit, OnDestroy {
+export class AuthFormComponent implements AfterContentInit, AfterViewInit, OnDestroy {
   @Output() submitted: EventEmitter<User> = new EventEmitter<User>();
   @ContentChild(AuthRememberComponent)
-  remember: AuthRememberComponent;
-  @ContentChildren(AuthRememberComponent) rememberList: QueryList<
-    AuthRememberComponent
-  >;
+  remember!: AuthRememberComponent;
+  @ContentChildren(AuthRememberComponent) rememberList!: QueryList<AuthRememberComponent>;
   @ViewChild(AuthMessageComponent, { static: true })
-  message: AuthMessageComponent;
-  @ViewChildren(AuthMessageComponent) messages: QueryList<AuthMessageComponent>;
-  @ViewChild("email", { static: true }) email: ElementRef;
-  @ViewChild("password", { static: true }) password: ElementRef;
-  @ViewChild("createButton") createButton: ElementRef;
+  message!: AuthMessageComponent;
+  @ViewChildren(AuthMessageComponent) messages!: QueryList<AuthMessageComponent>;
+  @ViewChild("email", { static: true }) email!: ElementRef;
+  @ViewChild("password", { static: true }) password!: ElementRef;
+  @ViewChild("createButton") createButton!: ElementRef;
 
   showMessage: boolean;
   subscription: Subscription;
   useRenderer: boolean;
   title: string;
 
-  constructor(
-    private changeDetector: ChangeDetectorRef,
-    private renderer: Renderer2
-  ) {
+  constructor(private changeDetector: ChangeDetectorRef, private renderer: Renderer2) {
     this.showMessage = false;
     this.subscription = new Subscription();
     this.useRenderer = false;
@@ -65,10 +59,8 @@ export class AuthFormComponent
     }
     if (this.rememberList) {
       console.log("afterContentInit rememberList", this.rememberList);
-      this.rememberList.forEach(item => {
-        tempSub = item.checked.subscribe(
-          (checked: boolean) => (this.showMessage = checked)
-        );
+      this.rememberList.forEach((item) => {
+        tempSub = item.checked.subscribe((checked: boolean) => (this.showMessage = checked));
         this.subscription.add(tempSub);
       });
     }
@@ -78,23 +70,16 @@ export class AuthFormComponent
   }
 
   ngAfterViewInit(): void {
-    this.email.nativeElement.setAttribute(
-      "placeholder",
-      "Enter your email address"
-    );
+    this.email.nativeElement.setAttribute("placeholder", "Enter your email address");
     this.email.nativeElement.classList.add("email");
-    this.renderer.setAttribute(
-      this.password.nativeElement,
-      "placeholder",
-      "Enter your password"
-    );
+    this.renderer.setAttribute(this.password.nativeElement, "placeholder", "Enter your password");
     this.renderer.addClass(this.password.nativeElement, "password");
     this.password.nativeElement["focus"].apply(this.password.nativeElement);
     this.email.nativeElement.focus();
     console.log("afterViewInit email", this.email.nativeElement);
     if (this.message) {
       console.log("afterViewInit message", this.message);
-      this.messages.forEach(oneMessage => {
+      this.messages.forEach((oneMessage) => {
         oneMessage.days = 30;
       });
       this.changeDetector.detectChanges();

@@ -1,6 +1,6 @@
 {
   "name": "angular-pro",
-  "version": "16.0.0",
+  "version": "16.0.1",
   "scripts": {
     "start": "ng serve",
     "build": "ng build && start http://localhost:8080 && http-server ./docs -a localhost -p 8080",

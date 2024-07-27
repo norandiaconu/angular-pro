@@ -1,8 +1,5 @@
-import {
-  ChangeDetectionStrategy,
-  Component,
-  Input,
-} from "@angular/core";
+import { ChangeDetectionStrategy, Component, Input } from "@angular/core";
+import { User } from "../../advanced-components.interface";
 
 @Component({
   selector: "example-2",
@@ -11,7 +8,10 @@ import {
   styleUrls: ["./example-2.component.scss"]
 })
 export class Example2Component {
-  @Input() user;
+  @Input() user: User = {
+    email: "",
+    password: ""
+  };
 
   constructor() {}
 

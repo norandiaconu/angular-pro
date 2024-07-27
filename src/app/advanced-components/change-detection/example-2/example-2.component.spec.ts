@@ -10,14 +10,14 @@ describe("Example2Component", () => {
     TestBed.configureTestingModule({
       declarations: [Example2Component]
     }).compileComponents();
-  }));
-
-  beforeEach(() => {
     fixture = TestBed.createComponent(Example2Component);
     component = fixture.componentInstance;
-    component.user = {};
+    component.user = {
+      email: "",
+      password: ""
+    };
     fixture.detectChanges();
-  });
+  }));
 
   it("should create", () => {
     expect(component).toBeTruthy();

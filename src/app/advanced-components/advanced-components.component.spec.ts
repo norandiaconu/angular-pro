@@ -32,17 +32,15 @@ describe("AdvancedComponentsComponent", () => {
         ExampleTwoComponent,
         ExampleThreeComponent,
         TemplateContainerComponent,
-        ViewEncapsulationComponent,
+        ViewEncapsulationComponent
       ],
-      imports: [FormsModule, RouterOutlet],
+      imports: [FormsModule, RouterOutlet]
     }).compileComponents();
-  }));
-
-  beforeEach(() => {
     fixture = TestBed.createComponent(AdvancedComponentsComponent);
     component = fixture.componentInstance;
     component.ngAfterContentInit();
-  });
+    jest.spyOn(console, "log").mockImplementation(() => {});
+  }));
 
   it("should create", () => {
     expect(component).toBeTruthy();

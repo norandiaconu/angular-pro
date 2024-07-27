@@ -17,27 +17,22 @@ import { User } from "./advanced-components.interface";
   templateUrl: "./advanced-components.component.html",
   styleUrls: ["./advanced-components.component.scss"]
 })
-export class AdvancedComponentsComponent
-  implements AfterContentInit, OnDestroy {
-  @ViewChild("entry", { read: ViewContainerRef, static: true }) entry: ViewContainerRef;
-  @ViewChild("template") template: TemplateRef<any>;
+export class AdvancedComponentsComponent implements AfterContentInit, OnDestroy {
+  @ViewChild("entry", { read: ViewContainerRef, static: true }) entry!: ViewContainerRef;
+  @ViewChild("template") template!: TemplateRef<any>;
 
   rememberMe = false;
-  subscription: Subscription;
-  component: ComponentRef<AuthFormComponent>;
+  subscription!: Subscription;
+  component!: ComponentRef<AuthFormComponent>;
 
   constructor(private resolver: ComponentFactoryResolver) {}
 
   ngAfterContentInit(): void {
-    const authFormFactory = this.resolver.resolveComponentFactory(
-      AuthFormComponent
-    );
+    const authFormFactory = this.resolver.resolveComponentFactory(AuthFormComponent);
     this.entry.createComponent(authFormFactory);
     this.component = this.entry.createComponent(authFormFactory, 0);
     this.component.instance.title = "Dynamic Create";
-    this.subscription = this.component.instance.submitted.subscribe(
-      this.createUser
-    );
+    this.subscription = this.component.instance.submitted.subscribe(this.createUser);
   }
 
   ngOnDestroy(): void {

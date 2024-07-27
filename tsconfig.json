@@ -21,8 +21,6 @@
     ],
     "useDefineForClassFields": false,
     "esModuleInterop": true,
-  },
-  "angularCompilerOptions": {
-    "strictTemplates": true
+    "strict": true
   }
 }
