@@ -61,8 +61,8 @@ class AdvancedComponentsComponent {
     this.entry.move(this.component.hostView, 1);
   }
   static {
-    this.ɵfac = function AdvancedComponentsComponent_Factory(t) {
-      return new (t || AdvancedComponentsComponent)(_angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵdirectiveInject"](_angular_core__WEBPACK_IMPORTED_MODULE_5__.ComponentFactoryResolver));
+    this.ɵfac = function AdvancedComponentsComponent_Factory(__ngFactoryType__) {
+      return new (__ngFactoryType__ || AdvancedComponentsComponent)(_angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵdirectiveInject"](_angular_core__WEBPACK_IMPORTED_MODULE_5__.ComponentFactoryResolver));
     };
   }
   static {
@@ -281,8 +281,8 @@ class AuthFormComponent {
     this.subscription.unsubscribe();
   }
   static {
-    this.ɵfac = function AuthFormComponent_Factory(t) {
-      return new (t || AuthFormComponent)(_angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵdirectiveInject"](_angular_core__WEBPACK_IMPORTED_MODULE_2__.ChangeDetectorRef), _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵdirectiveInject"](_angular_core__WEBPACK_IMPORTED_MODULE_2__.Renderer2));
+    this.ɵfac = function AuthFormComponent_Factory(__ngFactoryType__) {
+      return new (__ngFactoryType__ || AuthFormComponent)(_angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵdirectiveInject"](_angular_core__WEBPACK_IMPORTED_MODULE_2__.ChangeDetectorRef), _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵdirectiveInject"](_angular_core__WEBPACK_IMPORTED_MODULE_2__.Renderer2));
     };
   }
   static {
@@ -390,8 +390,8 @@ class AuthMessageComponent {
     this.days = 7;
   }
   static {
-    this.ɵfac = function AuthMessageComponent_Factory(t) {
-      return new (t || AuthMessageComponent)();
+    this.ɵfac = function AuthMessageComponent_Factory(__ngFactoryType__) {
+      return new (__ngFactoryType__ || AuthMessageComponent)();
     };
   }
   static {
@@ -439,8 +439,8 @@ class AuthRememberComponent {
     this.checked.emit(value);
   }
   static {
-    this.ɵfac = function AuthRememberComponent_Factory(t) {
-      return new (t || AuthRememberComponent)();
+    this.ɵfac = function AuthRememberComponent_Factory(__ngFactoryType__) {
+      return new (__ngFactoryType__ || AuthRememberComponent)();
     };
   }
   static {
@@ -512,8 +512,8 @@ class ChangeDetectionComponent {
     this.user.name = "Travis Barker";
   }
   static {
-    this.ɵfac = function ChangeDetectionComponent_Factory(t) {
-      return new (t || ChangeDetectionComponent)();
+    this.ɵfac = function ChangeDetectionComponent_Factory(__ngFactoryType__) {
+      return new (__ngFactoryType__ || ChangeDetectionComponent)();
     };
   }
   static {
@@ -593,8 +593,8 @@ class Example1Component {
     this.user.name = "Matt Skiba";
   }
   static {
-    this.ɵfac = function Example1Component_Factory(t) {
-      return new (t || Example1Component)();
+    this.ɵfac = function Example1Component_Factory(__ngFactoryType__) {
+      return new (__ngFactoryType__ || Example1Component)();
     };
   }
   static {
@@ -674,8 +674,8 @@ class Example2Component {
     this.user.name = "Matt Skiba";
   }
   static {
-    this.ɵfac = function Example2Component_Factory(t) {
-      return new (t || Example2Component)();
+    this.ɵfac = function Example2Component_Factory(__ngFactoryType__) {
+      return new (__ngFactoryType__ || Example2Component)();
     };
   }
   static {
@@ -772,8 +772,8 @@ class TemplateContainerComponent {
     });
   }
   static {
-    this.ɵfac = function TemplateContainerComponent_Factory(t) {
-      return new (t || TemplateContainerComponent)();
+    this.ɵfac = function TemplateContainerComponent_Factory(__ngFactoryType__) {
+      return new (__ngFactoryType__ || TemplateContainerComponent)();
     };
   }
   static {
@@ -835,8 +835,8 @@ __webpack_require__.r(__webpack_exports__);
 class ExampleOneComponent {
   constructor() {}
   static {
-    this.ɵfac = function ExampleOneComponent_Factory(t) {
-      return new (t || ExampleOneComponent)();
+    this.ɵfac = function ExampleOneComponent_Factory(__ngFactoryType__) {
+      return new (__ngFactoryType__ || ExampleOneComponent)();
     };
   }
   static {
@@ -875,8 +875,8 @@ __webpack_require__.r(__webpack_exports__);
 class ExampleThreeComponent {
   constructor() {}
   static {
-    this.ɵfac = function ExampleThreeComponent_Factory(t) {
-      return new (t || ExampleThreeComponent)();
+    this.ɵfac = function ExampleThreeComponent_Factory(__ngFactoryType__) {
+      return new (__ngFactoryType__ || ExampleThreeComponent)();
     };
   }
   static {
@@ -919,8 +919,8 @@ __webpack_require__.r(__webpack_exports__);
 class ExampleTwoComponent {
   constructor() {}
   static {
-    this.ɵfac = function ExampleTwoComponent_Factory(t) {
-      return new (t || ExampleTwoComponent)();
+    this.ɵfac = function ExampleTwoComponent_Factory(__ngFactoryType__) {
+      return new (__ngFactoryType__ || ExampleTwoComponent)();
     };
   }
   static {
@@ -969,8 +969,8 @@ __webpack_require__.r(__webpack_exports__);
 class ViewEncapsulationComponent {
   constructor() {}
   static {
-    this.ɵfac = function ViewEncapsulationComponent_Factory(t) {
-      return new (t || ViewEncapsulationComponent)();
+    this.ɵfac = function ViewEncapsulationComponent_Factory(__ngFactoryType__) {
+      return new (__ngFactoryType__ || ViewEncapsulationComponent)();
     };
   }
   static {
@@ -1021,8 +1021,8 @@ class AppComponent {
     this.title = "angular-pro";
   }
   static {
-    this.ɵfac = function AppComponent_Factory(t) {
-      return new (t || AppComponent)();
+    this.ɵfac = function AppComponent_Factory(__ngFactoryType__) {
+      return new (__ngFactoryType__ || AppComponent)();
     };
   }
   static {
@@ -1111,8 +1111,8 @@ const routes = [{
 }];
 class AppModule {
   static {
-    this.ɵfac = function AppModule_Factory(t) {
-      return new (t || AppModule)();
+    this.ɵfac = function AppModule_Factory(__ngFactoryType__) {
+      return new (__ngFactoryType__ || AppModule)();
     };
   }
   static {
@@ -1209,8 +1209,8 @@ class CustomPipesComponent {
     });
   }
   static {
-    this.ɵfac = function CustomPipesComponent_Factory(t) {
-      return new (t || CustomPipesComponent)(_angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵdirectiveInject"](_filesize_pipe__WEBPACK_IMPORTED_MODULE_0__.FilesizePipe));
+    this.ɵfac = function CustomPipesComponent_Factory(__ngFactoryType__) {
+      return new (__ngFactoryType__ || CustomPipesComponent)(_angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵdirectiveInject"](_filesize_pipe__WEBPACK_IMPORTED_MODULE_0__.FilesizePipe));
     };
   }
   static {
@@ -1270,8 +1270,8 @@ class FilesizePipe {
     return (size / (1024 * 1024)).toFixed(2) + extension;
   }
   static {
-    this.ɵfac = function FilesizePipe_Factory(t) {
-      return new (t || FilesizePipe)();
+    this.ɵfac = function FilesizePipe_Factory(__ngFactoryType__) {
+      return new (__ngFactoryType__ || FilesizePipe)();
     };
   }
   static {
@@ -1319,8 +1319,8 @@ class CreditCardDirective {
     }
   }
   static {
-    this.ɵfac = function CreditCardDirective_Factory(t) {
-      return new (t || CreditCardDirective)();
+    this.ɵfac = function CreditCardDirective_Factory(__ngFactoryType__) {
+      return new (__ngFactoryType__ || CreditCardDirective)();
     };
   }
   static {
@@ -1451,8 +1451,8 @@ class DirectivesComponent {
     }, 5000);
   }
   static {
-    this.ɵfac = function DirectivesComponent_Factory(t) {
-      return new (t || DirectivesComponent)();
+    this.ɵfac = function DirectivesComponent_Factory(__ngFactoryType__) {
+      return new (__ngFactoryType__ || DirectivesComponent)();
     };
   }
   static {
@@ -1558,8 +1558,8 @@ class HighlightDirective {
     this.el.nativeElement.style.color = "red";
   }
   static {
-    this.ɵfac = function HighlightDirective_Factory(t) {
-      return new (t || HighlightDirective)(_angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdirectiveInject"](_angular_core__WEBPACK_IMPORTED_MODULE_0__.ElementRef));
+    this.ɵfac = function HighlightDirective_Factory(__ngFactoryType__) {
+      return new (__ngFactoryType__ || HighlightDirective)(_angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdirectiveInject"](_angular_core__WEBPACK_IMPORTED_MODULE_0__.ElementRef));
     };
   }
   static {
@@ -1600,8 +1600,8 @@ class MyForDirective {
     this.template = template;
   }
   static {
-    this.ɵfac = function MyForDirective_Factory(t) {
-      return new (t || MyForDirective)(_angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdirectiveInject"](_angular_core__WEBPACK_IMPORTED_MODULE_0__.ViewContainerRef), _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdirectiveInject"](_angular_core__WEBPACK_IMPORTED_MODULE_0__.TemplateRef));
+    this.ɵfac = function MyForDirective_Factory(__ngFactoryType__) {
+      return new (__ngFactoryType__ || MyForDirective)(_angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdirectiveInject"](_angular_core__WEBPACK_IMPORTED_MODULE_0__.ViewContainerRef), _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdirectiveInject"](_angular_core__WEBPACK_IMPORTED_MODULE_0__.TemplateRef));
     };
   }
   static {
@@ -1656,8 +1656,8 @@ class TooltipDirective {
     return this.visible;
   }
   static {
-    this.ɵfac = function TooltipDirective_Factory(t) {
-      return new (t || TooltipDirective)(_angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdirectiveInject"](_angular_core__WEBPACK_IMPORTED_MODULE_0__.ElementRef));
+    this.ɵfac = function TooltipDirective_Factory(__ngFactoryType__) {
+      return new (__ngFactoryType__ || TooltipDirective)(_angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdirectiveInject"](_angular_core__WEBPACK_IMPORTED_MODULE_0__.ElementRef));
     };
   }
   static {
@@ -1688,8 +1688,8 @@ __webpack_require__.r(__webpack_exports__);
 
 class RoutesComponent {
   static {
-    this.ɵfac = function RoutesComponent_Factory(t) {
-      return new (t || RoutesComponent)();
+    this.ɵfac = function RoutesComponent_Factory(__ngFactoryType__) {
+      return new (__ngFactoryType__ || RoutesComponent)();
     };
   }
   static {
