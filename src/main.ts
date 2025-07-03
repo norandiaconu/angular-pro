@@ -1,13 +1,18 @@
-import { enableProdMode } from "@angular/core";
-import { platformBrowserDynamic } from "@angular/platform-browser-dynamic";
+import { enableProdMode, importProvidersFrom } from '@angular/core';
+import { environment } from './environments/environment';
+import { FilesizePipe } from './app/custom-pipes/filesize.pipe';
+import { BrowserModule, bootstrapApplication } from '@angular/platform-browser';
+import { FormsModule } from '@angular/forms';
+import { provideRouter, Routes } from '@angular/router';
+import { RoutesComponent } from './app/routes/routes.component';
+import { AppComponent } from './app/app.component';
 
-import { AppModule } from "./app/app.module";
-import { environment } from "./environments/environment";
+const routes: Routes = [{ path: 'route', component: RoutesComponent }];
 
 if (environment.production) {
-  enableProdMode();
+    enableProdMode();
 }
 
-platformBrowserDynamic()
-  .bootstrapModule(AppModule)
-  .catch(err => console.error(err));
+bootstrapApplication(AppComponent, {
+    providers: [importProvidersFrom(BrowserModule, FormsModule), FilesizePipe, provideRouter(routes)]
+}).catch((err) => console.error(err));

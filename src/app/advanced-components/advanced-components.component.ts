@@ -11,11 +11,18 @@ import {
 import { Subscription } from "rxjs";
 import { AuthFormComponent } from "./auth-form/auth-form.component";
 import { User } from "./advanced-components.interface";
+import { RouterLink, RouterOutlet } from "@angular/router";
+import { AuthRememberComponent } from "./auth-remember/auth-remember.component";
+import { TemplateContainerComponent } from "./template-container/template-container.component";
+import { ViewEncapsulationComponent } from "./view-encapsulation/view-encapsulation.component";
+import { ChangeDetectionComponent } from "./change-detection/change-detection.component";
 
 @Component({
-  selector: "advanced-components",
-  templateUrl: "./advanced-components.component.html",
-  styleUrls: ["./advanced-components.component.scss"]
+    selector: "advanced-components",
+    templateUrl: "./advanced-components.component.html",
+    styleUrls: ["./advanced-components.component.scss"],
+    standalone: true,
+    imports: [RouterLink, RouterOutlet, AuthFormComponent, AuthRememberComponent, TemplateContainerComponent, ViewEncapsulationComponent, ChangeDetectionComponent]
 })
 export class AdvancedComponentsComponent implements AfterContentInit, OnDestroy {
   @ViewChild("entry", { read: ViewContainerRef, static: true }) entry!: ViewContainerRef;

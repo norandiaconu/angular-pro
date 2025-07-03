@@ -1,5 +1,6 @@
 import { Component, OnInit } from "@angular/core";
 import { FilesizePipe } from "./filesize.pipe";
+import { NgFor } from "@angular/common";
 
 interface File {
   name: string;
@@ -13,9 +14,11 @@ interface FileStringSize {
 }
 
 @Component({
-  selector: "custom-pipes",
-  templateUrl: "./custom-pipes.component.html",
-  styleUrls: ["./custom-pipes.component.scss"]
+    selector: "custom-pipes",
+    templateUrl: "./custom-pipes.component.html",
+    styleUrls: ["./custom-pipes.component.scss"],
+    standalone: true,
+    imports: [NgFor, FilesizePipe]
 })
 export class CustomPipesComponent implements OnInit {
   files: File[] = [];

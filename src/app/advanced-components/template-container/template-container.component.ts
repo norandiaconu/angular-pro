@@ -1,9 +1,12 @@
 import { AfterContentInit, Component, TemplateRef, ViewChild, ViewContainerRef } from "@angular/core";
+import { NgTemplateOutlet } from "@angular/common";
 
 @Component({
-  selector: "template-container",
-  templateUrl: "./template-container.component.html",
-  styleUrls: ["./template-container.component.scss"]
+    selector: "template-container",
+    templateUrl: "./template-container.component.html",
+    styleUrls: ["./template-container.component.scss"],
+    standalone: true,
+    imports: [NgTemplateOutlet]
 })
 export class TemplateContainerComponent implements AfterContentInit {
   @ViewChild("entry", { read: ViewContainerRef, static: true }) entry!: ViewContainerRef;

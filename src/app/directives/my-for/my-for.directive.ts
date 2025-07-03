@@ -2,7 +2,8 @@ import { Directive, Input, TemplateRef, ViewContainerRef } from "@angular/core";
 import { User } from "src/app/advanced-components/advanced-components.interface";
 
 @Directive({
-  selector: "[myFor][myForOf]"
+    selector: "[myFor][myForOf]",
+    standalone: true
 })
 export class MyForDirective {
   @Input()

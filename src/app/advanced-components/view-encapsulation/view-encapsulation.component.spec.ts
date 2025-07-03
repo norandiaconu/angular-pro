@@ -6,23 +6,22 @@ import { ExampleTwoComponent } from './example-two/example-two.component';
 import { ViewEncapsulationComponent } from './view-encapsulation.component';
 
 describe('ViewEncapsulationComponent', () => {
-  let component: ViewEncapsulationComponent;
-  let fixture: ComponentFixture<ViewEncapsulationComponent>;
+    let component: ViewEncapsulationComponent;
+    let fixture: ComponentFixture<ViewEncapsulationComponent>;
 
-  beforeEach(waitForAsync(() => {
-    TestBed.configureTestingModule({
-      declarations: [ ViewEncapsulationComponent, ExampleOneComponent, ExampleTwoComponent, ExampleThreeComponent ]
-    })
-    .compileComponents();
-  }));
+    beforeEach(waitForAsync(() => {
+        TestBed.configureTestingModule({
+            imports: [ViewEncapsulationComponent, ExampleOneComponent, ExampleTwoComponent, ExampleThreeComponent]
+        }).compileComponents();
+    }));
 
-  beforeEach(() => {
-    fixture = TestBed.createComponent(ViewEncapsulationComponent);
-    component = fixture.componentInstance;
-    fixture.detectChanges();
-  });
+    beforeEach(() => {
+        fixture = TestBed.createComponent(ViewEncapsulationComponent);
+        component = fixture.componentInstance;
+        fixture.detectChanges();
+    });
 
-  it('should create', () => {
-    expect(component).toBeTruthy();
-  });
+    it('should create', () => {
+        expect(component).toBeTruthy();
+    });
 });

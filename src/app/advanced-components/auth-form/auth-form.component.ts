@@ -18,11 +18,15 @@ import { Subscription } from "rxjs";
 import { AuthMessageComponent } from "../auth-message/auth-message.component";
 import { AuthRememberComponent } from "../auth-remember/auth-remember.component";
 import { User } from "../advanced-components.interface";
+import { FormsModule } from "@angular/forms";
+import { NgIf } from "@angular/common";
 
 @Component({
-  selector: "auth-form",
-  templateUrl: "./auth-form.component.html",
-  styleUrls: ["./auth-form.component.scss"]
+    selector: "auth-form",
+    templateUrl: "./auth-form.component.html",
+    styleUrls: ["./auth-form.component.scss"],
+    standalone: true,
+    imports: [FormsModule, NgIf, AuthMessageComponent]
 })
 export class AuthFormComponent implements AfterContentInit, AfterViewInit, OnDestroy {
   @Output() submitted: EventEmitter<User> = new EventEmitter<User>();

@@ -5,24 +5,23 @@ import { MyForDirective } from './my-for/my-for.directive';
 import { TooltipDirective } from './tooltip/tooltip.directive';
 
 describe('DirectivesComponent', () => {
-  let component: DirectivesComponent;
-  let fixture: ComponentFixture<DirectivesComponent>;
+    let component: DirectivesComponent;
+    let fixture: ComponentFixture<DirectivesComponent>;
 
-  beforeEach(waitForAsync(() => {
-    TestBed.configureTestingModule({
-      declarations: [ DirectivesComponent, TooltipDirective, MyForDirective ],
-      providers: [ TooltipDirective ]
-    })
-    .compileComponents();
-  }));
+    beforeEach(waitForAsync(() => {
+        TestBed.configureTestingModule({
+            imports: [DirectivesComponent, TooltipDirective, MyForDirective],
+            providers: [TooltipDirective]
+        }).compileComponents();
+    }));
 
-  beforeEach(() => {
-    fixture = TestBed.createComponent(DirectivesComponent);
-    component = fixture.componentInstance;
-    fixture.detectChanges();
-  });
+    beforeEach(() => {
+        fixture = TestBed.createComponent(DirectivesComponent);
+        component = fixture.componentInstance;
+        fixture.detectChanges();
+    });
 
-  it('should create', () => {
-    expect(component).toBeTruthy();
-  });
+    it('should create', () => {
+        expect(component).toBeTruthy();
+    });
 });

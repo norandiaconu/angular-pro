@@ -1,7 +1,8 @@
 import { Directive, HostBinding, HostListener } from "@angular/core";
 
 @Directive({
-  selector: "[credit-card]"
+    selector: "[credit-card]",
+    standalone: true
 })
 export class CreditCardDirective {
   @HostBinding("style.border")
