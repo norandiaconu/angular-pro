@@ -8,48 +8,51 @@
       type="text"
       placeholder="Enter your 16-digit card number"
       credit-card
-    />
-  </label>
-  <br />
-  <label>
-    Enter your security code&nbsp;
-    <input type="text" />&nbsp;
-    <div class="myTooltip" tooltip="" #myTooltip="tooltip">
-      <span (mouseover)="myTooltip.show()" (mouseout)="myTooltip.hide()"
-        >(?)&nbsp;
-        <label
-          class="myTooltip"
-          tooltip="3 digits, back of your card"
-          *ngIf="myTooltip.getVisible()"
-        ></label
-      ></span>
+      />
+    </label>
+    <br />
+    <label>
+      Enter your security code&nbsp;
+      <input type="text" />&nbsp;
+      <div class="myTooltip" tooltip="" #myTooltip="tooltip">
+        <span (mouseover)="myTooltip.show()" (mouseout)="myTooltip.hide()"
+          >(?)&nbsp;
+          @if (myTooltip.getVisible()) {
+            <label
+              class="myTooltip"
+              tooltip="3 digits, back of your card"
+              ></label
+              >
+          }</span>
+        </div>
+      </label>
+      <ul>
+        <div>
+          <strong>Normal For</strong>
+          @for (item of items; track item; let i = $index) {
+            <li>
+              {{ i }} Member: {{ item.name | json }}
+            </li>
+          }
+        </div>
+        <div>
+          <strong>Normal ForOf</strong>
+          @for (item of items; track item; let i = $index) {
+            <li>{{ i }} Member: {{ item.name | json }}</li>
+          }
+        </div>
+        <div>
+          <strong>My For</strong>
+          <li *myFor="let item of items; let i = index">
+            {{ i }} Member: {{ item.name | json }}
+          </li>
+        </div>
+        <div>
+          <strong>My ForOf</strong>
+          <ng-template myFor [myForOf]="items" let-item let-i="index">
+            <li>{{ i }} Member: {{ item.name | json }}</li>
+          </ng-template>
+        </div>
+      </ul>
+      <div highlight>Highlight Directive</div>
     </div>
-  </label>
-  <ul>
-    <div>
-      <strong>Normal For</strong>
-      <li *ngFor="let item of items; let i = index">
-        {{ i }} Member: {{ item.name | json }}
-      </li>
-    </div>
-    <div>
-      <strong>Normal ForOf</strong>
-      <ng-template ngFor [ngForOf]="items" let-item let-i="index">
-        <li>{{ i }} Member: {{ item.name | json }}</li>
-      </ng-template>
-    </div>
-    <div>
-      <strong>My For</strong>
-      <li *myFor="let item of items; let i = index">
-        {{ i }} Member: {{ item.name | json }}
-      </li>
-    </div>
-    <div>
-      <strong>My ForOf</strong>
-      <ng-template myFor [myForOf]="items" let-item let-i="index">
-        <li>{{ i }} Member: {{ item.name | json }}</li>
-      </ng-template>
-    </div>
-  </ul>
-  <div highlight>Highlight Directive</div>
-</div>

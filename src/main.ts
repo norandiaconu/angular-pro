@@ -4,10 +4,10 @@ import { FilesizePipe } from './app/custom-pipes/filesize.pipe';
 import { BrowserModule, bootstrapApplication } from '@angular/platform-browser';
 import { FormsModule } from '@angular/forms';
 import { provideRouter, Routes } from '@angular/router';
-import { RoutesComponent } from './app/routes/routes.component';
+
 import { AppComponent } from './app/app.component';
 
-const routes: Routes = [{ path: 'route', component: RoutesComponent }];
+const routes: Routes = [{ path: 'route', loadComponent: () => import('./app/routes/routes.component').then(m => m.RoutesComponent) }];
 
 if (environment.production) {
     enableProdMode();

@@ -1,6 +1,6 @@
 {
     "name": "angular-pro",
-    "version": "18.1.0",
+    "version": "18.1.1",
     "scripts": {
         "start": "ng serve",
         "build": "ng build && vite preview --outDir ./docs --open",
@@ -9,7 +9,6 @@
     },
     "private": true,
     "dependencies": {
-        "@angular/animations": "~18.2.13",
         "@angular/common": "~18.2.13",
         "@angular/compiler": "~18.2.13",
         "@angular/core": "~18.2.13",
@@ -17,7 +16,6 @@
         "@angular/platform-browser": "~18.2.13",
         "@angular/router": "^18.2.13",
         "rxjs": "~6.6.7",
-        "tslib": "^2.0.0",
         "zone.js": "~0.14.10"
     },
     "devDependencies": {
@@ -25,7 +23,6 @@
         "@angular/cli": "~18.2.19",
         "@angular/compiler-cli": "~18.2.13",
         "@types/jest": "^29.5.12",
-        "@types/node": "~18.15.3",
         "@typescript-eslint/eslint-plugin": "^7.2.0",
         "@typescript-eslint/eslint-plugin-tslint": "~7.0.2",
         "@typescript-eslint/parser": "^7.2.0",

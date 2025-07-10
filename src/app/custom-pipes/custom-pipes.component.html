@@ -4,15 +4,19 @@
   <div class="transform">
     <div class="files">
       <strong>Normal Transform</strong>
-      <div *ngFor="let file of files">
-        <div>{{ file.name }}:&nbsp;{{ file.size | filesize: " MB" }}</div>
-      </div>
+      @for (file of files; track file) {
+        <div>
+          <div>{{ file.name }}:&nbsp;{{ file.size | filesize: " MB" }}</div>
+        </div>
+      }
     </div>
     <div class="files">
       <strong>Mapped Transform</strong>
-      <div *ngFor="let file of mapped">
-        <div>{{ file.name }}:&nbsp;{{ file.size }}</div>
-      </div>
+      @for (file of mapped; track file) {
+        <div>
+          <div>{{ file.name }}:&nbsp;{{ file.size }}</div>
+        </div>
+      }
     </div>
   </div>
 </div>
