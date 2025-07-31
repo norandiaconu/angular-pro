@@ -16,7 +16,6 @@ interface FileStringSize {
     selector: 'custom-pipes',
     templateUrl: './custom-pipes.component.html',
     styleUrls: ['./custom-pipes.component.scss'],
-    standalone: true,
     imports: [FilesizePipe]
 })
 export class CustomPipesComponent implements OnInit {

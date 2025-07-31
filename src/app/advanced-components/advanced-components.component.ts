@@ -22,7 +22,6 @@ import { ChangeDetectionComponent } from './change-detection/change-detection.co
     selector: 'advanced-components',
     templateUrl: './advanced-components.component.html',
     styleUrls: ['./advanced-components.component.scss'],
-    standalone: true,
     imports: [
         RouterLink,
         RouterOutlet,

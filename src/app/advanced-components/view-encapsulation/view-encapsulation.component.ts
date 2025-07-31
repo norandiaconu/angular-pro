@@ -7,7 +7,6 @@ import { ExampleThreeComponent } from "./example-three/example-three.component";
     selector: "view-encapsulation",
     templateUrl: "./view-encapsulation.component.html",
     styleUrls: ["./view-encapsulation.component.scss"],
-    standalone: true,
     imports: [ExampleOneComponent, ExampleTwoComponent, ExampleThreeComponent]
 })
 export class ViewEncapsulationComponent {

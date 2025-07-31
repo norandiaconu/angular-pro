@@ -9,7 +9,6 @@ import { HighlightDirective } from './highlight/highlight.directive';
     selector: 'directives',
     templateUrl: './directives.component.html',
     styleUrls: ['./directives.component.scss'],
-    standalone: true,
     imports: [CreditCardDirective, TooltipDirective, MyForDirective, HighlightDirective, JsonPipe]
 })
 export class DirectivesComponent {

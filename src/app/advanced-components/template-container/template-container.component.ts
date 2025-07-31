@@ -5,7 +5,6 @@ import { NgTemplateOutlet } from "@angular/common";
     selector: "template-container",
     templateUrl: "./template-container.component.html",
     styleUrls: ["./template-container.component.scss"],
-    standalone: true,
     imports: [NgTemplateOutlet]
 })
 export class TemplateContainerComponent implements AfterContentInit {

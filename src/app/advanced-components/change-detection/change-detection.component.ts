@@ -7,7 +7,6 @@ import { Example2Component } from "./example-2/example-2.component";
     changeDetection: ChangeDetectionStrategy.Default,
     templateUrl: "./change-detection.component.html",
     styleUrls: ["./change-detection.component.scss"],
-    standalone: true,
     imports: [Example1Component, Example2Component]
 })
 export class ChangeDetectionComponent {

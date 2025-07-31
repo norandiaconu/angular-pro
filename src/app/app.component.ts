@@ -7,7 +7,6 @@ import { CustomPipesComponent } from "./custom-pipes/custom-pipes.component";
     selector: "app-root",
     templateUrl: "./app.component.html",
     styleUrls: ["./app.component.scss"],
-    standalone: true,
     imports: [AdvancedComponentsComponent, DirectivesComponent, CustomPipesComponent]
 })
 export class AppComponent {
