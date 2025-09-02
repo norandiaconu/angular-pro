@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, Input } from "@angular/core";
+import { ChangeDetectionStrategy, Component, input } from "@angular/core";
 import { User } from "../../advanced-components.interface";
 
 @Component({
@@ -9,14 +9,14 @@ import { User } from "../../advanced-components.interface";
     standalone: true
 })
 export class Example2Component {
-  @Input() user: User = {
+  readonly user = input<User>({
     email: "",
     password: ""
-  };
+});
 
   constructor() {}
 
   update(): void {
-    this.user.name = "Matt Skiba";
+    this.user().name = "Matt Skiba";
   }
 }

@@ -2,7 +2,7 @@
   <a routerLink="/" class="route">Home</a>
   <a routerLink="/route">Route</a>
 </nav>
-<router-outlet></router-outlet>
+<router-outlet />
 <div class="row">
   <h2>Static Components</h2>
   <img
@@ -30,10 +30,10 @@
 </div>
 <hr />
 <h2>Dynamic Components</h2>
-<ng-template #entry></ng-template>
+<ng-template #entry />
 <br />
 <button (click)="destroyComponent()">Destroy</button>&nbsp;
 <button (click)="moveComponent()">Move</button>
-<template-container></template-container>
-<view-encapsulation></view-encapsulation>
-<change-detection></change-detection>
+<template-container />
+<view-encapsulation />
+<change-detection />

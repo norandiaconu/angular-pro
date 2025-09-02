@@ -4,12 +4,12 @@ import {
     ComponentFactoryResolver,
     ComponentRef,
     OnDestroy,
+    OutputRefSubscription,
     TemplateRef,
     ViewChild,
     ViewContainerRef,
     inject
 } from '@angular/core';
-import { Subscription } from 'rxjs';
 import { AuthFormComponent } from './auth-form/auth-form.component';
 import { User } from './advanced-components.interface';
 import { RouterLink, RouterOutlet } from '@angular/router';
@@ -37,7 +37,7 @@ export class AdvancedComponentsComponent implements AfterContentInit, OnDestroy 
     @ViewChild('template') template!: TemplateRef<any>;
 
     rememberMe = false;
-    subscription!: Subscription;
+    subscription!: OutputRefSubscription;
     component!: ComponentRef<AuthFormComponent>;
 
     private resolver = inject(ComponentFactoryResolver);

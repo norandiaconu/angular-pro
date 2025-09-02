@@ -6641,6 +6641,10 @@ var OutputEmitterRef = class {
     }
   }
 };
+function output(opts) {
+  ngDevMode && assertInInjectionContext(output);
+  return new OutputEmitterRef();
+}
 function inputFunction(initialValue, opts) {
   ngDevMode && assertInInjectionContext(input);
   return createInputSignal(initialValue, opts);
@@ -19563,13 +19567,13 @@ function listenToOutput(tNode, lView, directiveIndex, lookupName, eventName, lis
   const tView = lView[TVIEW];
   const def = tView.data[directiveIndex];
   const propertyName = def.outputs[lookupName];
-  const output = instance[propertyName];
-  if (ngDevMode && !isOutputSubscribable(output)) {
+  const output2 = instance[propertyName];
+  if (ngDevMode && !isOutputSubscribable(output2)) {
     throw new Error(`@Output ${propertyName} not initialized in '${instance.constructor.name}'.`);
   }
   const tCleanup = tView.firstCreatePass ? getOrCreateTViewCleanup(tView) : null;
   const lCleanup = getOrCreateLViewCleanup(lView);
-  const subscription = output.subscribe(listenerFn);
+  const subscription = output2.subscribe(listenerFn);
   const idx = lCleanup.length;
   lCleanup.push(listenerFn, subscription);
   tCleanup && tCleanup.push(eventName, tNode.index, idx, -(idx + 1));
@@ -23805,6 +23809,7 @@ export {
   EventEmitter,
   NgZone,
   ErrorHandler,
+  output,
   input,
   ElementRef,
   signal,

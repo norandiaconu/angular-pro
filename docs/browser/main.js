@@ -123,6 +123,7 @@ import {
   mergeMap,
   numberAttribute,
   of,
+  output,
   performanceMarkFeature,
   pipe,
   platformCore,
@@ -194,7 +195,7 @@ import {
   ɵɵtextInterpolate1,
   ɵɵtextInterpolate2,
   ɵɵviewQuery
-} from "./chunk-BT7MZY5M.js";
+} from "./chunk-766C6G4G.js";
 
 // src/environments/environment.ts
 var environment = {
@@ -19005,7 +19006,7 @@ var AuthMessageComponent = class _AuthMessageComponent {
 // src/app/advanced-components/auth-remember/auth-remember.component.ts
 var AuthRememberComponent = class _AuthRememberComponent {
   constructor() {
-    this.checked = new EventEmitter();
+    this.checked = output();
   }
   onChecked(value) {
     this.checked.emit(value);
@@ -19036,9 +19037,7 @@ var AuthRememberComponent = class _AuthRememberComponent {
   (typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(AuthRememberComponent, [{
     type: Component,
     args: [{ selector: "auth-remember", standalone: true, template: '<label>\r\n  <input type="checkbox" #inputBox (change)="onChecked(inputBox.checked)" />\r\n  Keep me logged in\r\n</label>\r\n' }]
-  }], () => [], { checked: [{
-    type: Output
-  }] });
+  }], () => [], null);
 })();
 (() => {
   (typeof ngDevMode === "undefined" || ngDevMode) && \u0275setClassDebugInfo(AuthRememberComponent, { className: "AuthRememberComponent", filePath: "src/app/advanced-components/auth-remember/auth-remember.component.ts", lineNumber: 9 });
@@ -19078,7 +19077,7 @@ function AuthFormComponent_Conditional_16_Template(rf, ctx) {
 }
 var AuthFormComponent = class _AuthFormComponent {
   constructor() {
-    this.submitted = new EventEmitter();
+    this.submitted = output();
     this.changeDetector = inject(ChangeDetectorRef);
     this.renderer = inject(Renderer2);
     this.showMessage = false;
@@ -19248,9 +19247,7 @@ var AuthFormComponent = class _AuthFormComponent {
   </form>
 </div>
 `, styles: ["/* src/app/advanced-components/auth-form/auth-form.component.scss */\n.email {\n  border-color: purple;\n}\n"] }]
-  }], () => [], { submitted: [{
-    type: Output
-  }], remember: [{
+  }], () => [], { remember: [{
     type: ContentChild,
     args: [AuthRememberComponent]
   }], rememberList: [{
@@ -19484,13 +19481,13 @@ var ViewEncapsulationComponent = class _ViewEncapsulationComponent {
 // src/app/advanced-components/change-detection/example-1/example-1.component.ts
 var Example1Component = class _Example1Component {
   constructor() {
-    this.user = {
+    this.user = input({
       email: "",
       password: ""
-    };
+    });
   }
   update() {
-    this.user.name = "Matt Skiba";
+    this.user().name = "Matt Skiba";
   }
   static {
     this.\u0275fac = function Example1Component_Factory(__ngFactoryType__) {
@@ -19498,7 +19495,7 @@ var Example1Component = class _Example1Component {
     };
   }
   static {
-    this.\u0275cmp = /* @__PURE__ */ \u0275\u0275defineComponent({ type: _Example1Component, selectors: [["example-1"]], inputs: { user: "user" }, decls: 15, vars: 4, consts: [[1, "example-1"], [3, "click"]], template: function Example1Component_Template(rf, ctx) {
+    this.\u0275cmp = /* @__PURE__ */ \u0275\u0275defineComponent({ type: _Example1Component, selectors: [["example-1"]], inputs: { user: [1, "user"] }, decls: 15, vars: 4, consts: [[1, "example-1"], [3, "click"]], template: function Example1Component_Template(rf, ctx) {
       if (rf & 1) {
         \u0275\u0275elementStart(0, "div", 0)(1, "h3");
         \u0275\u0275text(2, "OnPush");
@@ -19525,13 +19522,13 @@ var Example1Component = class _Example1Component {
       }
       if (rf & 2) {
         \u0275\u0275advance(4);
-        \u0275\u0275textInterpolate(ctx.user.name);
+        \u0275\u0275textInterpolate(ctx.user().name);
         \u0275\u0275advance(2);
-        \u0275\u0275textInterpolate1("", ctx.user.age, " years old");
+        \u0275\u0275textInterpolate1("", ctx.user().age, " years old");
         \u0275\u0275advance();
-        \u0275\u0275textInterpolate1(" ", ctx.user.location, " ");
+        \u0275\u0275textInterpolate1(" ", ctx.user().location, " ");
         \u0275\u0275advance(2);
-        \u0275\u0275textInterpolate1(" ", ctx.user.email, " ");
+        \u0275\u0275textInterpolate1(" ", ctx.user().email, " ");
       }
     }, styles: ["\n\n.example-1[_ngcontent-%COMP%] {\n  font-size: 19px;\n  margin-bottom: 10px;\n}"], changeDetection: 0 });
   }
@@ -19539,10 +19536,8 @@ var Example1Component = class _Example1Component {
 (() => {
   (typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(Example1Component, [{
     type: Component,
-    args: [{ selector: "example-1", changeDetection: ChangeDetectionStrategy.OnPush, standalone: true, template: '<div class="example-1">\r\n  <h3>OnPush</h3>\r\n  <h4>{{ user.name }}</h4>\r\n  <h5>{{ user.age }} years old</h5>\r\n  {{ user.location }} <br />\r\n  {{ user.email }} <br />\r\n  <button (click)="update()">Internal update</button>\r\n  <p>* should not update</p>\r\n</div>\r\n', styles: ["/* src/app/advanced-components/change-detection/example-1/example-1.component.scss */\n.example-1 {\n  font-size: 19px;\n  margin-bottom: 10px;\n}\n"] }]
-  }], () => [], { user: [{
-    type: Input
-  }] });
+    args: [{ selector: "example-1", changeDetection: ChangeDetectionStrategy.OnPush, standalone: true, template: '<div class="example-1">\r\n  <h3>OnPush</h3>\r\n  <h4>{{ user().name }}</h4>\r\n  <h5>{{ user().age }} years old</h5>\r\n  {{ user().location }} <br />\r\n  {{ user().email }} <br />\r\n  <button (click)="update()">Internal update</button>\r\n  <p>* should not update</p>\r\n</div>\r\n', styles: ["/* src/app/advanced-components/change-detection/example-1/example-1.component.scss */\n.example-1 {\n  font-size: 19px;\n  margin-bottom: 10px;\n}\n"] }]
+  }], () => [], null);
 })();
 (() => {
   (typeof ngDevMode === "undefined" || ngDevMode) && \u0275setClassDebugInfo(Example1Component, { className: "Example1Component", filePath: "src/app/advanced-components/change-detection/example-1/example-1.component.ts", lineNumber: 11 });
@@ -19551,13 +19546,13 @@ var Example1Component = class _Example1Component {
 // src/app/advanced-components/change-detection/example-2/example-2.component.ts
 var Example2Component = class _Example2Component {
   constructor() {
-    this.user = {
+    this.user = input({
       email: "",
       password: ""
-    };
+    });
   }
   update() {
-    this.user.name = "Matt Skiba";
+    this.user().name = "Matt Skiba";
   }
   static {
     this.\u0275fac = function Example2Component_Factory(__ngFactoryType__) {
@@ -19565,7 +19560,7 @@ var Example2Component = class _Example2Component {
     };
   }
   static {
-    this.\u0275cmp = /* @__PURE__ */ \u0275\u0275defineComponent({ type: _Example2Component, selectors: [["example-2"]], inputs: { user: "user" }, decls: 15, vars: 4, consts: [[1, "example-2"], [3, "click"]], template: function Example2Component_Template(rf, ctx) {
+    this.\u0275cmp = /* @__PURE__ */ \u0275\u0275defineComponent({ type: _Example2Component, selectors: [["example-2"]], inputs: { user: [1, "user"] }, decls: 15, vars: 4, consts: [[1, "example-2"], [3, "click"]], template: function Example2Component_Template(rf, ctx) {
       if (rf & 1) {
         \u0275\u0275elementStart(0, "div", 0)(1, "h3");
         \u0275\u0275text(2, "Default");
@@ -19592,13 +19587,13 @@ var Example2Component = class _Example2Component {
       }
       if (rf & 2) {
         \u0275\u0275advance(4);
-        \u0275\u0275textInterpolate(ctx.user.name);
+        \u0275\u0275textInterpolate(ctx.user().name);
         \u0275\u0275advance(2);
-        \u0275\u0275textInterpolate1("", ctx.user.age, " years old");
+        \u0275\u0275textInterpolate1("", ctx.user().age, " years old");
         \u0275\u0275advance();
-        \u0275\u0275textInterpolate1(" ", ctx.user.location, " ");
+        \u0275\u0275textInterpolate1(" ", ctx.user().location, " ");
         \u0275\u0275advance(2);
-        \u0275\u0275textInterpolate1(" ", ctx.user.email, " ");
+        \u0275\u0275textInterpolate1(" ", ctx.user().email, " ");
       }
     }, styles: ["\n\n.example-2[_ngcontent-%COMP%] {\n  font-size: 19px;\n  margin-bottom: 10px;\n}"] });
   }
@@ -19606,10 +19601,8 @@ var Example2Component = class _Example2Component {
 (() => {
   (typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(Example2Component, [{
     type: Component,
-    args: [{ selector: "example-2", changeDetection: ChangeDetectionStrategy.Default, standalone: true, template: '<div class="example-2">\r\n  <h3>Default</h3>\r\n  <h4>{{ user.name }}</h4>\r\n  <h5>{{ user.age }} years old</h5>\r\n  {{ user.location }} <br />\r\n  {{ user.email }} <br />\r\n  <button (click)="update()">Internal update</button>\r\n  <p>* should update</p>\r\n</div>\r\n', styles: ["/* src/app/advanced-components/change-detection/example-2/example-2.component.scss */\n.example-2 {\n  font-size: 19px;\n  margin-bottom: 10px;\n}\n"] }]
-  }], () => [], { user: [{
-    type: Input
-  }] });
+    args: [{ selector: "example-2", changeDetection: ChangeDetectionStrategy.Default, standalone: true, template: '<div class="example-2">\r\n  <h3>Default</h3>\r\n  <h4>{{ user().name }}</h4>\r\n  <h5>{{ user().age }} years old</h5>\r\n  {{ user().location }} <br />\r\n  {{ user().email }} <br />\r\n  <button (click)="update()">Internal update</button>\r\n  <p>* should update</p>\r\n</div>\r\n', styles: ["/* src/app/advanced-components/change-detection/example-2/example-2.component.scss */\n.example-2 {\n  font-size: 19px;\n  margin-bottom: 10px;\n}\n"] }]
+  }], () => [], null);
 })();
 (() => {
   (typeof ngDevMode === "undefined" || ngDevMode) && \u0275setClassDebugInfo(Example2Component, { className: "Example2Component", filePath: "src/app/advanced-components/change-detection/example-2/example-2.component.ts", lineNumber: 11 });
@@ -19845,7 +19838,7 @@ var AdvancedComponentsComponent = class _AdvancedComponentsComponent {
       TemplateContainerComponent,
       ViewEncapsulationComponent,
       ChangeDetectionComponent
-    ], template: '<nav class="routes">\r\n  <a routerLink="/" class="route">Home</a>\r\n  <a routerLink="/route">Route</a>\r\n</nav>\r\n<router-outlet></router-outlet>\r\n<div class="row">\r\n  <h2>Static Components</h2>\r\n  <img\r\n    width="50"\r\n    alt="Angular Logo"\r\n    src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNTAgMjUwIj4KICAgIDxwYXRoIGZpbGw9IiNERDAwMzEiIGQ9Ik0xMjUgMzBMMzEuOSA2My4ybDE0LjIgMTIzLjFMMTI1IDIzMGw3OC45LTQzLjcgMTQuMi0xMjMuMXoiIC8+CiAgICA8cGF0aCBmaWxsPSIjQzMwMDJGIiBkPSJNMTI1IDMwdjIyLjItLjFWMjMwbDc4LjktNDMuNyAxNC4yLTEyMy4xTDEyNSAzMHoiIC8+CiAgICA8cGF0aCAgZmlsbD0iI0ZGRkZGRiIgZD0iTTEyNSA1Mi4xTDY2LjggMTgyLjZoMjEuN2wxMS43LTI5LjJoNDkuNGwxMS43IDI5LjJIMTgzTDEyNSA1Mi4xem0xNyA4My4zaC0zNGwxNy00MC45IDE3IDQwLjl6IiAvPgogIDwvc3ZnPg=="\r\n  />\r\n</div>\r\n<div>\r\n  <auth-form (submitted)="createUser($event)">\r\n    <h3>Create Account</h3>\r\n    <button type="submit">\r\n      Join Us\r\n    </button>\r\n  </auth-form>\r\n  <auth-form (submitted)="loginUser($event)">\r\n    <h3>Login</h3>\r\n    <auth-remember (checked)="rememberUser($event)"></auth-remember>\r\n    <auth-remember (checked)="rememberUser($event)"></auth-remember>\r\n    <auth-remember (checked)="rememberUser($event)"></auth-remember>\r\n    <button type="submit">\r\n      Login\r\n    </button>\r\n  </auth-form>\r\n</div>\r\n<hr />\r\n<h2>Dynamic Components</h2>\r\n<ng-template #entry></ng-template>\r\n<br />\r\n<button (click)="destroyComponent()">Destroy</button>&nbsp;\r\n<button (click)="moveComponent()">Move</button>\r\n<template-container></template-container>\r\n<view-encapsulation></view-encapsulation>\r\n<change-detection></change-detection>\r\n', styles: ["/* src/app/advanced-components/advanced-components.component.scss */\n.row {\n  display: flex;\n  justify-content: space-between;\n}\n.routes {\n  display: flex;\n}\n.route {\n  margin-right: 5px;\n}\n"] }]
+    ], template: '<nav class="routes">\r\n  <a routerLink="/" class="route">Home</a>\r\n  <a routerLink="/route">Route</a>\r\n</nav>\r\n<router-outlet />\r\n<div class="row">\r\n  <h2>Static Components</h2>\r\n  <img\r\n    width="50"\r\n    alt="Angular Logo"\r\n    src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNTAgMjUwIj4KICAgIDxwYXRoIGZpbGw9IiNERDAwMzEiIGQ9Ik0xMjUgMzBMMzEuOSA2My4ybDE0LjIgMTIzLjFMMTI1IDIzMGw3OC45LTQzLjcgMTQuMi0xMjMuMXoiIC8+CiAgICA8cGF0aCBmaWxsPSIjQzMwMDJGIiBkPSJNMTI1IDMwdjIyLjItLjFWMjMwbDc4LjktNDMuNyAxNC4yLTEyMy4xTDEyNSAzMHoiIC8+CiAgICA8cGF0aCAgZmlsbD0iI0ZGRkZGRiIgZD0iTTEyNSA1Mi4xTDY2LjggMTgyLjZoMjEuN2wxMS43LTI5LjJoNDkuNGwxMS43IDI5LjJIMTgzTDEyNSA1Mi4xem0xNyA4My4zaC0zNGwxNy00MC45IDE3IDQwLjl6IiAvPgogIDwvc3ZnPg=="\r\n  />\r\n</div>\r\n<div>\r\n  <auth-form (submitted)="createUser($event)">\r\n    <h3>Create Account</h3>\r\n    <button type="submit">\r\n      Join Us\r\n    </button>\r\n  </auth-form>\r\n  <auth-form (submitted)="loginUser($event)">\r\n    <h3>Login</h3>\r\n    <auth-remember (checked)="rememberUser($event)"></auth-remember>\r\n    <auth-remember (checked)="rememberUser($event)"></auth-remember>\r\n    <auth-remember (checked)="rememberUser($event)"></auth-remember>\r\n    <button type="submit">\r\n      Login\r\n    </button>\r\n  </auth-form>\r\n</div>\r\n<hr />\r\n<h2>Dynamic Components</h2>\r\n<ng-template #entry />\r\n<br />\r\n<button (click)="destroyComponent()">Destroy</button>&nbsp;\r\n<button (click)="moveComponent()">Move</button>\r\n<template-container />\r\n<view-encapsulation />\r\n<change-detection />\r\n', styles: ["/* src/app/advanced-components/advanced-components.component.scss */\n.row {\n  display: flex;\n  justify-content: space-between;\n}\n.routes {\n  display: flex;\n}\n.route {\n  margin-right: 5px;\n}\n"] }]
   }], null, { entry: [{
     type: ViewChild,
     args: ["entry", { read: ViewContainerRef, static: true }]
@@ -20312,7 +20305,7 @@ var AppComponent = class _AppComponent {
 (() => {
   (typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(AppComponent, [{
     type: Component,
-    args: [{ selector: "app-root", imports: [AdvancedComponentsComponent, DirectivesComponent, CustomPipesComponent], template: "<advanced-components></advanced-components>\r\n<directives></directives>\r\n<custom-pipes></custom-pipes>\r\n" }]
+    args: [{ selector: "app-root", imports: [AdvancedComponentsComponent, DirectivesComponent, CustomPipesComponent], template: "<advanced-components />\r\n<directives />\r\n<custom-pipes />\r\n" }]
   }], null, null);
 })();
 (() => {
@@ -20320,7 +20313,7 @@ var AppComponent = class _AppComponent {
 })();
 
 // src/main.ts
-var routes = [{ path: "route", loadComponent: () => import("./routes.component-EZJDCIYH.js").then((m) => m.RoutesComponent) }];
+var routes = [{ path: "route", loadComponent: () => import("./routes.component-EE3PVUWI.js").then((m) => m.RoutesComponent) }];
 if (environment.production) {
   enableProdMode();
 }

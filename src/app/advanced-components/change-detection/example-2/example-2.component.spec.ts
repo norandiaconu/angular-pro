@@ -1,5 +1,4 @@
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
-
 import { Example2Component } from './example-2.component';
 
 describe('Example2Component', () => {
@@ -12,10 +11,6 @@ describe('Example2Component', () => {
         }).compileComponents();
         fixture = TestBed.createComponent(Example2Component);
         component = fixture.componentInstance;
-        component.user = {
-            email: '',
-            password: ''
-        };
         fixture.detectChanges();
     }));
 

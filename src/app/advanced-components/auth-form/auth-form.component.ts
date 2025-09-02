@@ -6,14 +6,14 @@ import {
     ContentChild,
     ContentChildren,
     ElementRef,
-    EventEmitter,
     OnDestroy,
-    Output,
+    OutputRefSubscription,
     QueryList,
     Renderer2,
     ViewChild,
     ViewChildren,
-    inject
+    inject,
+    output
 } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { AuthMessageComponent } from '../auth-message/auth-message.component';
@@ -28,7 +28,7 @@ import { FormsModule } from '@angular/forms';
     imports: [FormsModule, AuthMessageComponent]
 })
 export class AuthFormComponent implements AfterContentInit, AfterViewInit, OnDestroy {
-    @Output() submitted: EventEmitter<User> = new EventEmitter<User>();
+    readonly submitted = output<User>();
     @ContentChild(AuthRememberComponent)
     remember!: AuthRememberComponent;
     @ContentChildren(AuthRememberComponent) rememberList!: QueryList<AuthRememberComponent>;
@@ -55,7 +55,7 @@ export class AuthFormComponent implements AfterContentInit, AfterViewInit, OnDes
     }
 
     ngAfterContentInit(): void {
-        let tempSub: Subscription;
+        let tempSub: OutputRefSubscription;
         if (this.remember) {
             console.log('afterContentInit remember', this.remember);
             tempSub = this.remember.checked.subscribe((checked: boolean) => {
