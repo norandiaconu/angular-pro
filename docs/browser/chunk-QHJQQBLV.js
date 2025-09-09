@@ -13218,6 +13218,10 @@ var viewChild = (() => {
   viewChildFn.required = viewChildRequiredFn;
   return viewChildFn;
 })();
+function viewChildren(locator, opts) {
+  ngDevMode && assertInInjectionContext(viewChildren);
+  return createMultiResultQuerySignalFn(opts);
+}
 function contentChildFn(locator, opts) {
   ngDevMode && assertInInjectionContext(contentChild);
   return createSingleResultOptionalQuerySignalFn(opts);
@@ -23846,10 +23850,11 @@ export {
   ɵɵdirectiveInject,
   ɵɵinvalidFactory,
   ViewContainerRef,
+  viewChild,
+  viewChildren,
+  contentChild,
+  contentChildren,
   ContentChildren,
-  ContentChild,
-  ViewChildren,
-  ViewChild,
   NgModuleRef$1,
   NgModuleFactory$1,
   createNgModule,
@@ -23892,9 +23897,11 @@ export {
   ɵɵprojectionDef,
   ɵɵprojection,
   ɵɵcontentQuery,
-  ɵɵviewQuery,
   ɵɵqueryRefresh,
   ɵɵloadQuery,
+  ɵɵcontentQuerySignal,
+  ɵɵviewQuerySignal,
+  ɵɵqueryAdvance,
   ɵɵreference,
   ɵɵtext,
   ɵɵtextInterpolate,

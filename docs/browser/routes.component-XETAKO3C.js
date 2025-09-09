@@ -6,7 +6,7 @@ import {
   ɵɵelementEnd,
   ɵɵelementStart,
   ɵɵtext
-} from "./chunk-766C6G4G.js";
+} from "./chunk-QHJQQBLV.js";
 
 // src/app/routes/routes.component.ts
 var RoutesComponent = class _RoutesComponent {

@@ -1,4 +1,4 @@
-import { TestBed, waitForAsync } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { NgForm } from '@angular/forms';
 import { AdvancedComponentsComponent } from './advanced-components/advanced-components.component';
 import { AuthFormComponent } from './advanced-components/auth-form/auth-form.component';
@@ -18,13 +18,16 @@ import { FilesizePipe } from './custom-pipes/filesize.pipe';
 import { DirectivesComponent } from './directives/directives.component';
 import { MyForDirective } from './directives/my-for/my-for.directive';
 import { TooltipDirective } from './directives/tooltip/tooltip.directive';
-import { RouterTestingModule } from '@angular/router/testing';
+import { provideRouter, Routes } from '@angular/router';
 
 describe('AppComponent', () => {
+    const routes: Routes = [];
+    let fixture: ComponentFixture<AppComponent>;
+    let app: AppComponent;
+
     beforeEach(waitForAsync(() => {
         TestBed.configureTestingModule({
             imports: [
-                RouterTestingModule,
                 AdvancedComponentsComponent,
                 AppComponent,
                 AuthFormComponent,
@@ -44,27 +47,26 @@ describe('AppComponent', () => {
                 TooltipDirective
             ],
             declarations: [NgForm],
-            providers: [FilesizePipe]
+            providers: [FilesizePipe, provideRouter(routes)]
         }).compileComponents();
         jest.spyOn(console, 'log').mockImplementation(() => {});
     }));
 
-    it('should create the app', () => {
-        const fixture = TestBed.createComponent(AppComponent);
-        const app = fixture.debugElement.componentInstance;
+    beforeEach(() => {
+        fixture = TestBed.createComponent(AppComponent);
+        app = fixture.debugElement.componentInstance;
         fixture.detectChanges();
+    });
+
+    it('should create the app', () => {
         expect(app).toBeTruthy();
     });
 
     it(`should have as title 'angular-pro'`, () => {
-        const fixture = TestBed.createComponent(AppComponent);
-        const app = fixture.debugElement.componentInstance;
-        fixture.detectChanges();
         expect(app.title).toEqual('angular-pro');
     });
 
     it('should render title in a h1 tag', () => {
-        const fixture = TestBed.createComponent(AppComponent);
         const compiled = fixture.debugElement.nativeElement;
         fixture.detectChanges();
         expect(compiled.querySelector('advanced-components').textContent).toMatch(/Static Components.*/);

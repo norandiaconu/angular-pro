@@ -1,5 +1,5 @@
 import { Directive, Input, TemplateRef, ViewContainerRef, inject } from '@angular/core';
-import { User } from 'src/app/advanced-components/advanced-components.interface';
+import { User } from '../../advanced-components/advanced-components.interface';
 
 @Directive({
     selector: '[myFor][myForOf]',

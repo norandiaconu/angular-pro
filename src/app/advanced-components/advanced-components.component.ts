@@ -6,9 +6,9 @@ import {
     OnDestroy,
     OutputRefSubscription,
     TemplateRef,
-    ViewChild,
     ViewContainerRef,
-    inject
+    inject,
+    viewChild
 } from '@angular/core';
 import { AuthFormComponent } from './auth-form/auth-form.component';
 import { User } from './advanced-components.interface';
@@ -33,8 +33,8 @@ import { ChangeDetectionComponent } from './change-detection/change-detection.co
     ]
 })
 export class AdvancedComponentsComponent implements AfterContentInit, OnDestroy {
-    @ViewChild('entry', { read: ViewContainerRef, static: true }) entry!: ViewContainerRef;
-    @ViewChild('template') template!: TemplateRef<any>;
+    readonly entry = viewChild.required('entry', { read: ViewContainerRef });
+    readonly template = viewChild.required<TemplateRef<any>>('template');
 
     rememberMe = false;
     subscription!: OutputRefSubscription;
@@ -44,8 +44,8 @@ export class AdvancedComponentsComponent implements AfterContentInit, OnDestroy 
 
     ngAfterContentInit(): void {
         const authFormFactory = this.resolver.resolveComponentFactory(AuthFormComponent);
-        this.entry.createComponent(authFormFactory);
-        this.component = this.entry.createComponent(authFormFactory, 0);
+        this.entry().createComponent(authFormFactory);
+        this.component = this.entry().createComponent(authFormFactory, 0);
         this.component.instance.title = 'Dynamic Create';
         this.subscription = this.component.instance.submitted.subscribe(this.createUser);
     }
@@ -70,6 +70,6 @@ export class AdvancedComponentsComponent implements AfterContentInit, OnDestroy 
     }
 
     moveComponent(): void {
-        this.entry.move(this.component.hostView, 1);
+        this.entry().move(this.component.hostView, 1);
     }
 }

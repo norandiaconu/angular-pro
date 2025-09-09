@@ -12,17 +12,16 @@ import { ExampleOneComponent } from './view-encapsulation/example-one/example-on
 import { ExampleThreeComponent } from './view-encapsulation/example-three/example-three.component';
 import { ExampleTwoComponent } from './view-encapsulation/example-two/example-two.component';
 import { ViewEncapsulationComponent } from './view-encapsulation/view-encapsulation.component';
-import { RouterOutlet } from '@angular/router';
-import { RouterTestingModule } from '@angular/router/testing';
+import { provideRouter, RouterOutlet, Routes } from '@angular/router';
 
 describe('AdvancedComponentsComponent', () => {
     let component: AdvancedComponentsComponent;
     let fixture: ComponentFixture<AdvancedComponentsComponent>;
+    const routes: Routes = [];
 
     beforeEach(waitForAsync(() => {
         TestBed.configureTestingModule({
             imports: [
-                RouterTestingModule,
                 FormsModule,
                 RouterOutlet,
                 AdvancedComponentsComponent,
@@ -37,7 +36,8 @@ describe('AdvancedComponentsComponent', () => {
                 ExampleThreeComponent,
                 TemplateContainerComponent,
                 ViewEncapsulationComponent
-            ]
+            ],
+            providers: [provideRouter(routes)]
         }).compileComponents();
         fixture = TestBed.createComponent(AdvancedComponentsComponent);
         component = fixture.componentInstance;

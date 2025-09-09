@@ -13,7 +13,6 @@ import {
   ComponentFactoryResolver$1,
   ConnectableObservable,
   Console,
-  ContentChild,
   ContentChildren,
   DEFAULT_CURRENCY_CODE,
   DestroyRef,
@@ -67,8 +66,6 @@ import {
   TestabilityRegistry,
   TracingService,
   Version,
-  ViewChild,
-  ViewChildren,
   ViewContainerRef,
   ViewEncapsulation,
   XSS_SECURITY_URL,
@@ -91,6 +88,8 @@ import {
   computed,
   concat,
   concatMap,
+  contentChild,
+  contentChildren,
   createEnvironmentInjector,
   createNgModule,
   createPlatformFactory,
@@ -145,6 +144,8 @@ import {
   throwError,
   untracked,
   unwrapSafeValue,
+  viewChild,
+  viewChildren,
   ɵsetClassDebugInfo,
   ɵɵInheritDefinitionFeature,
   ɵɵNgOnChangesFeature,
@@ -154,6 +155,7 @@ import {
   ɵɵclassProp,
   ɵɵconditional,
   ɵɵcontentQuery,
+  ɵɵcontentQuerySignal,
   ɵɵdefineComponent,
   ɵɵdefineDirective,
   ɵɵdefineInjectable,
@@ -179,6 +181,7 @@ import {
   ɵɵprojection,
   ɵɵprojectionDef,
   ɵɵproperty,
+  ɵɵqueryAdvance,
   ɵɵqueryRefresh,
   ɵɵreference,
   ɵɵrepeater,
@@ -194,8 +197,8 @@ import {
   ɵɵtextInterpolate,
   ɵɵtextInterpolate1,
   ɵɵtextInterpolate2,
-  ɵɵviewQuery
-} from "./chunk-766C6G4G.js";
+  ɵɵviewQuerySignal
+} from "./chunk-QHJQQBLV.js";
 
 // src/environments/environment.ts
 var environment = {
@@ -19064,7 +19067,7 @@ function AuthFormComponent_Conditional_4_Template(rf, ctx) {
 function AuthFormComponent_Conditional_15_Template(rf, ctx) {
   if (rf & 1) {
     \u0275\u0275elementStart(0, "button", 7, 3);
-    \u0275\u0275text(2, " Dynamic Create ");
+    \u0275\u0275text(2, "Dynamic Create");
     \u0275\u0275elementEnd();
   }
 }
@@ -19078,6 +19081,13 @@ function AuthFormComponent_Conditional_16_Template(rf, ctx) {
 var AuthFormComponent = class _AuthFormComponent {
   constructor() {
     this.submitted = output();
+    this.remember = contentChild(AuthRememberComponent);
+    this.rememberList = contentChildren(AuthRememberComponent);
+    this.message = viewChild.required(AuthMessageComponent);
+    this.messages = viewChildren(AuthMessageComponent);
+    this.email = viewChild.required("email");
+    this.password = viewChild.required("password");
+    this.createButton = viewChild("createButton");
     this.changeDetector = inject(ChangeDetectorRef);
     this.renderer = inject(Renderer2);
     this.showMessage = false;
@@ -19087,41 +19097,47 @@ var AuthFormComponent = class _AuthFormComponent {
   }
   ngAfterContentInit() {
     let tempSub;
-    if (this.remember) {
-      console.log("afterContentInit remember", this.remember);
-      tempSub = this.remember.checked.subscribe((checked) => {
+    const remember = this.remember();
+    if (remember) {
+      console.log("afterContentInit remember", remember);
+      tempSub = remember.checked.subscribe((checked) => {
         this.showMessage = checked;
       });
       this.subscription.add(tempSub);
     }
-    if (this.rememberList) {
-      console.log("afterContentInit rememberList", this.rememberList);
-      this.rememberList.forEach((item) => {
+    const rememberList = this.rememberList();
+    if (rememberList) {
+      console.log("afterContentInit rememberList", rememberList);
+      rememberList.forEach((item) => {
         tempSub = item.checked.subscribe((checked) => this.showMessage = checked);
         this.subscription.add(tempSub);
       });
     }
-    if (this.message) {
-      this.message.days = 30;
+    const message = this.message();
+    if (message) {
+      message.days = 30;
     }
   }
   ngAfterViewInit() {
-    this.email.nativeElement.setAttribute("placeholder", "Enter your email address");
-    this.email.nativeElement.classList.add("email");
-    this.renderer.setAttribute(this.password.nativeElement, "placeholder", "Enter your password");
-    this.renderer.addClass(this.password.nativeElement, "password");
-    this.password.nativeElement["focus"].apply(this.password.nativeElement);
-    this.email.nativeElement.focus();
-    console.log("afterViewInit email", this.email.nativeElement);
-    if (this.message) {
-      console.log("afterViewInit message", this.message);
-      this.messages.forEach((oneMessage) => {
+    this.email().nativeElement.setAttribute("placeholder", "Enter your email address");
+    this.email().nativeElement.classList.add("email");
+    const password = this.password();
+    this.renderer.setAttribute(password.nativeElement, "placeholder", "Enter your password");
+    this.renderer.addClass(password.nativeElement, "password");
+    password.nativeElement["focus"].apply(password.nativeElement);
+    this.email().nativeElement.focus();
+    console.log("afterViewInit email", this.email().nativeElement);
+    const message = this.message();
+    if (message) {
+      console.log("afterViewInit message", message);
+      this.messages().forEach((oneMessage) => {
         oneMessage.days = 30;
       });
       this.changeDetector.detectChanges();
     }
-    if (this.createButton) {
-      this.createButton.nativeElement.classList.add("createButton");
+    const createButton = this.createButton();
+    if (createButton) {
+      createButton.nativeElement.classList.add("createButton");
     }
   }
   onSubmit(value) {
@@ -19138,29 +19154,22 @@ var AuthFormComponent = class _AuthFormComponent {
   static {
     this.\u0275cmp = /* @__PURE__ */ \u0275\u0275defineComponent({ type: _AuthFormComponent, selectors: [["auth-form"]], contentQueries: function AuthFormComponent_ContentQueries(rf, ctx, dirIndex) {
       if (rf & 1) {
-        \u0275\u0275contentQuery(dirIndex, AuthRememberComponent, 5);
-        \u0275\u0275contentQuery(dirIndex, AuthRememberComponent, 4);
+        \u0275\u0275contentQuerySignal(dirIndex, ctx.remember, AuthRememberComponent, 5);
+        \u0275\u0275contentQuerySignal(dirIndex, ctx.rememberList, AuthRememberComponent, 4);
       }
       if (rf & 2) {
-        let _t;
-        \u0275\u0275queryRefresh(_t = \u0275\u0275loadQuery()) && (ctx.remember = _t.first);
-        \u0275\u0275queryRefresh(_t = \u0275\u0275loadQuery()) && (ctx.rememberList = _t);
+        \u0275\u0275queryAdvance(2);
       }
     }, viewQuery: function AuthFormComponent_Query(rf, ctx) {
       if (rf & 1) {
-        \u0275\u0275viewQuery(AuthMessageComponent, 7);
-        \u0275\u0275viewQuery(_c0, 7);
-        \u0275\u0275viewQuery(_c1, 7);
-        \u0275\u0275viewQuery(_c2, 5);
-        \u0275\u0275viewQuery(AuthMessageComponent, 5);
+        \u0275\u0275viewQuerySignal(ctx.message, AuthMessageComponent, 5);
+        \u0275\u0275viewQuerySignal(ctx.messages, AuthMessageComponent, 5);
+        \u0275\u0275viewQuerySignal(ctx.email, _c0, 5);
+        \u0275\u0275viewQuerySignal(ctx.password, _c1, 5);
+        \u0275\u0275viewQuerySignal(ctx.createButton, _c2, 5);
       }
       if (rf & 2) {
-        let _t;
-        \u0275\u0275queryRefresh(_t = \u0275\u0275loadQuery()) && (ctx.message = _t.first);
-        \u0275\u0275queryRefresh(_t = \u0275\u0275loadQuery()) && (ctx.email = _t.first);
-        \u0275\u0275queryRefresh(_t = \u0275\u0275loadQuery()) && (ctx.password = _t.first);
-        \u0275\u0275queryRefresh(_t = \u0275\u0275loadQuery()) && (ctx.createButton = _t.first);
-        \u0275\u0275queryRefresh(_t = \u0275\u0275loadQuery()) && (ctx.messages = _t);
+        \u0275\u0275queryAdvance(5);
       }
     }, outputs: { submitted: "submitted" }, ngContentSelectors: _c4, decls: 20, vars: 9, consts: [["form", "ngForm"], ["email", ""], ["password", ""], ["createButton", ""], [3, "ngSubmit"], ["type", "email", "name", "email", "ngModel", ""], ["type", "password", "name", "password", "ngModel", ""], ["name", "createButton"]], template: function AuthFormComponent_Template(rf, ctx) {
       if (rf & 1) {
@@ -19209,69 +19218,37 @@ var AuthFormComponent = class _AuthFormComponent {
   (typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(AuthFormComponent, [{
     type: Component,
     args: [{ selector: "auth-form", imports: [FormsModule, AuthMessageComponent], template: `<div>
-  <form (ngSubmit)="onSubmit(form.value)" #form="ngForm">
-    <ng-content select="h3"></ng-content>
-    @if (title === 'Dynamic Create') {
-      <h3>{{ title }}</h3>
-    }
-    <label>
-      Email address
-      <input type="email" name="email" ngModel #email />
-    </label>
-    <label>
-      Password
-      <input type="password" name="password" ngModel #password />
-    </label>
-    <ng-content select="auth-remember"></ng-content>
-    <ng-content select="button"></ng-content>
-    @if (title === 'Dynamic Create') {
-      <button
-        name="createButton"
-        #createButton
-        >
-        Dynamic Create
-      </button>
-    }
-    @if (showMessage) {
-      <div>ngIf: You will be logged in for 30 days</div>
-    }
-    <auth-message
-      [style.display]="showMessage ? 'inherit' : 'none'"
-    ></auth-message>
-    <auth-message
-      [style.display]="showMessage ? 'inherit' : 'none'"
-    ></auth-message>
-    <auth-message
-      [style.display]="showMessage ? 'inherit' : 'none'"
-    ></auth-message>
-  </form>
+    <form (ngSubmit)="onSubmit(form.value)" #form="ngForm">
+        <ng-content select="h3"></ng-content>
+        @if (title === "Dynamic Create") {
+            <h3>{{ title }}</h3>
+        }
+        <label>
+            Email address
+            <input type="email" name="email" ngModel #email />
+        </label>
+        <label>
+            Password
+            <input type="password" name="password" ngModel #password />
+        </label>
+        <ng-content select="auth-remember"></ng-content>
+        <ng-content select="button"></ng-content>
+        @if (title === "Dynamic Create") {
+            <button name="createButton" #createButton>Dynamic Create</button>
+        }
+        @if (showMessage) {
+            <div>ngIf: You will be logged in for 30 days</div>
+        }
+        <auth-message [style.display]="showMessage ? 'inherit' : 'none'"></auth-message>
+        <auth-message [style.display]="showMessage ? 'inherit' : 'none'"></auth-message>
+        <auth-message [style.display]="showMessage ? 'inherit' : 'none'"></auth-message>
+    </form>
 </div>
 `, styles: ["/* src/app/advanced-components/auth-form/auth-form.component.scss */\n.email {\n  border-color: purple;\n}\n"] }]
-  }], () => [], { remember: [{
-    type: ContentChild,
-    args: [AuthRememberComponent]
-  }], rememberList: [{
-    type: ContentChildren,
-    args: [AuthRememberComponent]
-  }], message: [{
-    type: ViewChild,
-    args: [AuthMessageComponent, { static: true }]
-  }], messages: [{
-    type: ViewChildren,
-    args: [AuthMessageComponent]
-  }], email: [{
-    type: ViewChild,
-    args: ["email", { static: true }]
-  }], password: [{
-    type: ViewChild,
-    args: ["password", { static: true }]
-  }], createButton: [{
-    type: ViewChild,
-    args: ["createButton"]
-  }] });
+  }], () => [], null);
 })();
 (() => {
-  (typeof ngDevMode === "undefined" || ngDevMode) && \u0275setClassDebugInfo(AuthFormComponent, { className: "AuthFormComponent", filePath: "src/app/advanced-components/auth-form/auth-form.component.ts", lineNumber: 30 });
+  (typeof ngDevMode === "undefined" || ngDevMode) && \u0275setClassDebugInfo(AuthFormComponent, { className: "AuthFormComponent", filePath: "src/app/advanced-components/auth-form/auth-form.component.ts", lineNumber: 29 });
 })();
 
 // src/app/advanced-components/template-container/template-container.component.ts
@@ -19289,13 +19266,15 @@ function TemplateContainerComponent_ng_template_8_Template(rf, ctx) {
 }
 var TemplateContainerComponent = class _TemplateContainerComponent {
   constructor() {
+    this.entry = viewChild.required("entry", { read: ViewContainerRef });
+    this.template = viewChild.required("template");
     this.context = {
       $implicit: "Noran Diaconu",
       location: "North Carolina"
     };
   }
   ngAfterContentInit() {
-    this.entry.createEmbeddedView(this.template, {
+    this.entry().createEmbeddedView(this.template(), {
       $implicit: "Noran",
       location: "North Carolina"
     });
@@ -19308,13 +19287,11 @@ var TemplateContainerComponent = class _TemplateContainerComponent {
   static {
     this.\u0275cmp = /* @__PURE__ */ \u0275\u0275defineComponent({ type: _TemplateContainerComponent, selectors: [["template-container"]], viewQuery: function TemplateContainerComponent_Query(rf, ctx) {
       if (rf & 1) {
-        \u0275\u0275viewQuery(_c02, 7, ViewContainerRef);
-        \u0275\u0275viewQuery(_c12, 7);
+        \u0275\u0275viewQuerySignal(ctx.entry, _c02, 5, ViewContainerRef);
+        \u0275\u0275viewQuerySignal(ctx.template, _c12, 5);
       }
       if (rf & 2) {
-        let _t;
-        \u0275\u0275queryRefresh(_t = \u0275\u0275loadQuery()) && (ctx.entry = _t.first);
-        \u0275\u0275queryRefresh(_t = \u0275\u0275loadQuery()) && (ctx.template = _t.first);
+        \u0275\u0275queryAdvance(2);
       }
     }, decls: 10, vars: 2, consts: [["entry", ""], ["template", ""], [3, "ngTemplateOutlet", "ngTemplateOutletContext"]], template: function TemplateContainerComponent_Template(rf, ctx) {
       if (rf & 1) {
@@ -19340,13 +19317,7 @@ var TemplateContainerComponent = class _TemplateContainerComponent {
   (typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(TemplateContainerComponent, [{
     type: Component,
     args: [{ selector: "template-container", imports: [NgTemplateOutlet], template: '<div>\r\n  <hr />\r\n  <h2>ng-template / ng-container</h2>\r\n  <div #entry></div>\r\n  <br />\r\n  <ng-container\r\n    [ngTemplateOutlet]="template"\r\n    [ngTemplateOutletContext]="context"\r\n  ></ng-container>\r\n  <ng-template #template let-name let-location="location"\r\n    >{{ name }} : {{ location }}</ng-template\r\n  >\r\n</div>\r\n' }]
-  }], () => [], { entry: [{
-    type: ViewChild,
-    args: ["entry", { read: ViewContainerRef, static: true }]
-  }], template: [{
-    type: ViewChild,
-    args: ["template", { static: true }]
-  }] });
+  }], () => [], null);
 })();
 (() => {
   (typeof ngDevMode === "undefined" || ngDevMode) && \u0275setClassDebugInfo(TemplateContainerComponent, { className: "TemplateContainerComponent", filePath: "src/app/advanced-components/template-container/template-container.component.ts", lineNumber: 10 });
@@ -19694,13 +19665,15 @@ function AdvancedComponentsComponent_ng_template_27_Template(rf, ctx) {
 }
 var AdvancedComponentsComponent = class _AdvancedComponentsComponent {
   constructor() {
+    this.entry = viewChild.required("entry", { read: ViewContainerRef });
+    this.template = viewChild.required("template");
     this.rememberMe = false;
     this.resolver = inject(ComponentFactoryResolver$1);
   }
   ngAfterContentInit() {
     const authFormFactory = this.resolver.resolveComponentFactory(AuthFormComponent);
-    this.entry.createComponent(authFormFactory);
-    this.component = this.entry.createComponent(authFormFactory, 0);
+    this.entry().createComponent(authFormFactory);
+    this.component = this.entry().createComponent(authFormFactory, 0);
     this.component.instance.title = "Dynamic Create";
     this.subscription = this.component.instance.submitted.subscribe(this.createUser);
   }
@@ -19720,7 +19693,7 @@ var AdvancedComponentsComponent = class _AdvancedComponentsComponent {
     this.component.destroy();
   }
   moveComponent() {
-    this.entry.move(this.component.hostView, 1);
+    this.entry().move(this.component.hostView, 1);
   }
   static {
     this.\u0275fac = function AdvancedComponentsComponent_Factory(__ngFactoryType__) {
@@ -19730,13 +19703,11 @@ var AdvancedComponentsComponent = class _AdvancedComponentsComponent {
   static {
     this.\u0275cmp = /* @__PURE__ */ \u0275\u0275defineComponent({ type: _AdvancedComponentsComponent, selectors: [["advanced-components"]], viewQuery: function AdvancedComponentsComponent_Query(rf, ctx) {
       if (rf & 1) {
-        \u0275\u0275viewQuery(_c03, 7, ViewContainerRef);
-        \u0275\u0275viewQuery(_c13, 5);
+        \u0275\u0275viewQuerySignal(ctx.entry, _c03, 5, ViewContainerRef);
+        \u0275\u0275viewQuerySignal(ctx.template, _c13, 5);
       }
       if (rf & 2) {
-        let _t;
-        \u0275\u0275queryRefresh(_t = \u0275\u0275loadQuery()) && (ctx.entry = _t.first);
-        \u0275\u0275queryRefresh(_t = \u0275\u0275loadQuery()) && (ctx.template = _t.first);
+        \u0275\u0275queryAdvance(2);
       }
     }, decls: 38, vars: 0, consts: [["entry", ""], [1, "routes"], ["routerLink", "/", 1, "route"], ["routerLink", "/route"], [1, "row"], ["width", "50", "alt", "Angular Logo", "src", "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNTAgMjUwIj4KICAgIDxwYXRoIGZpbGw9IiNERDAwMzEiIGQ9Ik0xMjUgMzBMMzEuOSA2My4ybDE0LjIgMTIzLjFMMTI1IDIzMGw3OC45LTQzLjcgMTQuMi0xMjMuMXoiIC8+CiAgICA8cGF0aCBmaWxsPSIjQzMwMDJGIiBkPSJNMTI1IDMwdjIyLjItLjFWMjMwbDc4LjktNDMuNyAxNC4yLTEyMy4xTDEyNSAzMHoiIC8+CiAgICA8cGF0aCAgZmlsbD0iI0ZGRkZGRiIgZD0iTTEyNSA1Mi4xTDY2LjggMTgyLjZoMjEuN2wxMS43LTI5LjJoNDkuNGwxMS43IDI5LjJIMTgzTDEyNSA1Mi4xem0xNyA4My4zaC0zNGwxNy00MC45IDE3IDQwLjl6IiAvPgogIDwvc3ZnPg=="], [3, "submitted"], ["type", "submit"], [3, "checked"], [3, "click"]], template: function AdvancedComponentsComponent_Template(rf, ctx) {
       if (rf & 1) {
@@ -19839,13 +19810,7 @@ var AdvancedComponentsComponent = class _AdvancedComponentsComponent {
       ViewEncapsulationComponent,
       ChangeDetectionComponent
     ], template: '<nav class="routes">\r\n  <a routerLink="/" class="route">Home</a>\r\n  <a routerLink="/route">Route</a>\r\n</nav>\r\n<router-outlet />\r\n<div class="row">\r\n  <h2>Static Components</h2>\r\n  <img\r\n    width="50"\r\n    alt="Angular Logo"\r\n    src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNTAgMjUwIj4KICAgIDxwYXRoIGZpbGw9IiNERDAwMzEiIGQ9Ik0xMjUgMzBMMzEuOSA2My4ybDE0LjIgMTIzLjFMMTI1IDIzMGw3OC45LTQzLjcgMTQuMi0xMjMuMXoiIC8+CiAgICA8cGF0aCBmaWxsPSIjQzMwMDJGIiBkPSJNMTI1IDMwdjIyLjItLjFWMjMwbDc4LjktNDMuNyAxNC4yLTEyMy4xTDEyNSAzMHoiIC8+CiAgICA8cGF0aCAgZmlsbD0iI0ZGRkZGRiIgZD0iTTEyNSA1Mi4xTDY2LjggMTgyLjZoMjEuN2wxMS43LTI5LjJoNDkuNGwxMS43IDI5LjJIMTgzTDEyNSA1Mi4xem0xNyA4My4zaC0zNGwxNy00MC45IDE3IDQwLjl6IiAvPgogIDwvc3ZnPg=="\r\n  />\r\n</div>\r\n<div>\r\n  <auth-form (submitted)="createUser($event)">\r\n    <h3>Create Account</h3>\r\n    <button type="submit">\r\n      Join Us\r\n    </button>\r\n  </auth-form>\r\n  <auth-form (submitted)="loginUser($event)">\r\n    <h3>Login</h3>\r\n    <auth-remember (checked)="rememberUser($event)"></auth-remember>\r\n    <auth-remember (checked)="rememberUser($event)"></auth-remember>\r\n    <auth-remember (checked)="rememberUser($event)"></auth-remember>\r\n    <button type="submit">\r\n      Login\r\n    </button>\r\n  </auth-form>\r\n</div>\r\n<hr />\r\n<h2>Dynamic Components</h2>\r\n<ng-template #entry />\r\n<br />\r\n<button (click)="destroyComponent()">Destroy</button>&nbsp;\r\n<button (click)="moveComponent()">Move</button>\r\n<template-container />\r\n<view-encapsulation />\r\n<change-detection />\r\n', styles: ["/* src/app/advanced-components/advanced-components.component.scss */\n.row {\n  display: flex;\n  justify-content: space-between;\n}\n.routes {\n  display: flex;\n}\n.route {\n  margin-right: 5px;\n}\n"] }]
-  }], null, { entry: [{
-    type: ViewChild,
-    args: ["entry", { read: ViewContainerRef, static: true }]
-  }], template: [{
-    type: ViewChild,
-    args: ["template"]
-  }] });
+  }], null, null);
 })();
 (() => {
   (typeof ngDevMode === "undefined" || ngDevMode) && \u0275setClassDebugInfo(AdvancedComponentsComponent, { className: "AdvancedComponentsComponent", filePath: "src/app/advanced-components/advanced-components.component.ts", lineNumber: 35 });
@@ -20033,7 +19998,7 @@ function DirectivesComponent_For_22_Template(rf, ctx) {
     const item_r3 = ctx.$implicit;
     const \u0275$index_36_r4 = ctx.$index;
     \u0275\u0275advance();
-    \u0275\u0275textInterpolate2(" ", \u0275$index_36_r4, " Member: ", \u0275\u0275pipeBind1(2, 2, item_r3.name), " ");
+    \u0275\u0275textInterpolate2("", \u0275$index_36_r4, " Member: ", \u0275\u0275pipeBind1(2, 2, item_r3.name), "");
   }
 }
 function DirectivesComponent_For_27_Template(rf, ctx) {
@@ -20061,7 +20026,7 @@ function DirectivesComponent_li_31_Template(rf, ctx) {
     const item_r7 = ctx.$implicit;
     const i_r8 = ctx.index;
     \u0275\u0275advance();
-    \u0275\u0275textInterpolate2(" ", i_r8, " Member: ", \u0275\u0275pipeBind1(2, 2, item_r7.name), " ");
+    \u0275\u0275textInterpolate2("", i_r8, " Member: ", \u0275\u0275pipeBind1(2, 2, item_r7.name), "");
   }
 }
 function DirectivesComponent_ng_template_35_Template(rf, ctx) {
@@ -20175,7 +20140,7 @@ var DirectivesComponent = class _DirectivesComponent {
 (() => {
   (typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(DirectivesComponent, [{
     type: Component,
-    args: [{ selector: "directives", imports: [CreditCardDirective, TooltipDirective, MyForDirective, HighlightDirective, JsonPipe], template: '<div>\n  <hr />\n  <h2>Directives</h2>\n  <label>\n    Credit Card Number&nbsp;\n    <input\n      name="credit-card"\n      type="text"\n      placeholder="Enter your 16-digit card number"\n      credit-card\n      />\n    </label>\n    <br />\n    <label>\n      Enter your security code&nbsp;\n      <input type="text" />&nbsp;\n      <div class="myTooltip" tooltip="" #myTooltip="tooltip">\n        <span (mouseover)="myTooltip.show()" (mouseout)="myTooltip.hide()"\n          >(?)&nbsp;\n          @if (myTooltip.getVisible()) {\n            <label\n              class="myTooltip"\n              tooltip="3 digits, back of your card"\n              ></label\n              >\n          }</span>\n        </div>\n      </label>\n      <ul>\n        <div>\n          <strong>Normal For</strong>\n          @for (item of items; track item; let i = $index) {\n            <li>\n              {{ i }} Member: {{ item.name | json }}\n            </li>\n          }\n        </div>\n        <div>\n          <strong>Normal ForOf</strong>\n          @for (item of items; track item; let i = $index) {\n            <li>{{ i }} Member: {{ item.name | json }}</li>\n          }\n        </div>\n        <div>\n          <strong>My For</strong>\n          <li *myFor="let item of items; let i = index">\n            {{ i }} Member: {{ item.name | json }}\n          </li>\n        </div>\n        <div>\n          <strong>My ForOf</strong>\n          <ng-template myFor [myForOf]="items" let-item let-i="index">\n            <li>{{ i }} Member: {{ item.name | json }}</li>\n          </ng-template>\n        </div>\n      </ul>\n      <div highlight>Highlight Directive</div>\n    </div>\n', styles: ["/* src/app/directives/directives.component.scss */\n.myTooltip {\n  display: inline-flex;\n}\nul {\n  display: flex;\n  justify-content: space-evenly;\n}\n"] }]
+    args: [{ selector: "directives", imports: [CreditCardDirective, TooltipDirective, MyForDirective, HighlightDirective, JsonPipe], template: '<div>\n    <hr />\n    <h2>Directives</h2>\n    <label>\n        Credit Card Number&nbsp;\n        <input name="credit-card" type="text" placeholder="Enter your 16-digit card number" credit-card />\n    </label>\n    <br />\n    <label>\n        Enter your security code&nbsp;\n        <input type="text" />&nbsp;\n        <div class="myTooltip" tooltip="" #myTooltip="tooltip">\n            <span (mouseover)="myTooltip.show()" (mouseout)="myTooltip.hide()"\n                >(?)&nbsp;\n                @if (myTooltip.getVisible()) {\n                    <label class="myTooltip" tooltip="3 digits, back of your card"></label>\n                }\n            </span>\n        </div>\n    </label>\n    <ul>\n        <div>\n            <strong>Normal For</strong>\n            @for (item of items; track item; let i = $index) {\n                <li>{{ i }} Member: {{ item.name | json }}</li>\n            }\n        </div>\n        <div>\n            <strong>Normal ForOf</strong>\n            @for (item of items; track item; let i = $index) {\n                <li>{{ i }} Member: {{ item.name | json }}</li>\n            }\n        </div>\n        <div>\n            <strong>My For</strong>\n            <li *myFor="let item of items; let i = index">{{ i }} Member: {{ item.name | json }}</li>\n        </div>\n        <div>\n            <strong>My ForOf</strong>\n            <ng-template myFor [myForOf]="items" let-item let-i="index">\n                <li>{{ i }} Member: {{ item.name | json }}</li>\n            </ng-template>\n        </div>\n    </ul>\n    <div highlight>Highlight Directive</div>\n</div>\n', styles: ["/* src/app/directives/directives.component.scss */\n.myTooltip {\n  display: inline-flex;\n}\nul {\n  display: flex;\n  justify-content: space-evenly;\n}\n"] }]
   }], () => [], null);
 })();
 (() => {
@@ -20313,7 +20278,7 @@ var AppComponent = class _AppComponent {
 })();
 
 // src/main.ts
-var routes = [{ path: "route", loadComponent: () => import("./routes.component-EE3PVUWI.js").then((m) => m.RoutesComponent) }];
+var routes = [{ path: "route", loadComponent: () => import("./routes.component-XETAKO3C.js").then((m) => m.RoutesComponent) }];
 if (environment.production) {
   enableProdMode();
 }

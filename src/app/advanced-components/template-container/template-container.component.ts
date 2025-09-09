@@ -1,27 +1,27 @@
-import { AfterContentInit, Component, TemplateRef, ViewChild, ViewContainerRef } from "@angular/core";
-import { NgTemplateOutlet } from "@angular/common";
+import { AfterContentInit, Component, TemplateRef, ViewContainerRef, viewChild } from '@angular/core';
+import { NgTemplateOutlet } from '@angular/common';
 
 @Component({
-    selector: "template-container",
-    templateUrl: "./template-container.component.html",
-    styleUrls: ["./template-container.component.scss"],
+    selector: 'template-container',
+    templateUrl: './template-container.component.html',
+    styleUrls: ['./template-container.component.scss'],
     imports: [NgTemplateOutlet]
 })
 export class TemplateContainerComponent implements AfterContentInit {
-  @ViewChild("entry", { read: ViewContainerRef, static: true }) entry!: ViewContainerRef;
-  @ViewChild("template", { static: true }) template!: TemplateRef<any>;
+    readonly entry = viewChild.required('entry', { read: ViewContainerRef });
+    readonly template = viewChild.required<TemplateRef<any>>('template');
 
-  context = {
-    $implicit: "Noran Diaconu",
-    location: "North Carolina"
-  };
+    context = {
+        $implicit: 'Noran Diaconu',
+        location: 'North Carolina'
+    };
 
-  constructor() {}
+    constructor() {}
 
-  ngAfterContentInit(): void {
-    this.entry.createEmbeddedView(this.template, {
-      $implicit: "Noran",
-      location: "North Carolina"
-    });
-  }
+    ngAfterContentInit(): void {
+        this.entry().createEmbeddedView(this.template(), {
+            $implicit: 'Noran',
+            location: 'North Carolina'
+        });
+    }
 }
