@@ -33,14 +33,14 @@ import { ChangeDetectionComponent } from './change-detection/change-detection.co
     ]
 })
 export class AdvancedComponentsComponent implements AfterContentInit, OnDestroy {
-    readonly entry = viewChild.required('entry', { read: ViewContainerRef });
-    readonly template = viewChild.required<TemplateRef<any>>('template');
+    protected readonly template = viewChild.required<TemplateRef<any>>('template');
 
-    rememberMe = false;
-    subscription!: OutputRefSubscription;
-    component!: ComponentRef<AuthFormComponent>;
+    private rememberMe = false;
+    private subscription!: OutputRefSubscription;
+    private component!: ComponentRef<AuthFormComponent>;
 
-    private resolver = inject(ComponentFactoryResolver);
+    private readonly entry = viewChild.required('entry', { read: ViewContainerRef });
+    private readonly resolver = inject(ComponentFactoryResolver);
 
     ngAfterContentInit(): void {
         const authFormFactory = this.resolver.resolveComponentFactory(AuthFormComponent);
@@ -54,22 +54,23 @@ export class AdvancedComponentsComponent implements AfterContentInit, OnDestroy 
         this.subscription.unsubscribe();
     }
 
-    createUser(user: User): void {
+    protected createUser(user: User): void {
         console.log('Create Account', user);
     }
-    loginUser(user: User): void {
+
+    protected loginUser(user: User): void {
         console.log('Login Account', user, this.rememberMe);
     }
 
-    rememberUser(remember: boolean): void {
+    protected rememberUser(remember: boolean): void {
         this.rememberMe = remember;
     }
 
-    destroyComponent(): void {
+    protected destroyComponent(): void {
         this.component.destroy();
     }
 
-    moveComponent(): void {
+    protected moveComponent(): void {
         this.entry().move(this.component.hostView, 1);
     }
 }

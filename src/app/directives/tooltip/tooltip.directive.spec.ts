@@ -19,13 +19,13 @@ describe('TooltipDirective', () => {
 
     it('should show', () => {
         directive.show();
-        expect(directive.tooltipElement.classList.contains('tooltip--active')).toBeTruthy();
-        expect(directive.visible).toBeTruthy();
+        expect(directive['tooltipElement'].classList.contains('tooltip--active')).toBeTruthy();
+        expect(directive['visible']).toBeTruthy();
     });
 
     it('should hide', () => {
         directive.hide();
-        expect(directive.tooltipElement.classList.contains('tooltip--active')).toBeFalsy();
-        expect(directive.visible).toBeFalsy();
+        expect(directive['tooltipElement'].classList.contains('tooltip--active')).toBeFalsy();
+        expect(directive['visible']).toBeFalsy();
     });
 });

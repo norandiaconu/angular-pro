@@ -1,22 +1,19 @@
-import { ChangeDetectionStrategy, Component, input } from "@angular/core";
-import { User } from "../../advanced-components.interface";
+import { ChangeDetectionStrategy, Component, input } from '@angular/core';
+import { User } from '../../advanced-components.interface';
 
 @Component({
-    selector: "example-2",
+    selector: 'example-2',
     changeDetection: ChangeDetectionStrategy.Default,
-    templateUrl: "./example-2.component.html",
-    styleUrls: ["./example-2.component.scss"],
-    standalone: true
+    templateUrl: './example-2.component.html',
+    styleUrls: ['./example-2.component.scss']
 })
 export class Example2Component {
-  readonly user = input<User>({
-    email: "",
-    password: ""
-});
+    public readonly user = input<User>({
+        email: '',
+        password: ''
+    });
 
-  constructor() {}
-
-  update(): void {
-    this.user().name = "Matt Skiba";
-  }
+    protected update(): void {
+        this.user().name = 'Matt Skiba';
+    }
 }

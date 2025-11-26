@@ -27,22 +27,21 @@ import { FormsModule } from '@angular/forms';
     imports: [FormsModule, AuthMessageComponent]
 })
 export class AuthFormComponent implements AfterContentInit, AfterViewInit, OnDestroy {
-    readonly submitted = output<User>();
-    readonly remember = contentChild(AuthRememberComponent);
-    readonly rememberList = contentChildren(AuthRememberComponent);
-    readonly message = viewChild.required(AuthMessageComponent);
-    readonly messages = viewChildren(AuthMessageComponent);
-    readonly email = viewChild.required<ElementRef>('email');
-    readonly password = viewChild.required<ElementRef>('password');
-    readonly createButton = viewChild<ElementRef>('createButton');
+    public readonly submitted = output<User>();
+    public title: string;
+    protected showMessage: boolean;
+    protected useRenderer: boolean;
 
-    showMessage: boolean;
-    subscription: Subscription;
-    useRenderer: boolean;
-    title: string;
-
-    private changeDetector = inject(ChangeDetectorRef);
-    private renderer = inject(Renderer2);
+    private subscription: Subscription;
+    private readonly remember = contentChild(AuthRememberComponent);
+    private readonly rememberList = contentChildren(AuthRememberComponent);
+    private readonly message = viewChild.required(AuthMessageComponent);
+    private readonly messages = viewChildren(AuthMessageComponent);
+    private readonly email = viewChild.required<ElementRef>('email');
+    private readonly password = viewChild.required<ElementRef>('password');
+    private readonly createButton = viewChild<ElementRef>('createButton');
+    private readonly changeDetector = inject(ChangeDetectorRef);
+    private readonly renderer = inject(Renderer2);
 
     constructor() {
         this.showMessage = false;
@@ -98,11 +97,11 @@ export class AuthFormComponent implements AfterContentInit, AfterViewInit, OnDes
         }
     }
 
-    onSubmit(value: User): void {
-        this.submitted.emit(value);
-    }
-
     ngOnDestroy(): void {
         this.subscription.unsubscribe();
+    }
+
+    protected onSubmit(value: User): void {
+        this.submitted.emit(value);
     }
 }

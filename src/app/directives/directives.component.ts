@@ -12,7 +12,7 @@ import { HighlightDirective } from './highlight/highlight.directive';
     imports: [CreditCardDirective, TooltipDirective, MyForDirective, HighlightDirective, JsonPipe]
 })
 export class DirectivesComponent {
-    items = [
+    protected items = [
         { name: 'Mark Hoppus', age: 48, location: 'California' },
         { name: 'Tom Delonge', age: 45, location: 'California' },
         { name: 'Travis Barker', age: 45, location: 'California' }

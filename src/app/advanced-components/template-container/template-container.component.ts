@@ -8,15 +8,13 @@ import { NgTemplateOutlet } from '@angular/common';
     imports: [NgTemplateOutlet]
 })
 export class TemplateContainerComponent implements AfterContentInit {
-    readonly entry = viewChild.required('entry', { read: ViewContainerRef });
-    readonly template = viewChild.required<TemplateRef<any>>('template');
-
-    context = {
+    protected context = {
         $implicit: 'Noran Diaconu',
         location: 'North Carolina'
     };
 
-    constructor() {}
+    private readonly entry = viewChild.required('entry', { read: ViewContainerRef });
+    private readonly template = viewChild.required<TemplateRef<any>>('template');
 
     ngAfterContentInit(): void {
         this.entry().createEmbeddedView(this.template(), {

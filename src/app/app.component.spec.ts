@@ -1,4 +1,4 @@
-import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { NgForm } from '@angular/forms';
 import { AdvancedComponentsComponent } from './advanced-components/advanced-components.component';
 import { AuthFormComponent } from './advanced-components/auth-form/auth-form.component';
@@ -25,8 +25,8 @@ describe('AppComponent', () => {
     let fixture: ComponentFixture<AppComponent>;
     let app: AppComponent;
 
-    beforeEach(waitForAsync(() => {
-        TestBed.configureTestingModule({
+    beforeEach(async () => {
+        await TestBed.configureTestingModule({
             imports: [
                 AdvancedComponentsComponent,
                 AppComponent,
@@ -50,7 +50,7 @@ describe('AppComponent', () => {
             providers: [FilesizePipe, provideRouter(routes)]
         }).compileComponents();
         jest.spyOn(console, 'log').mockImplementation(() => {});
-    }));
+    });
 
     beforeEach(() => {
         fixture = TestBed.createComponent(AppComponent);
@@ -63,7 +63,7 @@ describe('AppComponent', () => {
     });
 
     it(`should have as title 'angular-pro'`, () => {
-        expect(app.title).toEqual('angular-pro');
+        expect(app['title']).toEqual('angular-pro');
     });
 
     it('should render title in a h1 tag', () => {

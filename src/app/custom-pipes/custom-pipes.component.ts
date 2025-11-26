@@ -19,11 +19,11 @@ interface FileStringSize {
     imports: [FilesizePipe]
 })
 export class CustomPipesComponent implements OnInit {
-    private fileSizePipe = inject(FilesizePipe);
+    protected files: File[] = [];
+    protected mapped: FileStringSize[] = [];
+    protected fileProperty: any;
 
-    files: File[] = [];
-    mapped: FileStringSize[] = [];
-    fileProperty: any;
+    private readonly fileSizePipe = inject(FilesizePipe);
 
     ngOnInit(): void {
         this.files = [

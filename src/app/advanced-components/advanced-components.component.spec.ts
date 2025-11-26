@@ -1,4 +1,4 @@
-import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { FormsModule } from '@angular/forms';
 import { AdvancedComponentsComponent } from './advanced-components.component';
 import { AuthFormComponent } from './auth-form/auth-form.component';
@@ -19,8 +19,8 @@ describe('AdvancedComponentsComponent', () => {
     let fixture: ComponentFixture<AdvancedComponentsComponent>;
     const routes: Routes = [];
 
-    beforeEach(waitForAsync(() => {
-        TestBed.configureTestingModule({
+    beforeEach(async () => {
+        await TestBed.configureTestingModule({
             imports: [
                 FormsModule,
                 RouterOutlet,
@@ -43,7 +43,7 @@ describe('AdvancedComponentsComponent', () => {
         component = fixture.componentInstance;
         component.ngAfterContentInit();
         jest.spyOn(console, 'log').mockImplementation(() => {});
-    }));
+    });
 
     it('should create', () => {
         expect(component).toBeTruthy();
@@ -51,18 +51,18 @@ describe('AdvancedComponentsComponent', () => {
 
     it('should create user', () => {
         jest.spyOn(window.console, 'log');
-        component.createUser({ email: 'email', password: 'password' });
+        component['createUser']({ email: 'email', password: 'password' });
         expect(window.console.log).toHaveBeenCalledWith('Create Account', { email: 'email', password: 'password' });
     });
 
     it('should login user', () => {
         jest.spyOn(window.console, 'log');
-        component.loginUser({ email: 'email', password: 'password' });
+        component['loginUser']({ email: 'email', password: 'password' });
         expect(window.console.log).toHaveBeenCalledWith('Login Account', { email: 'email', password: 'password' }, false);
     });
 
     it('should remember user', () => {
-        component.rememberUser(true);
-        expect(component.rememberMe).toBe(true);
+        component['rememberUser'](true);
+        expect(component['rememberMe']).toBe(true);
     });
 });

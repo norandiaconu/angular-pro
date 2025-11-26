@@ -2,14 +2,13 @@ import { Directive, ElementRef, Input, OnInit, inject } from '@angular/core';
 
 @Directive({
     selector: '[tooltip]',
-    exportAs: 'tooltip',
-    standalone: true
+    exportAs: 'tooltip'
 })
 export class TooltipDirective implements OnInit {
-    tooltipElement = document.createElement('div');
-    visible = false;
+    private tooltipElement = document.createElement('div');
+    private visible = false;
 
-    private element = inject(ElementRef);
+    private readonly element = inject(ElementRef);
 
     @Input()
     set tooltip(value: string) {
@@ -22,17 +21,17 @@ export class TooltipDirective implements OnInit {
         this.element.nativeElement.classList.add('tooltip-container');
     }
 
-    hide(): void {
+    public hide(): void {
         this.tooltipElement.classList.remove('tooltip--active');
         this.visible = false;
     }
 
-    show(): void {
+    public show(): void {
         this.tooltipElement.classList.add('tooltip--active');
         this.visible = true;
     }
 
-    getVisible(): boolean {
+    public getVisible(): boolean {
         return this.visible;
     }
 }

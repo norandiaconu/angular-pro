@@ -1,8 +1,7 @@
 import { Directive, ElementRef, inject } from '@angular/core';
 
 @Directive({
-    selector: '[highlight]',
-    standalone: true
+    selector: '[highlight]'
 })
 export class HighlightDirective {
     private el = inject(ElementRef);

@@ -223,8 +223,7 @@ var FilesizePipe = class _FilesizePipe {
   (typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(FilesizePipe, [{
     type: Pipe,
     args: [{
-      name: "filesize",
-      standalone: true
+      name: "filesize"
     }]
   }], null, null);
 })();
@@ -18999,11 +18998,11 @@ var AuthMessageComponent = class _AuthMessageComponent {
 (() => {
   (typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(AuthMessageComponent, [{
     type: Component,
-    args: [{ selector: "auth-message", standalone: true, template: "<div>auth-message: You will be logged in for {{ days }} days</div>\r\n" }]
-  }], () => [], null);
+    args: [{ selector: "auth-message", template: "<div>auth-message: You will be logged in for {{ days }} days</div>\r\n" }]
+  }], null, null);
 })();
 (() => {
-  (typeof ngDevMode === "undefined" || ngDevMode) && \u0275setClassDebugInfo(AuthMessageComponent, { className: "AuthMessageComponent", filePath: "src/app/advanced-components/auth-message/auth-message.component.ts", lineNumber: 9 });
+  (typeof ngDevMode === "undefined" || ngDevMode) && \u0275setClassDebugInfo(AuthMessageComponent, { className: "AuthMessageComponent", filePath: "src/app/advanced-components/auth-message/auth-message.component.ts", lineNumber: 8 });
 })();
 
 // src/app/advanced-components/auth-remember/auth-remember.component.ts
@@ -19039,11 +19038,11 @@ var AuthRememberComponent = class _AuthRememberComponent {
 (() => {
   (typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(AuthRememberComponent, [{
     type: Component,
-    args: [{ selector: "auth-remember", standalone: true, template: '<label>\r\n  <input type="checkbox" #inputBox (change)="onChecked(inputBox.checked)" />\r\n  Keep me logged in\r\n</label>\r\n' }]
-  }], () => [], null);
+    args: [{ selector: "auth-remember", template: '<label>\r\n  <input type="checkbox" #inputBox (change)="onChecked(inputBox.checked)" />\r\n  Keep me logged in\r\n</label>\r\n' }]
+  }], null, null);
 })();
 (() => {
-  (typeof ngDevMode === "undefined" || ngDevMode) && \u0275setClassDebugInfo(AuthRememberComponent, { className: "AuthRememberComponent", filePath: "src/app/advanced-components/auth-remember/auth-remember.component.ts", lineNumber: 9 });
+  (typeof ngDevMode === "undefined" || ngDevMode) && \u0275setClassDebugInfo(AuthRememberComponent, { className: "AuthRememberComponent", filePath: "src/app/advanced-components/auth-remember/auth-remember.component.ts", lineNumber: 8 });
 })();
 
 // src/app/advanced-components/auth-form/auth-form.component.ts
@@ -19140,11 +19139,11 @@ var AuthFormComponent = class _AuthFormComponent {
       createButton.nativeElement.classList.add("createButton");
     }
   }
-  onSubmit(value) {
-    this.submitted.emit(value);
-  }
   ngOnDestroy() {
     this.subscription.unsubscribe();
+  }
+  onSubmit(value) {
+    this.submitted.emit(value);
   }
   static {
     this.\u0275fac = function AuthFormComponent_Factory(__ngFactoryType__) {
@@ -19266,12 +19265,12 @@ function TemplateContainerComponent_ng_template_8_Template(rf, ctx) {
 }
 var TemplateContainerComponent = class _TemplateContainerComponent {
   constructor() {
-    this.entry = viewChild.required("entry", { read: ViewContainerRef });
-    this.template = viewChild.required("template");
     this.context = {
       $implicit: "Noran Diaconu",
       location: "North Carolina"
     };
+    this.entry = viewChild.required("entry", { read: ViewContainerRef });
+    this.template = viewChild.required("template");
   }
   ngAfterContentInit() {
     this.entry().createEmbeddedView(this.template(), {
@@ -19317,7 +19316,7 @@ var TemplateContainerComponent = class _TemplateContainerComponent {
   (typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(TemplateContainerComponent, [{
     type: Component,
     args: [{ selector: "template-container", imports: [NgTemplateOutlet], template: '<div>\r\n  <hr />\r\n  <h2>ng-template / ng-container</h2>\r\n  <div #entry></div>\r\n  <br />\r\n  <ng-container\r\n    [ngTemplateOutlet]="template"\r\n    [ngTemplateOutletContext]="context"\r\n  ></ng-container>\r\n  <ng-template #template let-name let-location="location"\r\n    >{{ name }} : {{ location }}</ng-template\r\n  >\r\n</div>\r\n' }]
-  }], () => [], null);
+  }], null, null);
 })();
 (() => {
   (typeof ngDevMode === "undefined" || ngDevMode) && \u0275setClassDebugInfo(TemplateContainerComponent, { className: "TemplateContainerComponent", filePath: "src/app/advanced-components/template-container/template-container.component.ts", lineNumber: 10 });
@@ -19325,8 +19324,6 @@ var TemplateContainerComponent = class _TemplateContainerComponent {
 
 // src/app/advanced-components/view-encapsulation/example-one/example-one.component.ts
 var ExampleOneComponent = class _ExampleOneComponent {
-  constructor() {
-  }
   static {
     this.\u0275fac = function ExampleOneComponent_Factory(__ngFactoryType__) {
       return new (__ngFactoryType__ || _ExampleOneComponent)();
@@ -19345,17 +19342,15 @@ var ExampleOneComponent = class _ExampleOneComponent {
 (() => {
   (typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(ExampleOneComponent, [{
     type: Component,
-    args: [{ selector: "example-one", encapsulation: ViewEncapsulation.Emulated, standalone: true, template: '<div class="example-one">Example One</div>\r\n', styles: ["/* src/app/advanced-components/view-encapsulation/example-one/example-one.component.scss */\n.example-one {\n  background: purple;\n  font-size: 19px;\n  color: white;\n  margin-bottom: 50px;\n  padding: 10px 20px;\n}\n"] }]
-  }], () => [], null);
+    args: [{ selector: "example-one", encapsulation: ViewEncapsulation.Emulated, template: '<div class="example-one">Example One</div>\r\n', styles: ["/* src/app/advanced-components/view-encapsulation/example-one/example-one.component.scss */\n.example-one {\n  background: purple;\n  font-size: 19px;\n  color: white;\n  margin-bottom: 50px;\n  padding: 10px 20px;\n}\n"] }]
+  }], null, null);
 })();
 (() => {
-  (typeof ngDevMode === "undefined" || ngDevMode) && \u0275setClassDebugInfo(ExampleOneComponent, { className: "ExampleOneComponent", filePath: "src/app/advanced-components/view-encapsulation/example-one/example-one.component.ts", lineNumber: 10 });
+  (typeof ngDevMode === "undefined" || ngDevMode) && \u0275setClassDebugInfo(ExampleOneComponent, { className: "ExampleOneComponent", filePath: "src/app/advanced-components/view-encapsulation/example-one/example-one.component.ts", lineNumber: 9 });
 })();
 
 // src/app/advanced-components/view-encapsulation/example-two/example-two.component.ts
 var ExampleTwoComponent = class _ExampleTwoComponent {
-  constructor() {
-  }
   static {
     this.\u0275fac = function ExampleTwoComponent_Factory(__ngFactoryType__) {
       return new (__ngFactoryType__ || _ExampleTwoComponent)();
@@ -19377,17 +19372,15 @@ var ExampleTwoComponent = class _ExampleTwoComponent {
 (() => {
   (typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(ExampleTwoComponent, [{
     type: Component,
-    args: [{ selector: "example-two", encapsulation: ViewEncapsulation.ShadowDom, standalone: true, template: '<div class="example-two">Example Two</div>\r\n<div class="example-one">Example One!</div>\r\n', styles: ["/* src/app/advanced-components/view-encapsulation/example-two/example-two.component.scss */\n.example-two {\n  background: purple;\n  font-size: 19px;\n  color: white;\n  margin-bottom: 10px;\n  padding: 5px 7px;\n}\n.example-one {\n  border: 3px solid purple;\n  font-size: 14px;\n  color: purple;\n  padding: 5px 7px;\n}\n"] }]
-  }], () => [], null);
+    args: [{ selector: "example-two", encapsulation: ViewEncapsulation.ShadowDom, template: '<div class="example-two">Example Two</div>\r\n<div class="example-one">Example One!</div>\r\n', styles: ["/* src/app/advanced-components/view-encapsulation/example-two/example-two.component.scss */\n.example-two {\n  background: purple;\n  font-size: 19px;\n  color: white;\n  margin-bottom: 10px;\n  padding: 5px 7px;\n}\n.example-one {\n  border: 3px solid purple;\n  font-size: 14px;\n  color: purple;\n  padding: 5px 7px;\n}\n"] }]
+  }], null, null);
 })();
 (() => {
-  (typeof ngDevMode === "undefined" || ngDevMode) && \u0275setClassDebugInfo(ExampleTwoComponent, { className: "ExampleTwoComponent", filePath: "src/app/advanced-components/view-encapsulation/example-two/example-two.component.ts", lineNumber: 10 });
+  (typeof ngDevMode === "undefined" || ngDevMode) && \u0275setClassDebugInfo(ExampleTwoComponent, { className: "ExampleTwoComponent", filePath: "src/app/advanced-components/view-encapsulation/example-two/example-two.component.ts", lineNumber: 9 });
 })();
 
 // src/app/advanced-components/view-encapsulation/example-three/example-three.component.ts
 var ExampleThreeComponent = class _ExampleThreeComponent {
-  constructor() {
-  }
   static {
     this.\u0275fac = function ExampleThreeComponent_Factory(__ngFactoryType__) {
       return new (__ngFactoryType__ || _ExampleThreeComponent)();
@@ -19409,17 +19402,15 @@ var ExampleThreeComponent = class _ExampleThreeComponent {
 (() => {
   (typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(ExampleThreeComponent, [{
     type: Component,
-    args: [{ selector: "example-three", encapsulation: ViewEncapsulation.None, standalone: true, template: '<div class="example-three">Example Three</div>\r\n<div class="example-one">Example One!</div>\r\n', styles: ["/* src/app/advanced-components/view-encapsulation/example-three/example-three.component.scss */\n.example-one {\n  border: 2px solid green;\n}\n"] }]
-  }], () => [], null);
+    args: [{ selector: "example-three", encapsulation: ViewEncapsulation.None, template: '<div class="example-three">Example Three</div>\r\n<div class="example-one">Example One!</div>\r\n', styles: ["/* src/app/advanced-components/view-encapsulation/example-three/example-three.component.scss */\n.example-one {\n  border: 2px solid green;\n}\n"] }]
+  }], null, null);
 })();
 (() => {
-  (typeof ngDevMode === "undefined" || ngDevMode) && \u0275setClassDebugInfo(ExampleThreeComponent, { className: "ExampleThreeComponent", filePath: "src/app/advanced-components/view-encapsulation/example-three/example-three.component.ts", lineNumber: 10 });
+  (typeof ngDevMode === "undefined" || ngDevMode) && \u0275setClassDebugInfo(ExampleThreeComponent, { className: "ExampleThreeComponent", filePath: "src/app/advanced-components/view-encapsulation/example-three/example-three.component.ts", lineNumber: 9 });
 })();
 
 // src/app/advanced-components/view-encapsulation/view-encapsulation.component.ts
 var ViewEncapsulationComponent = class _ViewEncapsulationComponent {
-  constructor() {
-  }
   static {
     this.\u0275fac = function ViewEncapsulationComponent_Factory(__ngFactoryType__) {
       return new (__ngFactoryType__ || _ViewEncapsulationComponent)();
@@ -19443,7 +19434,7 @@ var ViewEncapsulationComponent = class _ViewEncapsulationComponent {
   (typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(ViewEncapsulationComponent, [{
     type: Component,
     args: [{ selector: "view-encapsulation", imports: [ExampleOneComponent, ExampleTwoComponent, ExampleThreeComponent], template: "<div>\r\n  <hr />\r\n  <h2>View Encapsulation</h2>\r\n  <example-one></example-one>\r\n  <example-two></example-two>\r\n  <example-three></example-three>\r\n</div>\r\n" }]
-  }], () => [], null);
+  }], null, null);
 })();
 (() => {
   (typeof ngDevMode === "undefined" || ngDevMode) && \u0275setClassDebugInfo(ViewEncapsulationComponent, { className: "ViewEncapsulationComponent", filePath: "src/app/advanced-components/view-encapsulation/view-encapsulation.component.ts", lineNumber: 12 });
@@ -19507,11 +19498,11 @@ var Example1Component = class _Example1Component {
 (() => {
   (typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(Example1Component, [{
     type: Component,
-    args: [{ selector: "example-1", changeDetection: ChangeDetectionStrategy.OnPush, standalone: true, template: '<div class="example-1">\r\n  <h3>OnPush</h3>\r\n  <h4>{{ user().name }}</h4>\r\n  <h5>{{ user().age }} years old</h5>\r\n  {{ user().location }} <br />\r\n  {{ user().email }} <br />\r\n  <button (click)="update()">Internal update</button>\r\n  <p>* should not update</p>\r\n</div>\r\n', styles: ["/* src/app/advanced-components/change-detection/example-1/example-1.component.scss */\n.example-1 {\n  font-size: 19px;\n  margin-bottom: 10px;\n}\n"] }]
-  }], () => [], null);
+    args: [{ selector: "example-1", changeDetection: ChangeDetectionStrategy.OnPush, template: '<div class="example-1">\r\n  <h3>OnPush</h3>\r\n  <h4>{{ user().name }}</h4>\r\n  <h5>{{ user().age }} years old</h5>\r\n  {{ user().location }} <br />\r\n  {{ user().email }} <br />\r\n  <button (click)="update()">Internal update</button>\r\n  <p>* should not update</p>\r\n</div>\r\n', styles: ["/* src/app/advanced-components/change-detection/example-1/example-1.component.scss */\n.example-1 {\n  font-size: 19px;\n  margin-bottom: 10px;\n}\n"] }]
+  }], null, null);
 })();
 (() => {
-  (typeof ngDevMode === "undefined" || ngDevMode) && \u0275setClassDebugInfo(Example1Component, { className: "Example1Component", filePath: "src/app/advanced-components/change-detection/example-1/example-1.component.ts", lineNumber: 11 });
+  (typeof ngDevMode === "undefined" || ngDevMode) && \u0275setClassDebugInfo(Example1Component, { className: "Example1Component", filePath: "src/app/advanced-components/change-detection/example-1/example-1.component.ts", lineNumber: 10 });
 })();
 
 // src/app/advanced-components/change-detection/example-2/example-2.component.ts
@@ -19572,11 +19563,11 @@ var Example2Component = class _Example2Component {
 (() => {
   (typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(Example2Component, [{
     type: Component,
-    args: [{ selector: "example-2", changeDetection: ChangeDetectionStrategy.Default, standalone: true, template: '<div class="example-2">\r\n  <h3>Default</h3>\r\n  <h4>{{ user().name }}</h4>\r\n  <h5>{{ user().age }} years old</h5>\r\n  {{ user().location }} <br />\r\n  {{ user().email }} <br />\r\n  <button (click)="update()">Internal update</button>\r\n  <p>* should update</p>\r\n</div>\r\n', styles: ["/* src/app/advanced-components/change-detection/example-2/example-2.component.scss */\n.example-2 {\n  font-size: 19px;\n  margin-bottom: 10px;\n}\n"] }]
-  }], () => [], null);
+    args: [{ selector: "example-2", changeDetection: ChangeDetectionStrategy.Default, template: '<div class="example-2">\r\n  <h3>Default</h3>\r\n  <h4>{{ user().name }}</h4>\r\n  <h5>{{ user().age }} years old</h5>\r\n  {{ user().location }} <br />\r\n  {{ user().email }} <br />\r\n  <button (click)="update()">Internal update</button>\r\n  <p>* should update</p>\r\n</div>\r\n', styles: ["/* src/app/advanced-components/change-detection/example-2/example-2.component.scss */\n.example-2 {\n  font-size: 19px;\n  margin-bottom: 10px;\n}\n"] }]
+  }], null, null);
 })();
 (() => {
-  (typeof ngDevMode === "undefined" || ngDevMode) && \u0275setClassDebugInfo(Example2Component, { className: "Example2Component", filePath: "src/app/advanced-components/change-detection/example-2/example-2.component.ts", lineNumber: 11 });
+  (typeof ngDevMode === "undefined" || ngDevMode) && \u0275setClassDebugInfo(Example2Component, { className: "Example2Component", filePath: "src/app/advanced-components/change-detection/example-2/example-2.component.ts", lineNumber: 10 });
 })();
 
 // src/app/advanced-components/change-detection/change-detection.component.ts
@@ -19652,22 +19643,22 @@ var ChangeDetectionComponent = class _ChangeDetectionComponent {
   (typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(ChangeDetectionComponent, [{
     type: Component,
     args: [{ selector: "change-detection", changeDetection: ChangeDetectionStrategy.Default, imports: [Example1Component, Example2Component], template: '<div>\r\n  <hr />\r\n  <h2>Change Detection Strategy</h2>\r\n  <div class="buttons">\r\n    <button (click)="addProp()">Add property</button>\r\n    <button (click)="changeUser()">Change user object</button>\r\n    <button (click)="changeName()">Change name property</button>\r\n  </div>\r\n  <div class="users">\r\n    <div><example-1 [user]="user"></example-1></div>\r\n    <div><example-2 [user]="user"></example-2></div>\r\n  </div>\r\n</div>\r\n', styles: ["/* src/app/advanced-components/change-detection/change-detection.component.scss */\n.users {\n  display: flex;\n  justify-content: space-evenly;\n}\n.buttons {\n  display: flex;\n  justify-content: center;\n}\n.buttons button {\n  margin: 10px;\n}\n"] }]
-  }], () => [], null);
+  }], null, null);
 })();
 (() => {
   (typeof ngDevMode === "undefined" || ngDevMode) && \u0275setClassDebugInfo(ChangeDetectionComponent, { className: "ChangeDetectionComponent", filePath: "src/app/advanced-components/change-detection/change-detection.component.ts", lineNumber: 12 });
 })();
 
 // src/app/advanced-components/advanced-components.component.ts
-var _c03 = ["entry"];
-var _c13 = ["template"];
+var _c03 = ["template"];
+var _c13 = ["entry"];
 function AdvancedComponentsComponent_ng_template_27_Template(rf, ctx) {
 }
 var AdvancedComponentsComponent = class _AdvancedComponentsComponent {
   constructor() {
-    this.entry = viewChild.required("entry", { read: ViewContainerRef });
     this.template = viewChild.required("template");
     this.rememberMe = false;
+    this.entry = viewChild.required("entry", { read: ViewContainerRef });
     this.resolver = inject(ComponentFactoryResolver$1);
   }
   ngAfterContentInit() {
@@ -19703,8 +19694,8 @@ var AdvancedComponentsComponent = class _AdvancedComponentsComponent {
   static {
     this.\u0275cmp = /* @__PURE__ */ \u0275\u0275defineComponent({ type: _AdvancedComponentsComponent, selectors: [["advanced-components"]], viewQuery: function AdvancedComponentsComponent_Query(rf, ctx) {
       if (rf & 1) {
-        \u0275\u0275viewQuerySignal(ctx.entry, _c03, 5, ViewContainerRef);
-        \u0275\u0275viewQuerySignal(ctx.template, _c13, 5);
+        \u0275\u0275viewQuerySignal(ctx.template, _c03, 5);
+        \u0275\u0275viewQuerySignal(ctx.entry, _c13, 5, ViewContainerRef);
       }
       if (rf & 2) {
         \u0275\u0275queryAdvance(2);
@@ -19859,10 +19850,9 @@ var CreditCardDirective = class _CreditCardDirective {
   (typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(CreditCardDirective, [{
     type: Directive,
     args: [{
-      selector: "[credit-card]",
-      standalone: true
+      selector: "[credit-card]"
     }]
-  }], () => [], { border: [{
+  }], null, { border: [{
     type: HostBinding,
     args: ["style.border"]
   }], onKeyDown: [{
@@ -19911,8 +19901,7 @@ var TooltipDirective = class _TooltipDirective {
     type: Directive,
     args: [{
       selector: "[tooltip]",
-      exportAs: "tooltip",
-      standalone: true
+      exportAs: "tooltip"
     }]
   }], null, { tooltip: [{
     type: Input
@@ -19947,8 +19936,7 @@ var MyForDirective = class _MyForDirective {
   (typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(MyForDirective, [{
     type: Directive,
     args: [{
-      selector: "[myFor][myForOf]",
-      standalone: true
+      selector: "[myFor][myForOf]"
     }]
   }], null, { myForOf: [{
     type: Input
@@ -19975,8 +19963,7 @@ var HighlightDirective = class _HighlightDirective {
   (typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(HighlightDirective, [{
     type: Directive,
     args: [{
-      selector: "[highlight]",
-      standalone: true
+      selector: "[highlight]"
     }]
   }], () => [], null);
 })();
@@ -20175,9 +20162,9 @@ function CustomPipesComponent_For_14_Template(rf, ctx) {
 }
 var CustomPipesComponent = class _CustomPipesComponent {
   constructor() {
-    this.fileSizePipe = inject(FilesizePipe);
     this.files = [];
     this.mapped = [];
+    this.fileSizePipe = inject(FilesizePipe);
   }
   ngOnInit() {
     this.files = [
@@ -20278,7 +20265,7 @@ var AppComponent = class _AppComponent {
 })();
 
 // src/main.ts
-var routes = [{ path: "route", loadComponent: () => import("./routes.component-XETAKO3C.js").then((m) => m.RoutesComponent) }];
+var routes = [{ path: "route", loadComponent: () => import("./routes.component-QCT4YEO3.js").then((m) => m.RoutesComponent) }];
 if (environment.production) {
   enableProdMode();
 }

@@ -1,17 +1,14 @@
-import { Component, output } from "@angular/core";
+import { Component, output } from '@angular/core';
 
 @Component({
-    selector: "auth-remember",
-    templateUrl: "./auth-remember.component.html",
-    styleUrls: ["./auth-remember.component.scss"],
-    standalone: true
+    selector: 'auth-remember',
+    templateUrl: './auth-remember.component.html',
+    styleUrls: ['./auth-remember.component.scss']
 })
 export class AuthRememberComponent {
-  readonly checked = output<boolean>();
+    public readonly checked = output<boolean>();
 
-  constructor() {}
-
-  onChecked(value: boolean): void {
-    this.checked.emit(value);
-  }
+    protected onChecked(value: boolean): void {
+        this.checked.emit(value);
+    }
 }

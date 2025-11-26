@@ -3,9 +3,6 @@ import { Component } from '@angular/core';
 @Component({
     selector: 'routes',
     templateUrl: './routes.component.html',
-    styleUrls: ['./routes.component.scss'],
-    standalone: true
+    styleUrls: ['./routes.component.scss']
 })
-export class RoutesComponent {
-
-}
+export class RoutesComponent {}

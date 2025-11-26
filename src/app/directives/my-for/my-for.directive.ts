@@ -2,12 +2,11 @@ import { Directive, Input, TemplateRef, ViewContainerRef, inject } from '@angula
 import { User } from '../../advanced-components/advanced-components.interface';
 
 @Directive({
-    selector: '[myFor][myForOf]',
-    standalone: true
+    selector: '[myFor][myForOf]'
 })
 export class MyForDirective {
-    private view = inject(ViewContainerRef);
-    private template = inject<TemplateRef<any>>(TemplateRef);
+    private readonly view = inject(ViewContainerRef);
+    private readonly template = inject<TemplateRef<any>>(TemplateRef);
 
     @Input()
     set myForOf(collection: any) {

@@ -1,16 +1,15 @@
-import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
-
+import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { TemplateContainerComponent } from './template-container.component';
 
 describe('TemplateContainerComponent', () => {
     let component: TemplateContainerComponent;
     let fixture: ComponentFixture<TemplateContainerComponent>;
 
-    beforeEach(waitForAsync(() => {
-        TestBed.configureTestingModule({
+    beforeEach(async () => {
+        await TestBed.configureTestingModule({
             imports: [TemplateContainerComponent]
         }).compileComponents();
-    }));
+    });
 
     beforeEach(() => {
         fixture = TestBed.createComponent(TemplateContainerComponent);

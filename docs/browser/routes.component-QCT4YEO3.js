@@ -28,11 +28,11 @@ var RoutesComponent = class _RoutesComponent {
 (() => {
   (typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(RoutesComponent, [{
     type: Component,
-    args: [{ selector: "routes", standalone: true, template: "<p>Route</p>\n" }]
+    args: [{ selector: "routes", template: "<p>Route</p>\n" }]
   }], null, null);
 })();
 (() => {
-  (typeof ngDevMode === "undefined" || ngDevMode) && \u0275setClassDebugInfo(RoutesComponent, { className: "RoutesComponent", filePath: "src/app/routes/routes.component.ts", lineNumber: 9 });
+  (typeof ngDevMode === "undefined" || ngDevMode) && \u0275setClassDebugInfo(RoutesComponent, { className: "RoutesComponent", filePath: "src/app/routes/routes.component.ts", lineNumber: 8 });
 })();
 export {
   RoutesComponent

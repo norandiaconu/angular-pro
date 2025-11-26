@@ -1,12 +1,9 @@
-import { Component, ViewEncapsulation } from "@angular/core";
+import { Component, ViewEncapsulation } from '@angular/core';
 
 @Component({
-    selector: "example-three",
+    selector: 'example-three',
     encapsulation: ViewEncapsulation.None,
-    templateUrl: "./example-three.component.html",
-    styleUrls: ["./example-three.component.scss"],
-    standalone: true
+    templateUrl: './example-three.component.html',
+    styleUrls: ['./example-three.component.scss']
 })
-export class ExampleThreeComponent {
-  constructor() {}
-}
+export class ExampleThreeComponent {}

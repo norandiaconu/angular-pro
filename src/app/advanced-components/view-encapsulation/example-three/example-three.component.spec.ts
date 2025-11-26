@@ -1,16 +1,15 @@
-import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
-
+import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ExampleThreeComponent } from './example-three.component';
 
 describe('ExampleThreeComponent', () => {
     let component: ExampleThreeComponent;
     let fixture: ComponentFixture<ExampleThreeComponent>;
 
-    beforeEach(waitForAsync(() => {
-        TestBed.configureTestingModule({
+    beforeEach(async () => {
+        await TestBed.configureTestingModule({
             imports: [ExampleThreeComponent]
         }).compileComponents();
-    }));
+    });
 
     beforeEach(() => {
         fixture = TestBed.createComponent(ExampleThreeComponent);
