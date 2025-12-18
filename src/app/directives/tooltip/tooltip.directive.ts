@@ -1,18 +1,21 @@
-import { Directive, ElementRef, Input, OnInit, inject } from '@angular/core';
+import { Directive, ElementRef, OnInit, effect, inject, input } from '@angular/core';
 
 @Directive({
     selector: '[tooltip]',
     exportAs: 'tooltip'
 })
 export class TooltipDirective implements OnInit {
+    public tooltip = input<string>('');
+
     private tooltipElement = document.createElement('div');
     private visible = false;
 
     private readonly element = inject(ElementRef);
 
-    @Input()
-    set tooltip(value: string) {
-        this.tooltipElement.textContent = value;
+    constructor() {
+        effect(() => {
+            this.tooltipElement.textContent = this.tooltip();
+        });
     }
 
     ngOnInit(): void {

@@ -1,6 +1,6 @@
 {
     "name": "angular-pro",
-    "version": "19.2.1",
+    "version": "19.2.2",
     "scripts": {
         "start": "ng serve",
         "build": "ng build && vite preview --port 8080 --outDir ./docs/browser --open",

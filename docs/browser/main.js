@@ -95,6 +95,7 @@ import {
   createPlatformFactory,
   defaultIfEmpty,
   defer,
+  effect,
   enableProdMode,
   filter,
   finalize,
@@ -198,7 +199,7 @@ import {
   ɵɵtextInterpolate1,
   ɵɵtextInterpolate2,
   ɵɵviewQuerySignal
-} from "./chunk-QHJQQBLV.js";
+} from "./chunk-GTZ5HGL3.js";
 
 // src/environments/environment.ts
 var environment = {
@@ -3823,7 +3824,7 @@ var XhrFactory = class {
 };
 
 // node_modules/@angular/common/fesm2022/common.mjs
-var VERSION = new Version("19.2.14");
+var VERSION = new Version("19.2.17");
 var ViewportScroller = class _ViewportScroller {
   // De-sugared tree-shakable injection
   // See #23917
@@ -5796,7 +5797,7 @@ var EmulatedEncapsulationDomRenderer2 = class extends NoneEncapsulationDomRender
   }
 };
 
-// node_modules/@angular/platform-browser/fesm2022/browser-D-u-fknz.mjs
+// node_modules/@angular/platform-browser/fesm2022/browser-0WrrQdE0.mjs
 var BrowserDomAdapter = class _BrowserDomAdapter extends DomAdapter {
   supportsDOMEvents = true;
   static makeCurrent() {
@@ -6125,9 +6126,10 @@ var KeyEventsPlugin = class _KeyEventsPlugin extends EventManagerPlugin {
     }]
   }], null);
 })();
-function bootstrapApplication(rootComponent, options) {
+function bootstrapApplication(rootComponent, options, context) {
   return internalCreateApplication(__spreadValues({
-    rootComponent
+    rootComponent,
+    platformRef: context?.platformRef
   }, createProvidersConfig(options)));
 }
 function createProvidersConfig(options) {
@@ -6804,7 +6806,7 @@ var HydrationFeatureKind;
   HydrationFeatureKind2[HydrationFeatureKind2["EventReplay"] = 3] = "EventReplay";
   HydrationFeatureKind2[HydrationFeatureKind2["IncrementalHydration"] = 4] = "IncrementalHydration";
 })(HydrationFeatureKind || (HydrationFeatureKind = {}));
-var VERSION2 = new Version("19.2.14");
+var VERSION2 = new Version("19.2.17");
 
 // node_modules/@angular/forms/fesm2022/forms.mjs
 var BaseControlValueAccessor = class _BaseControlValueAccessor {
@@ -13173,7 +13175,7 @@ var UntypedFormBuilder = class _UntypedFormBuilder extends FormBuilder {
     }]
   }], null, null);
 })();
-var VERSION3 = new Version("19.2.14");
+var VERSION3 = new Version("19.2.17");
 var FormsModule = class _FormsModule {
   /**
    * @description
@@ -18969,7 +18971,7 @@ function provideRouterInitializer() {
 }
 
 // node_modules/@angular/router/fesm2022/router.mjs
-var VERSION4 = new Version("19.2.14");
+var VERSION4 = new Version("19.2.17");
 
 // src/app/advanced-components/auth-message/auth-message.component.ts
 var AuthMessageComponent = class _AuthMessageComponent {
@@ -19816,11 +19818,11 @@ var CreditCardDirective = class _CreditCardDirective {
     const input2 = event.target;
     let trimmed = input2.value.replace(/\s+/g, "");
     if (trimmed.length > 16) {
-      trimmed = trimmed.substr(0, 16);
+      trimmed = trimmed.substring(0, 16);
     }
     const numbers = [];
     for (let i = 0; i < trimmed.length; i += 4) {
-      numbers.push(trimmed.substr(i, 4));
+      numbers.push(trimmed.substring(i, i + 4));
     }
     input2.value = numbers.join(" ");
     this.border = "";
@@ -19864,12 +19866,13 @@ var CreditCardDirective = class _CreditCardDirective {
 // src/app/directives/tooltip/tooltip.directive.ts
 var TooltipDirective = class _TooltipDirective {
   constructor() {
+    this.tooltip = input("");
     this.tooltipElement = document.createElement("div");
     this.visible = false;
     this.element = inject(ElementRef);
-  }
-  set tooltip(value) {
-    this.tooltipElement.textContent = value;
+    effect(() => {
+      this.tooltipElement.textContent = this.tooltip();
+    });
   }
   ngOnInit() {
     this.tooltipElement.className = "tooltip";
@@ -19893,7 +19896,7 @@ var TooltipDirective = class _TooltipDirective {
     };
   }
   static {
-    this.\u0275dir = /* @__PURE__ */ \u0275\u0275defineDirective({ type: _TooltipDirective, selectors: [["", "tooltip", ""]], inputs: { tooltip: "tooltip" }, exportAs: ["tooltip"] });
+    this.\u0275dir = /* @__PURE__ */ \u0275\u0275defineDirective({ type: _TooltipDirective, selectors: [["", "tooltip", ""]], inputs: { tooltip: [1, "tooltip"] }, exportAs: ["tooltip"] });
   }
 };
 (() => {
@@ -19903,23 +19906,22 @@ var TooltipDirective = class _TooltipDirective {
       selector: "[tooltip]",
       exportAs: "tooltip"
     }]
-  }], null, { tooltip: [{
-    type: Input
-  }] });
+  }], () => [], null);
 })();
 
 // src/app/directives/my-for/my-for.directive.ts
 var MyForDirective = class _MyForDirective {
   constructor() {
+    this.myForOf = input();
     this.view = inject(ViewContainerRef);
     this.template = inject(TemplateRef);
-  }
-  set myForOf(collection) {
-    this.view.clear();
-    collection.forEach((item, index) => {
-      this.view.createEmbeddedView(this.template, {
-        $implicit: item,
-        index
+    effect(() => {
+      this.view.clear();
+      this.myForOf().forEach((item, index) => {
+        this.view.createEmbeddedView(this.template, {
+          $implicit: item,
+          index
+        });
       });
     });
   }
@@ -19929,7 +19931,7 @@ var MyForDirective = class _MyForDirective {
     };
   }
   static {
-    this.\u0275dir = /* @__PURE__ */ \u0275\u0275defineDirective({ type: _MyForDirective, selectors: [["", "myFor", "", "myForOf", ""]], inputs: { myForOf: "myForOf" } });
+    this.\u0275dir = /* @__PURE__ */ \u0275\u0275defineDirective({ type: _MyForDirective, selectors: [["", "myFor", "", "myForOf", ""]], inputs: { myForOf: [1, "myForOf"] } });
   }
 };
 (() => {
@@ -19938,9 +19940,7 @@ var MyForDirective = class _MyForDirective {
     args: [{
       selector: "[myFor][myForOf]"
     }]
-  }], null, { myForOf: [{
-    type: Input
-  }] });
+  }], () => [], null);
 })();
 
 // src/app/directives/highlight/highlight.directive.ts
@@ -20265,7 +20265,7 @@ var AppComponent = class _AppComponent {
 })();
 
 // src/main.ts
-var routes = [{ path: "route", loadComponent: () => import("./routes.component-QCT4YEO3.js").then((m) => m.RoutesComponent) }];
+var routes = [{ path: "route", loadComponent: () => import("./routes.component-VJTDD3RC.js").then((m) => m.RoutesComponent) }];
 if (environment.production) {
   enableProdMode();
 }
@@ -20280,14 +20280,14 @@ bootstrapApplication(AppComponent, {
 @angular/common/fesm2022/xhr-BfNfxNDv.mjs:
 @angular/common/fesm2022/common.mjs:
 @angular/platform-browser/fesm2022/dom_renderer-DGKzginR.mjs:
-@angular/platform-browser/fesm2022/browser-D-u-fknz.mjs:
+@angular/platform-browser/fesm2022/browser-0WrrQdE0.mjs:
 @angular/platform-browser/fesm2022/platform-browser.mjs:
 @angular/forms/fesm2022/forms.mjs:
 @angular/router/fesm2022/router-Dwfin5Au.mjs:
 @angular/router/fesm2022/router_module-DTJgGWLd.mjs:
 @angular/router/fesm2022/router.mjs:
   (**
-   * @license Angular v19.2.14
+   * @license Angular v19.2.17
    * (c) 2010-2025 Google LLC. https://angular.io/
    * License: MIT
    *)

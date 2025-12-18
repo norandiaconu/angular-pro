@@ -54,6 +54,9 @@ function setActiveConsumer(consumer) {
 function getActiveConsumer() {
   return activeConsumer;
 }
+function isInNotificationPhase() {
+  return inNotificationPhase;
+}
 var REACTIVE_NODE = {
   version: 0,
   lastCleanEpoch: 0,
@@ -3031,6 +3034,14 @@ function emitInjectEvent(token, value, flags) {
     }
   });
 }
+function emitEffectCreatedEvent(effect2) {
+  !ngDevMode && throwError2("Injector profiler should never be called in production mode");
+  injectorProfiler({
+    type: 3,
+    context: getInjectorProfilerContext(),
+    effect: effect2
+  });
+}
 function runInInjectorProfilerContext(injector, token, callback) {
   !ngDevMode && throwError2("runInInjectorProfilerContext should never be called in production mode");
   const prevInjectContext = setInjectorProfilerContext({
@@ -5784,9 +5795,9 @@ function getTNodeFromLView(lView) {
 function \u0275\u0275injectAttribute(attrNameToInject) {
   return injectAttributeImpl(getCurrentTNode(), attrNameToInject);
 }
-var Attribute = makeParamDecorator("Attribute", (attributeName) => ({
-  attributeName,
-  __NG_ELEMENT_ID__: () => \u0275\u0275injectAttribute(attributeName)
+var Attribute = makeParamDecorator("Attribute", (attributeName2) => ({
+  attributeName: attributeName2,
+  __NG_ELEMENT_ID__: () => \u0275\u0275injectAttribute(attributeName2)
 }));
 var _reflect = null;
 function getReflect() {
@@ -8132,6 +8143,115 @@ var ViewEncapsulation;
   ViewEncapsulation2[ViewEncapsulation2["None"] = 2] = "None";
   ViewEncapsulation2[ViewEncapsulation2["ShadowDom"] = 3] = "ShadowDom";
 })(ViewEncapsulation || (ViewEncapsulation = {}));
+var CUSTOM_ELEMENTS_SCHEMA = {
+  name: "custom-elements"
+};
+var NO_ERRORS_SCHEMA = {
+  name: "no-errors-schema"
+};
+var shouldThrowErrorOnUnknownElement = false;
+var shouldThrowErrorOnUnknownProperty = false;
+function validateElementIsKnown(element, lView, tagName, schemas, hasDirectives) {
+  if (schemas === null) return;
+  if (!hasDirectives && tagName !== null) {
+    const isUnknown = (
+      // Note that we can't check for `typeof HTMLUnknownElement === 'function'` because
+      // Domino doesn't expose HTMLUnknownElement globally.
+      typeof HTMLUnknownElement !== "undefined" && HTMLUnknownElement && element instanceof HTMLUnknownElement || typeof customElements !== "undefined" && tagName.indexOf("-") > -1 && !customElements.get(tagName)
+    );
+    if (isUnknown && !matchingSchemas(schemas, tagName)) {
+      const isHostStandalone = isHostComponentStandalone(lView);
+      const templateLocation = getTemplateLocationDetails(lView);
+      const schemas2 = `'${isHostStandalone ? "@Component" : "@NgModule"}.schemas'`;
+      let message = `'${tagName}' is not a known element${templateLocation}:
+`;
+      message += `1. If '${tagName}' is an Angular component, then verify that it is ${isHostStandalone ? "included in the '@Component.imports' of this component" : "a part of an @NgModule where this component is declared"}.
+`;
+      if (tagName && tagName.indexOf("-") > -1) {
+        message += `2. If '${tagName}' is a Web Component then add 'CUSTOM_ELEMENTS_SCHEMA' to the ${schemas2} of this component to suppress this message.`;
+      } else {
+        message += `2. To allow any element add 'NO_ERRORS_SCHEMA' to the ${schemas2} of this component.`;
+      }
+      if (shouldThrowErrorOnUnknownElement) {
+        throw new RuntimeError(304, message);
+      } else {
+        console.error(formatRuntimeError(304, message));
+      }
+    }
+  }
+}
+function isPropertyValid(element, propName, tagName, schemas) {
+  if (schemas === null) return true;
+  if (matchingSchemas(schemas, tagName) || propName in element || isAnimationProp(propName)) {
+    return true;
+  }
+  return typeof Node === "undefined" || Node === null || !(element instanceof Node);
+}
+function handleUnknownPropertyError(propName, tagName, nodeType, lView) {
+  if (!tagName && nodeType === 4) {
+    tagName = "ng-template";
+  }
+  const isHostStandalone = isHostComponentStandalone(lView);
+  const templateLocation = getTemplateLocationDetails(lView);
+  let message = `Can't bind to '${propName}' since it isn't a known property of '${tagName}'${templateLocation}.`;
+  const schemas = `'${isHostStandalone ? "@Component" : "@NgModule"}.schemas'`;
+  const importLocation = isHostStandalone ? "included in the '@Component.imports' of this component" : "a part of an @NgModule where this component is declared";
+  if (KNOWN_CONTROL_FLOW_DIRECTIVES.has(propName)) {
+    const correspondingImport = KNOWN_CONTROL_FLOW_DIRECTIVES.get(propName);
+    message += `
+If the '${propName}' is an Angular control flow directive, please make sure that either the '${correspondingImport}' directive or the 'CommonModule' is ${importLocation}.`;
+  } else {
+    message += `
+1. If '${tagName}' is an Angular component and it has the '${propName}' input, then verify that it is ${importLocation}.`;
+    if (tagName && tagName.indexOf("-") > -1) {
+      message += `
+2. If '${tagName}' is a Web Component then add 'CUSTOM_ELEMENTS_SCHEMA' to the ${schemas} of this component to suppress this message.`;
+      message += `
+3. To allow any property add 'NO_ERRORS_SCHEMA' to the ${schemas} of this component.`;
+    } else {
+      message += `
+2. To allow any property add 'NO_ERRORS_SCHEMA' to the ${schemas} of this component.`;
+    }
+  }
+  reportUnknownPropertyError(message);
+}
+function reportUnknownPropertyError(message) {
+  if (shouldThrowErrorOnUnknownProperty) {
+    throw new RuntimeError(303, message);
+  } else {
+    console.error(formatRuntimeError(303, message));
+  }
+}
+function getDeclarationComponentDef(lView) {
+  !ngDevMode && throwError2("Must never be called in production mode");
+  const declarationLView = lView[DECLARATION_COMPONENT_VIEW];
+  const context = declarationLView[CONTEXT];
+  if (!context) return null;
+  return context.constructor ? getComponentDef(context.constructor) : null;
+}
+function isHostComponentStandalone(lView) {
+  !ngDevMode && throwError2("Must never be called in production mode");
+  const componentDef = getDeclarationComponentDef(lView);
+  return !!componentDef?.standalone;
+}
+function getTemplateLocationDetails(lView) {
+  !ngDevMode && throwError2("Must never be called in production mode");
+  const hostComponentDef = getDeclarationComponentDef(lView);
+  const componentClassName = hostComponentDef?.type?.name;
+  return componentClassName ? ` (used in the '${componentClassName}' component template)` : "";
+}
+var KNOWN_CONTROL_FLOW_DIRECTIVES = /* @__PURE__ */ new Map([["ngIf", "NgIf"], ["ngFor", "NgFor"], ["ngSwitchCase", "NgSwitchCase"], ["ngSwitchDefault", "NgSwitchDefault"]]);
+function matchingSchemas(schemas, tagName) {
+  if (schemas !== null) {
+    for (let i = 0; i < schemas.length; i++) {
+      const schema = schemas[i];
+      if (schema === NO_ERRORS_SCHEMA || schema === CUSTOM_ELEMENTS_SCHEMA && tagName && tagName.indexOf("-") > -1) {
+        return true;
+      }
+    }
+  }
+  return false;
+}
 var policy$1;
 function getPolicy$1() {
   if (policy$1 === void 0) {
@@ -8476,6 +8596,85 @@ function getTemplateContent(el) {
 function isTemplateElement(el) {
   return el.nodeType === Node.ELEMENT_NODE && el.nodeName === "TEMPLATE";
 }
+var COMMENT_DISALLOWED = /^>|^->|<!--|-->|--!>|<!-$/g;
+var COMMENT_DELIMITER = /(<|>)/g;
+var COMMENT_DELIMITER_ESCAPED = "\u200B$1\u200B";
+function escapeCommentText(value) {
+  return value.replace(COMMENT_DISALLOWED, (text) => text.replace(COMMENT_DELIMITER, COMMENT_DELIMITER_ESCAPED));
+}
+function createTextNode(renderer, value) {
+  ngDevMode && ngDevMode.rendererCreateTextNode++;
+  ngDevMode && ngDevMode.rendererSetText++;
+  return renderer.createText(value);
+}
+function updateTextNode(renderer, rNode, value) {
+  ngDevMode && ngDevMode.rendererSetText++;
+  renderer.setValue(rNode, value);
+}
+function createCommentNode(renderer, value) {
+  ngDevMode && ngDevMode.rendererCreateComment++;
+  return renderer.createComment(escapeCommentText(value));
+}
+function createElementNode(renderer, name, namespace) {
+  ngDevMode && ngDevMode.rendererCreateElement++;
+  return renderer.createElement(name, namespace);
+}
+function nativeInsertBefore(renderer, parent, child, beforeNode, isMove) {
+  ngDevMode && ngDevMode.rendererInsertBefore++;
+  renderer.insertBefore(parent, child, beforeNode, isMove);
+}
+function nativeAppendChild(renderer, parent, child) {
+  ngDevMode && ngDevMode.rendererAppendChild++;
+  ngDevMode && assertDefined(parent, "parent node must be defined");
+  renderer.appendChild(parent, child);
+}
+function nativeAppendOrInsertBefore(renderer, parent, child, beforeNode, isMove) {
+  if (beforeNode !== null) {
+    nativeInsertBefore(renderer, parent, child, beforeNode, isMove);
+  } else {
+    nativeAppendChild(renderer, parent, child);
+  }
+}
+function nativeRemoveNode(renderer, rNode, isHostElement) {
+  ngDevMode && ngDevMode.rendererRemoveNode++;
+  renderer.removeChild(null, rNode, isHostElement);
+}
+function writeDirectStyle(renderer, element, newValue) {
+  ngDevMode && assertString(newValue, "'newValue' should be a string");
+  renderer.setAttribute(element, "style", newValue);
+  ngDevMode && ngDevMode.rendererSetStyle++;
+}
+function writeDirectClass(renderer, element, newValue) {
+  ngDevMode && assertString(newValue, "'newValue' should be a string");
+  if (newValue === "") {
+    renderer.removeAttribute(element, "class");
+  } else {
+    renderer.setAttribute(element, "class", newValue);
+  }
+  ngDevMode && ngDevMode.rendererSetClassName++;
+}
+function setupStaticAttributes(renderer, element, tNode) {
+  const {
+    mergedAttrs,
+    classes,
+    styles
+  } = tNode;
+  if (mergedAttrs !== null) {
+    setUpAttributes(renderer, element, mergedAttrs);
+  }
+  if (classes !== null) {
+    writeDirectClass(renderer, element, classes);
+  }
+  if (styles !== null) {
+    writeDirectStyle(renderer, element, styles);
+  }
+}
+function enforceIframeSecurity(iframe) {
+  const lView = getLView();
+  iframe.src = "";
+  iframe.srcdoc = trustedHTMLFromString("");
+  nativeRemoveNode(lView[RENDERER], iframe);
+}
 var SecurityContext;
 (function(SecurityContext2) {
   SecurityContext2[SecurityContext2["NONE"] = 0] = "NONE";
@@ -8593,11 +8792,32 @@ function getSanitizer() {
   const lView = getLView();
   return lView && lView[ENVIRONMENT].sanitizer;
 }
-var COMMENT_DISALLOWED = /^>|^->|<!--|-->|--!>|<!-$/g;
-var COMMENT_DELIMITER = /(<|>)/g;
-var COMMENT_DELIMITER_ESCAPED = "\u200B$1\u200B";
-function escapeCommentText(value) {
-  return value.replace(COMMENT_DISALLOWED, (text) => text.replace(COMMENT_DELIMITER, COMMENT_DELIMITER_ESCAPED));
+var attributeName = /* @__PURE__ */ new Set(["attributename"]);
+var SECURITY_SENSITIVE_ELEMENTS = {
+  "iframe": /* @__PURE__ */ new Set(["sandbox", "allow", "allowfullscreen", "referrerpolicy", "csp", "fetchpriority"]),
+  "animate": attributeName,
+  "set": attributeName,
+  "animatemotion": attributeName,
+  "animatetransform": attributeName
+};
+function \u0275\u0275validateAttribute(value, tagName, attributeName2) {
+  const lowerCaseTagName = tagName.toLowerCase();
+  const lowerCaseAttrName = attributeName2.toLowerCase();
+  if (!SECURITY_SENSITIVE_ELEMENTS[lowerCaseTagName]?.has(lowerCaseAttrName)) {
+    return value;
+  }
+  const tNode = getSelectedTNode();
+  if (tNode.type !== 2) {
+    return value;
+  }
+  const lView = getLView();
+  if (lowerCaseTagName === "iframe") {
+    const element = getNativeByTNode(tNode, lView);
+    enforceIframeSecurity(element);
+  }
+  const errorMessage = ngDevMode && `Angular has detected that the \`${attributeName2}\` was applied as a binding to the <${tagName}> element${getTemplateLocationDetails(lView)}. For security reasons, the \`${attributeName2}\` can be set on the <${tagName}> element as a static attribute only. 
+To fix this, switch the \`${attributeName2}\` binding to a static attribute in a template or in host bindings section.`;
+  throw new RuntimeError(-910, errorMessage);
 }
 function normalizeDebugBindingName(name) {
   name = camelCaseToDashCase(name.replace(/[$@]/g, "_"));
@@ -8613,115 +8833,6 @@ function normalizeDebugBindingValue(value) {
   } catch (e) {
     return "[ERROR] Exception while trying to serialize the value";
   }
-}
-var CUSTOM_ELEMENTS_SCHEMA = {
-  name: "custom-elements"
-};
-var NO_ERRORS_SCHEMA = {
-  name: "no-errors-schema"
-};
-var shouldThrowErrorOnUnknownElement = false;
-var shouldThrowErrorOnUnknownProperty = false;
-function validateElementIsKnown(element, lView, tagName, schemas, hasDirectives) {
-  if (schemas === null) return;
-  if (!hasDirectives && tagName !== null) {
-    const isUnknown = (
-      // Note that we can't check for `typeof HTMLUnknownElement === 'function'` because
-      // Domino doesn't expose HTMLUnknownElement globally.
-      typeof HTMLUnknownElement !== "undefined" && HTMLUnknownElement && element instanceof HTMLUnknownElement || typeof customElements !== "undefined" && tagName.indexOf("-") > -1 && !customElements.get(tagName)
-    );
-    if (isUnknown && !matchingSchemas(schemas, tagName)) {
-      const isHostStandalone = isHostComponentStandalone(lView);
-      const templateLocation = getTemplateLocationDetails(lView);
-      const schemas2 = `'${isHostStandalone ? "@Component" : "@NgModule"}.schemas'`;
-      let message = `'${tagName}' is not a known element${templateLocation}:
-`;
-      message += `1. If '${tagName}' is an Angular component, then verify that it is ${isHostStandalone ? "included in the '@Component.imports' of this component" : "a part of an @NgModule where this component is declared"}.
-`;
-      if (tagName && tagName.indexOf("-") > -1) {
-        message += `2. If '${tagName}' is a Web Component then add 'CUSTOM_ELEMENTS_SCHEMA' to the ${schemas2} of this component to suppress this message.`;
-      } else {
-        message += `2. To allow any element add 'NO_ERRORS_SCHEMA' to the ${schemas2} of this component.`;
-      }
-      if (shouldThrowErrorOnUnknownElement) {
-        throw new RuntimeError(304, message);
-      } else {
-        console.error(formatRuntimeError(304, message));
-      }
-    }
-  }
-}
-function isPropertyValid(element, propName, tagName, schemas) {
-  if (schemas === null) return true;
-  if (matchingSchemas(schemas, tagName) || propName in element || isAnimationProp(propName)) {
-    return true;
-  }
-  return typeof Node === "undefined" || Node === null || !(element instanceof Node);
-}
-function handleUnknownPropertyError(propName, tagName, nodeType, lView) {
-  if (!tagName && nodeType === 4) {
-    tagName = "ng-template";
-  }
-  const isHostStandalone = isHostComponentStandalone(lView);
-  const templateLocation = getTemplateLocationDetails(lView);
-  let message = `Can't bind to '${propName}' since it isn't a known property of '${tagName}'${templateLocation}.`;
-  const schemas = `'${isHostStandalone ? "@Component" : "@NgModule"}.schemas'`;
-  const importLocation = isHostStandalone ? "included in the '@Component.imports' of this component" : "a part of an @NgModule where this component is declared";
-  if (KNOWN_CONTROL_FLOW_DIRECTIVES.has(propName)) {
-    const correspondingImport = KNOWN_CONTROL_FLOW_DIRECTIVES.get(propName);
-    message += `
-If the '${propName}' is an Angular control flow directive, please make sure that either the '${correspondingImport}' directive or the 'CommonModule' is ${importLocation}.`;
-  } else {
-    message += `
-1. If '${tagName}' is an Angular component and it has the '${propName}' input, then verify that it is ${importLocation}.`;
-    if (tagName && tagName.indexOf("-") > -1) {
-      message += `
-2. If '${tagName}' is a Web Component then add 'CUSTOM_ELEMENTS_SCHEMA' to the ${schemas} of this component to suppress this message.`;
-      message += `
-3. To allow any property add 'NO_ERRORS_SCHEMA' to the ${schemas} of this component.`;
-    } else {
-      message += `
-2. To allow any property add 'NO_ERRORS_SCHEMA' to the ${schemas} of this component.`;
-    }
-  }
-  reportUnknownPropertyError(message);
-}
-function reportUnknownPropertyError(message) {
-  if (shouldThrowErrorOnUnknownProperty) {
-    throw new RuntimeError(303, message);
-  } else {
-    console.error(formatRuntimeError(303, message));
-  }
-}
-function getDeclarationComponentDef(lView) {
-  !ngDevMode && throwError2("Must never be called in production mode");
-  const declarationLView = lView[DECLARATION_COMPONENT_VIEW];
-  const context = declarationLView[CONTEXT];
-  if (!context) return null;
-  return context.constructor ? getComponentDef(context.constructor) : null;
-}
-function isHostComponentStandalone(lView) {
-  !ngDevMode && throwError2("Must never be called in production mode");
-  const componentDef = getDeclarationComponentDef(lView);
-  return !!componentDef?.standalone;
-}
-function getTemplateLocationDetails(lView) {
-  !ngDevMode && throwError2("Must never be called in production mode");
-  const hostComponentDef = getDeclarationComponentDef(lView);
-  const componentClassName = hostComponentDef?.type?.name;
-  return componentClassName ? ` (used in the '${componentClassName}' component template)` : "";
-}
-var KNOWN_CONTROL_FLOW_DIRECTIVES = /* @__PURE__ */ new Map([["ngIf", "NgIf"], ["ngFor", "NgFor"], ["ngSwitchCase", "NgSwitchCase"], ["ngSwitchDefault", "NgSwitchDefault"]]);
-function matchingSchemas(schemas, tagName) {
-  if (schemas !== null) {
-    for (let i = 0; i < schemas.length; i++) {
-      const schema = schemas[i];
-      if (schema === NO_ERRORS_SCHEMA || schema === CUSTOM_ELEMENTS_SCHEMA && tagName && tagName.indexOf("-") > -1) {
-        return true;
-      }
-    }
-  }
-  return false;
 }
 function \u0275\u0275resolveWindow(element) {
   return element.ownerDocument.defaultView;
@@ -9083,73 +9194,6 @@ function extractAttrsAndClassesFromSelector(selector) {
 var NO_CHANGE = typeof ngDevMode === "undefined" || ngDevMode ? {
   __brand__: "NO_CHANGE"
 } : {};
-function createTextNode(renderer, value) {
-  ngDevMode && ngDevMode.rendererCreateTextNode++;
-  ngDevMode && ngDevMode.rendererSetText++;
-  return renderer.createText(value);
-}
-function updateTextNode(renderer, rNode, value) {
-  ngDevMode && ngDevMode.rendererSetText++;
-  renderer.setValue(rNode, value);
-}
-function createCommentNode(renderer, value) {
-  ngDevMode && ngDevMode.rendererCreateComment++;
-  return renderer.createComment(escapeCommentText(value));
-}
-function createElementNode(renderer, name, namespace) {
-  ngDevMode && ngDevMode.rendererCreateElement++;
-  return renderer.createElement(name, namespace);
-}
-function nativeInsertBefore(renderer, parent, child, beforeNode, isMove) {
-  ngDevMode && ngDevMode.rendererInsertBefore++;
-  renderer.insertBefore(parent, child, beforeNode, isMove);
-}
-function nativeAppendChild(renderer, parent, child) {
-  ngDevMode && ngDevMode.rendererAppendChild++;
-  ngDevMode && assertDefined(parent, "parent node must be defined");
-  renderer.appendChild(parent, child);
-}
-function nativeAppendOrInsertBefore(renderer, parent, child, beforeNode, isMove) {
-  if (beforeNode !== null) {
-    nativeInsertBefore(renderer, parent, child, beforeNode, isMove);
-  } else {
-    nativeAppendChild(renderer, parent, child);
-  }
-}
-function nativeRemoveNode(renderer, rNode, isHostElement) {
-  ngDevMode && ngDevMode.rendererRemoveNode++;
-  renderer.removeChild(null, rNode, isHostElement);
-}
-function writeDirectStyle(renderer, element, newValue) {
-  ngDevMode && assertString(newValue, "'newValue' should be a string");
-  renderer.setAttribute(element, "style", newValue);
-  ngDevMode && ngDevMode.rendererSetStyle++;
-}
-function writeDirectClass(renderer, element, newValue) {
-  ngDevMode && assertString(newValue, "'newValue' should be a string");
-  if (newValue === "") {
-    renderer.removeAttribute(element, "class");
-  } else {
-    renderer.setAttribute(element, "class", newValue);
-  }
-  ngDevMode && ngDevMode.rendererSetClassName++;
-}
-function setupStaticAttributes(renderer, element, tNode) {
-  const {
-    mergedAttrs,
-    classes,
-    styles
-  } = tNode;
-  if (mergedAttrs !== null) {
-    setUpAttributes(renderer, element, mergedAttrs);
-  }
-  if (classes !== null) {
-    writeDirectClass(renderer, element, classes);
-  }
-  if (styles !== null) {
-    writeDirectStyle(renderer, element, styles);
-  }
-}
 function createTView(type, declTNode, templateFn, decls, vars, directives, pipes, viewQuery, schemas, constsOrFactory, ssrId) {
   ngDevMode && ngDevMode.tView++;
   const bindingStartIndex = HEADER_OFFSET + decls;
@@ -9898,8 +9942,8 @@ function processCleanups(tView, lView) {
   const effects = lView[EFFECTS];
   if (effects !== null) {
     lView[EFFECTS] = null;
-    for (const effect of effects) {
-      effect.destroy();
+    for (const effect2 of effects) {
+      effect2.destroy();
     }
   }
 }
@@ -10291,15 +10335,15 @@ function runEffectsInView(view) {
   let tryFlushEffects = true;
   while (tryFlushEffects) {
     let foundDirtyEffect = false;
-    for (const effect of view[EFFECTS]) {
-      if (!effect.dirty) {
+    for (const effect2 of view[EFFECTS]) {
+      if (!effect2.dirty) {
         continue;
       }
       foundDirtyEffect = true;
-      if (effect.zone === null || Zone.current === effect.zone) {
-        effect.run();
+      if (effect2.zone === null || Zone.current === effect2.zone) {
+        effect2.run();
       } else {
-        effect.zone.run(() => effect.run());
+        effect2.zone.run(() => effect2.run());
       }
     }
     tryFlushEffects = foundDirtyEffect && !!(view[FLAGS] & 8192);
@@ -12439,7 +12483,7 @@ var ComponentFactory2 = class extends ComponentFactory$1 {
     try {
       const cmpDef = this.componentDef;
       ngDevMode && verifyNotAnOrphanComponent(cmpDef);
-      const tAttributes = rootSelectorOrNode ? ["ng-version", "19.2.14"] : (
+      const tAttributes = rootSelectorOrNode ? ["ng-version", "19.2.17"] : (
         // Extract attributes and classes from the first selector only to match VE behavior.
         extractAttrsAndClassesFromSelector(this.componentDef.selectors[0])
       );
@@ -13395,21 +13439,6 @@ function registerNgModuleType(ngModuleType, id) {
   const existing = modules.get(id) || null;
   assertSameOrNotExisting(id, existing, ngModuleType);
   modules.set(id, ngModuleType);
-}
-function \u0275\u0275validateIframeAttribute(attrValue, tagName, attrName) {
-  const lView = getLView();
-  const tNode = getSelectedTNode();
-  const element = getNativeByTNode(tNode, lView);
-  if (tNode.type === 2 && tagName.toLowerCase() === "iframe") {
-    const iframe = element;
-    iframe.src = "";
-    iframe.srcdoc = trustedHTMLFromString("");
-    nativeRemoveNode(lView[RENDERER], iframe);
-    const errorMessage = ngDevMode && `Angular has detected that the \`${attrName}\` was applied as a binding to an <iframe>${getTemplateLocationDetails(lView)}. For security reasons, the \`${attrName}\` can be set on an <iframe> as a static attribute only. 
-To fix this, switch the \`${attrName}\` binding to a static attribute in a template or in host bindings section.`;
-    throw new RuntimeError(-910, errorMessage);
-  }
-  return attrValue;
 }
 var NgModuleRef$1 = class NgModuleRef {
 };
@@ -14681,7 +14710,7 @@ function handleInjectorProfilerEvent(injectorProfilerEvent) {
     handleEffectCreatedEvent(context, injectorProfilerEvent.effect);
   }
 }
-function handleEffectCreatedEvent(context, effect) {
+function handleEffectCreatedEvent(context, effect2) {
   const diResolver = getDIResolver(context.injector);
   if (diResolver === null) {
     throwError2("An EffectCreated event must be run within an injection context.");
@@ -14692,7 +14721,7 @@ function handleEffectCreatedEvent(context, effect) {
   if (!resolverToEffects.has(diResolver)) {
     resolverToEffects.set(diResolver, []);
   }
-  resolverToEffects.get(diResolver).push(effect);
+  resolverToEffects.get(diResolver).push(effect2);
 }
 function handleInjectEvent(context, data) {
   const diResolver = getDIResolver(context.injector);
@@ -15289,7 +15318,7 @@ function extractEffectsFromInjector(injector) {
   }
   const resolverToEffects = getFrameworkDIDebugData().resolverToEffects;
   const effects = resolverToEffects.get(diResolver) ?? [];
-  return effects.map((effect) => effect[SIGNAL]);
+  return effects.map((effect2) => effect2[SIGNAL]);
 }
 function extractSignalNodesAndEdgesFromRoots(nodes, signalDependenciesMap = /* @__PURE__ */ new Map()) {
   for (const node of nodes) {
@@ -20157,7 +20186,7 @@ function \u0275\u0275attachSourceLocations(templatePath, locations) {
   const tView = getTView();
   const lView = getLView();
   const renderer = lView[RENDERER];
-  const attributeName = "data-ng-source-location";
+  const attributeName2 = "data-ng-source-location";
   for (const [index, offset, line, column] of locations) {
     const tNode = getTNode(tView, index + HEADER_OFFSET);
     ngDevMode && assertTNodeType(
@@ -20166,9 +20195,9 @@ function \u0275\u0275attachSourceLocations(templatePath, locations) {
       /* TNodeType.Element */
     );
     const node = getNativeByIndex(index + HEADER_OFFSET, lView);
-    if (!node.hasAttribute(attributeName)) {
+    if (!node.hasAttribute(attributeName2)) {
       const attributeValue = `${templatePath}@o:${offset},l:${line},c:${column}`;
-      renderer.setAttribute(node, attributeName, attributeValue);
+      renderer.setAttribute(node, attributeName2, attributeValue);
     }
   }
 }
@@ -20927,11 +20956,11 @@ var angularCoreEnv = /* @__PURE__ */ (() => ({
   "\u0275\u0275sanitizeStyle": \u0275\u0275sanitizeStyle,
   "\u0275\u0275sanitizeResourceUrl": \u0275\u0275sanitizeResourceUrl,
   "\u0275\u0275sanitizeScript": \u0275\u0275sanitizeScript,
+  "\u0275\u0275validateAttribute": \u0275\u0275validateAttribute,
   "\u0275\u0275sanitizeUrl": \u0275\u0275sanitizeUrl,
   "\u0275\u0275sanitizeUrlOrResourceUrl": \u0275\u0275sanitizeUrlOrResourceUrl,
   "\u0275\u0275trustConstantHtml": \u0275\u0275trustConstantHtml,
   "\u0275\u0275trustConstantResourceUrl": \u0275\u0275trustConstantResourceUrl,
-  "\u0275\u0275validateIframeAttribute": \u0275\u0275validateIframeAttribute,
   "forwardRef": forwardRef,
   "resolveForwardRef": resolveForwardRef,
   "\u0275\u0275twoWayProperty": \u0275\u0275twoWayProperty,
@@ -21731,7 +21760,7 @@ var Version = class {
     this.patch = parts.slice(2).join(".");
   }
 };
-var VERSION = new Version("19.2.14");
+var VERSION = new Version("19.2.17");
 var ModuleWithComponentFactories = class {
   ngModuleFactory;
   componentFactories;
@@ -22578,14 +22607,13 @@ var PlatformRef = class _PlatformRef {
   }], null);
 })();
 var _platformInjector = null;
-var ALLOW_MULTIPLE_PLATFORMS = new InjectionToken(ngDevMode ? "AllowMultipleToken" : "");
 function createPlatform(injector) {
-  if (_platformInjector && !_platformInjector.get(ALLOW_MULTIPLE_PLATFORMS, false)) {
+  if (getPlatform()) {
     throw new RuntimeError(400, ngDevMode && "There can be only one platform. Destroy the previous one to create a new one.");
   }
   publishDefaultGlobalUtils();
   publishSignalConfiguration();
-  _platformInjector = injector;
+  _platformInjector = true ? injector : null;
   const platform = injector.get(PlatformRef);
   runPlatformInitializers(injector);
   return platform;
@@ -22595,18 +22623,14 @@ function createPlatformFactory(parentPlatformFactory, name, providers = []) {
   const marker = new InjectionToken(desc);
   return (extraProviders = []) => {
     let platform = getPlatform();
-    if (!platform || platform.injector.get(ALLOW_MULTIPLE_PLATFORMS, false)) {
+    if (!platform) {
       const platformProviders = [...providers, ...extraProviders, {
         provide: marker,
         useValue: true
       }];
-      if (parentPlatformFactory) {
-        parentPlatformFactory(platformProviders);
-      } else {
-        createPlatform(createPlatformInjector(platformProviders, desc));
-      }
+      platform = parentPlatformFactory?.(platformProviders) ?? createPlatform(createPlatformInjector(platformProviders, desc));
     }
-    return assertPlatform(marker);
+    return false ? platform : assertPlatform(marker);
   };
 }
 function createPlatformInjector(providers = [], name) {
@@ -22632,13 +22656,18 @@ function assertPlatform(requiredToken) {
   return platform;
 }
 function getPlatform() {
+  if (false) {
+    return null;
+  }
   return _platformInjector?.get(PlatformRef) ?? null;
 }
 function createOrReusePlatformInjector(providers = []) {
   if (_platformInjector) return _platformInjector;
   publishDefaultGlobalUtils();
   const injector = createPlatformInjector(providers);
-  _platformInjector = injector;
+  if (true) {
+    _platformInjector = injector;
+  }
   publishSignalConfiguration();
   runPlatformInitializers(injector);
   return injector;
@@ -23621,20 +23650,24 @@ var ApplicationModule = class _ApplicationModule {
   }], null);
 })();
 function internalCreateApplication(config2) {
+  const {
+    rootComponent,
+    appProviders,
+    platformProviders,
+    platformRef
+  } = config2;
   profiler(
     8
     /* ProfilerEvent.BootstrapApplicationStart */
   );
+  if (false) {
+    throw new RuntimeError(401, ngDevMode && "Missing Platform: This may be due to using `bootstrapApplication` on the server without passing a `BootstrapContext`. Please make sure that `bootstrapApplication` is called with a `context` argument.");
+  }
   try {
-    const {
-      rootComponent,
-      appProviders,
-      platformProviders
-    } = config2;
+    const platformInjector = platformRef?.injector ?? createOrReusePlatformInjector(platformProviders);
     if ((typeof ngDevMode === "undefined" || ngDevMode) && rootComponent !== void 0) {
       assertStandaloneComponentType(rootComponent);
     }
-    const platformInjector = createOrReusePlatformInjector(platformProviders);
     const allAppProviders = [internalProvideZoneChangeDetection({}), {
       provide: ChangeDetectionScheduler,
       useExisting: ChangeDetectionSchedulerImpl
@@ -23688,6 +23721,143 @@ var EffectRefImpl = class {
     this[SIGNAL].destroy();
   }
 };
+function effect(effectFn, options) {
+  ngDevMode && assertNotInReactiveContext(effect, "Call `effect` outside of a reactive context. For example, schedule the effect inside the component constructor.");
+  !options?.injector && assertInInjectionContext(effect);
+  if (ngDevMode && options?.allowSignalWrites !== void 0) {
+    console.warn(`The 'allowSignalWrites' flag is deprecated and no longer impacts effect() (writes are always allowed)`);
+  }
+  const injector = options?.injector ?? inject(Injector);
+  let destroyRef = options?.manualCleanup !== true ? injector.get(DestroyRef) : null;
+  let node;
+  const viewContext = injector.get(ViewContext, null, {
+    optional: true
+  });
+  const notifier = injector.get(ChangeDetectionScheduler);
+  if (viewContext !== null && !options?.forceRoot) {
+    node = createViewEffect(viewContext.view, notifier, effectFn);
+    if (destroyRef instanceof NodeInjectorDestroyRef && destroyRef._lView === viewContext.view) {
+      destroyRef = null;
+    }
+  } else {
+    node = createRootEffect(effectFn, injector.get(EffectScheduler), notifier);
+  }
+  node.injector = injector;
+  if (destroyRef !== null) {
+    node.onDestroyFn = destroyRef.onDestroy(() => node.destroy());
+  }
+  const effectRef = new EffectRefImpl(node);
+  if (ngDevMode) {
+    node.debugName = options?.debugName ?? "";
+    const prevInjectorProfilerContext = setInjectorProfilerContext({
+      injector,
+      token: null
+    });
+    try {
+      emitEffectCreatedEvent(effectRef);
+    } finally {
+      setInjectorProfilerContext(prevInjectorProfilerContext);
+    }
+  }
+  return effectRef;
+}
+var BASE_EFFECT_NODE = /* @__PURE__ */ (() => __spreadProps(__spreadValues({}, REACTIVE_NODE), {
+  consumerIsAlwaysLive: true,
+  consumerAllowSignalWrites: true,
+  dirty: true,
+  hasRun: false,
+  cleanupFns: void 0,
+  zone: null,
+  kind: "effect",
+  onDestroyFn: noop2,
+  run() {
+    this.dirty = false;
+    if (ngDevMode && isInNotificationPhase()) {
+      throw new Error(`Schedulers cannot synchronously execute watches while scheduling.`);
+    }
+    if (this.hasRun && !consumerPollProducersForChange(this)) {
+      return;
+    }
+    this.hasRun = true;
+    const registerCleanupFn = (cleanupFn) => (this.cleanupFns ??= []).push(cleanupFn);
+    const prevNode = consumerBeforeComputation(this);
+    const prevRefreshingViews = setIsRefreshingViews(false);
+    try {
+      this.maybeCleanup();
+      this.fn(registerCleanupFn);
+    } finally {
+      setIsRefreshingViews(prevRefreshingViews);
+      consumerAfterComputation(this, prevNode);
+    }
+  },
+  maybeCleanup() {
+    if (!this.cleanupFns?.length) {
+      return;
+    }
+    try {
+      while (this.cleanupFns.length) {
+        this.cleanupFns.pop()();
+      }
+    } finally {
+      this.cleanupFns = [];
+    }
+  }
+}))();
+var ROOT_EFFECT_NODE = /* @__PURE__ */ (() => __spreadProps(__spreadValues({}, BASE_EFFECT_NODE), {
+  consumerMarkedDirty() {
+    this.scheduler.schedule(this);
+    this.notifier.notify(
+      12
+      /* NotificationSource.RootEffect */
+    );
+  },
+  destroy() {
+    consumerDestroy(this);
+    this.onDestroyFn();
+    this.maybeCleanup();
+    this.scheduler.remove(this);
+  }
+}))();
+var VIEW_EFFECT_NODE = /* @__PURE__ */ (() => __spreadProps(__spreadValues({}, BASE_EFFECT_NODE), {
+  consumerMarkedDirty() {
+    this.view[FLAGS] |= 8192;
+    markAncestorsForTraversal(this.view);
+    this.notifier.notify(
+      13
+      /* NotificationSource.ViewEffect */
+    );
+  },
+  destroy() {
+    consumerDestroy(this);
+    this.onDestroyFn();
+    this.maybeCleanup();
+    this.view[EFFECTS]?.delete(this);
+  }
+}))();
+function createViewEffect(view, notifier, fn) {
+  const node = Object.create(VIEW_EFFECT_NODE);
+  node.view = view;
+  node.zone = typeof Zone !== "undefined" ? Zone.current : null;
+  node.notifier = notifier;
+  node.fn = fn;
+  view[EFFECTS] ??= /* @__PURE__ */ new Set();
+  view[EFFECTS].add(node);
+  node.consumerMarkedDirty(node);
+  return node;
+}
+function createRootEffect(fn, scheduler, notifier) {
+  const node = Object.create(ROOT_EFFECT_NODE);
+  node.fn = fn;
+  node.scheduler = scheduler;
+  node.notifier = notifier;
+  node.zone = typeof Zone !== "undefined" ? Zone.current : null;
+  node.scheduler.schedule(node);
+  node.notifier.notify(
+    12
+    /* NotificationSource.RootEffect */
+  );
+  return node;
+}
 var ResourceStatus;
 (function(ResourceStatus2) {
   ResourceStatus2[ResourceStatus2["Idle"] = 0] = "Idle";
@@ -23937,6 +24107,7 @@ export {
   numberAttribute,
   untracked2 as untracked,
   computed,
+  effect,
   reflectComponentType
 };
 /*! Bundled license information:
@@ -23946,7 +24117,7 @@ export {
 @angular/core/fesm2022/primitives/signals.mjs:
 @angular/core/fesm2022/core.mjs:
   (**
-   * @license Angular v19.2.14
+   * @license Angular v19.2.17
    * (c) 2010-2025 Google LLC. https://angular.io/
    * License: MIT
    *)
