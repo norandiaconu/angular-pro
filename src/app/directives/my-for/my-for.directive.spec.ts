@@ -1,19 +1,51 @@
-import { ElementRef, TemplateRef, ViewContainerRef } from '@angular/core';
+import { Component } from '@angular/core';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { By } from '@angular/platform-browser';
 import { MyForDirective } from './my-for.directive';
-import { TestBed } from '@angular/core/testing';
-import { MockElementRef } from '../highlight/highlight.directive.spec';
+import { User } from '../../advanced-components/advanced-components.interface';
+
+@Component({
+    standalone: true,
+    imports: [MyForDirective],
+    template: ` <div *myFor="let user of users; let i = index" class="user-item">{{ i }}: {{ user.name }}</div> `
+})
+class TestUserComponent {
+    users: User[] = [];
+}
 
 describe('MyForDirective', () => {
-    let directive: MyForDirective;
+    let fixture: ComponentFixture<TestUserComponent>;
+    let component: TestUserComponent;
 
     beforeEach(() => {
         TestBed.configureTestingModule({
-            providers: [MyForDirective, ViewContainerRef, TemplateRef, { provide: ElementRef, useClass: MockElementRef }]
-        });
-        directive = TestBed.inject(MyForDirective);
+            imports: [TestUserComponent, MyForDirective]
+        }).compileComponents();
+
+        fixture = TestBed.createComponent(TestUserComponent);
+        component = fixture.componentInstance;
     });
 
-    it('should create an instance', () => {
-        expect(directive).toBeTruthy();
+    it('should render a list of users', () => {
+        component.users = [{ name: 'Alice' } as User, { name: 'Bob' } as User];
+
+        fixture.detectChanges();
+
+        const debugElements = fixture.debugElement.queryAll(By.css('.user-item'));
+        expect(debugElements.length).toBe(2);
+        expect(debugElements[0].nativeElement.textContent).toContain('0: Alice');
+        expect(debugElements[1].nativeElement.textContent).toContain('1: Bob');
+    });
+
+    it('should clear the view when the list is emptied', () => {
+        component.users = [{ name: 'Alice' } as User];
+        fixture.detectChanges();
+        expect(fixture.debugElement.queryAll(By.css('.user-item')).length).toBe(1);
+
+        component.users = [];
+        fixture.detectChanges();
+
+        const debugElements = fixture.debugElement.queryAll(By.css('.user-item'));
+        expect(debugElements.length).toBe(0);
     });
 });

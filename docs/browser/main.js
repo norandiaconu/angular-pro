@@ -13,8 +13,10 @@ import {
   ComponentFactoryResolver$1,
   ConnectableObservable,
   Console,
+  ContentChild,
   ContentChildren,
   DEFAULT_CURRENCY_CODE,
+  DOCUMENT,
   DestroyRef,
   Directive,
   EMPTY,
@@ -25,13 +27,15 @@ import {
   ErrorHandler,
   EventEmitter,
   Host,
+  HostAttributeToken,
   HostBinding,
   HostListener,
   IMAGE_CONFIG,
   IMAGE_CONFIG_DEFAULTS,
   INJECTOR_SCOPE,
+  INTERNAL_APPLICATION_ERROR_HANDLER,
+  IS_ENABLED_BLOCKING_INITIAL_NAVIGATION,
   Inject,
-  InjectFlags,
   Injectable,
   InjectionToken,
   Injector,
@@ -44,6 +48,7 @@ import {
   NgModuleFactory$1,
   NgModuleRef$1,
   NgZone,
+  Observable,
   Optional,
   Output,
   PLATFORM_ID,
@@ -65,7 +70,8 @@ import {
   Testability,
   TestabilityRegistry,
   TracingService,
-  Version,
+  ViewChild,
+  ViewChildren,
   ViewContainerRef,
   ViewEncapsulation,
   XSS_SECURITY_URL,
@@ -76,6 +82,7 @@ import {
   _sanitizeHtml,
   _sanitizeUrl,
   afterNextRender,
+  allLeavingAnimations,
   allowSanitizationBypassAndThrow,
   booleanAttribute,
   bypassSanitizationTrustHtml,
@@ -128,6 +135,7 @@ import {
   pipe,
   platformCore,
   provideAppInitializer,
+  publishExternalGlobalUtil,
   refCount,
   reflectComponentType,
   runInInjectionContext,
@@ -155,6 +163,7 @@ import {
   ɵɵattribute,
   ɵɵclassProp,
   ɵɵconditional,
+  ɵɵconditionalCreate,
   ɵɵcontentQuery,
   ɵɵcontentQuerySignal,
   ɵɵdefineComponent,
@@ -164,6 +173,10 @@ import {
   ɵɵdefineNgModule,
   ɵɵdefinePipe,
   ɵɵdirectiveInject,
+  ɵɵdomElement,
+  ɵɵdomElementEnd,
+  ɵɵdomElementStart,
+  ɵɵdomListener,
   ɵɵelement,
   ɵɵelementContainer,
   ɵɵelementEnd,
@@ -199,7 +212,7 @@ import {
   ɵɵtextInterpolate1,
   ɵɵtextInterpolate2,
   ɵɵviewQuerySignal
-} from "./chunk-GTZ5HGL3.js";
+} from "./chunk-7SEXRZKV.js";
 
 // src/environments/environment.ts
 var environment = {
@@ -207,19 +220,16 @@ var environment = {
 };
 
 // src/app/custom-pipes/filesize.pipe.ts
-var FilesizePipe = class _FilesizePipe {
+var _FilesizePipe = class _FilesizePipe {
   transform(size, extension = "megabytes") {
     return (size / (1024 * 1024)).toFixed(2) + extension;
   }
-  static {
-    this.\u0275fac = function FilesizePipe_Factory(__ngFactoryType__) {
-      return new (__ngFactoryType__ || _FilesizePipe)();
-    };
-  }
-  static {
-    this.\u0275pipe = /* @__PURE__ */ \u0275\u0275definePipe({ name: "filesize", type: _FilesizePipe, pure: true });
-  }
 };
+_FilesizePipe.\u0275fac = function FilesizePipe_Factory(__ngFactoryType__) {
+  return new (__ngFactoryType__ || _FilesizePipe)();
+};
+_FilesizePipe.\u0275pipe = /* @__PURE__ */ \u0275\u0275definePipe({ name: "filesize", type: _FilesizePipe, pure: true });
+var FilesizePipe = _FilesizePipe;
 (() => {
   (typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(FilesizePipe, [{
     type: Pipe,
@@ -229,10 +239,7 @@ var FilesizePipe = class _FilesizePipe {
   }], null, null);
 })();
 
-// node_modules/@angular/common/fesm2022/dom_tokens-rA0ACyx7.mjs
-var DOCUMENT = new InjectionToken(ngDevMode ? "DocumentToken" : "");
-
-// node_modules/@angular/common/fesm2022/location-Dq4mJT-A.mjs
+// node_modules/@angular/common/fesm2022/location.mjs
 var _DOM = null;
 function getDOM() {
   return _DOM;
@@ -719,7 +726,7 @@ function _stripOrigin(baseHref) {
   return baseHref;
 }
 
-// node_modules/@angular/common/fesm2022/common_module-Dx7dWex5.mjs
+// node_modules/@angular/common/fesm2022/common_module.mjs
 var HashLocationStrategy = class _HashLocationStrategy extends LocationStrategy {
   _platformLocation;
   _baseHref = "";
@@ -1117,7 +1124,7 @@ function getLocaleCurrencies(locale) {
 var getLocalePluralCase2 = getLocalePluralCase;
 function checkFullData(data) {
   if (!data[LocaleDataIndex.ExtraData]) {
-    throw new Error(`Missing extra locale data for the locale "${data[LocaleDataIndex.LocaleId]}". Use "registerLocaleData" to load new data. See the "I18n guide" on angular.io to know more.`);
+    throw new RuntimeError(2303, ngDevMode && `Missing extra locale data for the locale "${data[LocaleDataIndex.LocaleId]}". Use "registerLocaleData" to load new data. See the "I18n guide" on angular.io to know more.`);
   }
 }
 function getLocaleExtraDayPeriodRules(locale) {
@@ -1153,7 +1160,7 @@ function getLastDefinedValue(data, index) {
       return data[i];
     }
   }
-  throw new Error("Locale data API: locale data undefined");
+  throw new RuntimeError(2304, ngDevMode && "Locale data API: locale data undefined");
 }
 function extractTime(time) {
   const [h, m] = time.split(":");
@@ -1211,6 +1218,9 @@ function formatDate(value, format, locale, timezone) {
       break;
     }
   }
+  if (typeof ngDevMode === "undefined" || ngDevMode) {
+    assertValidDateFormat(parts);
+  }
   let dateTimezoneOffset = date.getTimezoneOffset();
   if (timezone) {
     dateTimezoneOffset = timezoneToOffset(timezone, dateTimezoneOffset);
@@ -1222,6 +1232,16 @@ function formatDate(value, format, locale, timezone) {
     text += dateFormatter ? dateFormatter(date, locale, dateTimezoneOffset) : value2 === "''" ? "'" : value2.replace(/(^'|'$)/g, "").replace(/''/g, "'");
   });
   return text;
+}
+function assertValidDateFormat(parts) {
+  if (parts.some((part) => /^Y+$/.test(part)) && !parts.some((part) => /^w+$/.test(part))) {
+    const message = `Suspicious use of week-based year "Y" in date pattern "${parts.join("")}". Did you mean to use calendar year "y" instead?`;
+    if (parts.length === 1) {
+      console.error(formatRuntimeError(2300, message));
+    } else {
+      throw new RuntimeError(2300, message);
+    }
+  }
 }
 function createDate(year, month, date) {
   const newDate = /* @__PURE__ */ new Date(0);
@@ -1354,7 +1374,7 @@ function getDatePart(part, date) {
     case 7:
       return date.getDay();
     default:
-      throw new Error(`Unknown DateType value "${part}".`);
+      throw new RuntimeError(2301, ngDevMode && `Unknown DateType value "${part}".`);
   }
 }
 function dateStrGetter(name, width, form = FormStyle.Format, extended = false) {
@@ -1402,7 +1422,7 @@ function getDateTranslation(date, locale, name, width, form, extended) {
       return getLocaleEraNames(locale, width)[date.getFullYear() <= 0 ? 0 : 1];
     default:
       const unexpected = name;
-      throw new Error(`unexpected translation type ${unexpected}`);
+      throw new RuntimeError(2302, ngDevMode && `unexpected translation type ${unexpected}`);
   }
 }
 function timeZoneGetter(width) {
@@ -1424,7 +1444,7 @@ function timeZoneGetter(width) {
           return (zone >= 0 ? "+" : "") + padNumber(hours, 2, minusSign) + ":" + padNumber(Math.abs(zone % 60), 2, minusSign);
         }
       default:
-        throw new Error(`Unknown zone width "${width}"`);
+        throw new RuntimeError(2310, ngDevMode && `Unknown zone width "${width}"`);
     }
   };
 }
@@ -1754,7 +1774,7 @@ function toDate(value) {
   }
   const date = new Date(value);
   if (!isDate(date)) {
-    throw new Error(`Unable to convert "${value}" into a date`);
+    throw new RuntimeError(2311, ngDevMode && `Unable to convert "${value}" into a date`);
   }
   return date;
 }
@@ -1804,7 +1824,7 @@ function formatNumberToLocaleString(value, pattern, locale, groupSymbol, decimal
     if (digitsInfo) {
       const parts = digitsInfo.match(NUMBER_FORMAT_REGEXP);
       if (parts === null) {
-        throw new Error(`${digitsInfo} is not a valid digit info`);
+        throw new RuntimeError(2306, ngDevMode && `${digitsInfo} is not a valid digit info`);
       }
       const minIntPart = parts[1];
       const minFractionPart = parts[3];
@@ -1981,7 +2001,7 @@ function parseNumber(num) {
 }
 function roundNumber(parsedNumber, minFrac, maxFrac) {
   if (minFrac > maxFrac) {
-    throw new Error(`The minimum number of digits after fraction (${minFrac}) is higher than the maximum (${maxFrac}).`);
+    throw new RuntimeError(2307, ngDevMode && `The minimum number of digits after fraction (${minFrac}) is higher than the maximum (${maxFrac}).`);
   }
   let digits = parsedNumber.digits;
   let fractionLen = digits.length - parsedNumber.integerLen;
@@ -2035,7 +2055,7 @@ function roundNumber(parsedNumber, minFrac, maxFrac) {
 function parseIntAutoRadix(text) {
   const result = parseInt(text);
   if (isNaN(result)) {
-    throw new Error("Invalid integer literal when parsing " + text);
+    throw new RuntimeError(2305, ngDevMode && "Invalid integer literal when parsing " + text);
   }
   return result;
 }
@@ -2079,7 +2099,7 @@ function getPluralCategory(value, cases, ngLocalization, locale) {
   if (cases.indexOf("other") > -1) {
     return "other";
   }
-  throw new Error(`No plural message found for value "${value}"`);
+  throw new RuntimeError(2308, ngDevMode && `No plural message found for value "${value}"`);
 }
 var NgLocaleLocalization = class _NgLocaleLocalization extends NgLocalization {
   locale;
@@ -2269,6 +2289,7 @@ var NgComponentOutlet = class _NgComponentOutlet {
   ngComponentOutlet = null;
   ngComponentOutletInputs;
   ngComponentOutletInjector;
+  ngComponentOutletEnvironmentInjector;
   ngComponentOutletContent;
   ngComponentOutletNgModule;
   /**
@@ -2297,7 +2318,7 @@ var NgComponentOutlet = class _NgComponentOutlet {
     return changes["ngComponentOutletNgModule"] !== void 0 || changes["ngComponentOutletNgModuleFactory"] !== void 0;
   }
   _needToReCreateComponentInstance(changes) {
-    return changes["ngComponentOutlet"] !== void 0 || changes["ngComponentOutletContent"] !== void 0 || changes["ngComponentOutletInjector"] !== void 0 || this._needToReCreateNgModuleInstance(changes);
+    return changes["ngComponentOutlet"] !== void 0 || changes["ngComponentOutletContent"] !== void 0 || changes["ngComponentOutletInjector"] !== void 0 || changes["ngComponentOutletEnvironmentInjector"] !== void 0 || this._needToReCreateNgModuleInstance(changes);
   }
   /** @docs-private */
   ngOnChanges(changes) {
@@ -2320,7 +2341,8 @@ var NgComponentOutlet = class _NgComponentOutlet {
         this._componentRef = this._viewContainerRef.createComponent(this.ngComponentOutlet, {
           injector,
           ngModuleRef: this._moduleRef,
-          projectableNodes: this.ngComponentOutletContent
+          projectableNodes: this.ngComponentOutletContent,
+          environmentInjector: this.ngComponentOutletEnvironmentInjector
         });
       }
     }
@@ -2361,6 +2383,7 @@ var NgComponentOutlet = class _NgComponentOutlet {
       ngComponentOutlet: "ngComponentOutlet",
       ngComponentOutletInputs: "ngComponentOutletInputs",
       ngComponentOutletInjector: "ngComponentOutletInjector",
+      ngComponentOutletEnvironmentInjector: "ngComponentOutletEnvironmentInjector",
       ngComponentOutletContent: "ngComponentOutletContent",
       ngComponentOutletNgModule: "ngComponentOutletNgModule",
       ngComponentOutletNgModuleFactory: "ngComponentOutletNgModuleFactory"
@@ -2386,6 +2409,9 @@ var NgComponentOutlet = class _NgComponentOutlet {
       type: Input
     }],
     ngComponentOutletInjector: [{
+      type: Input
+    }],
+    ngComponentOutletEnvironmentInjector: [{
       type: Input
     }],
     ngComponentOutletContent: [{
@@ -2438,6 +2464,7 @@ var NgForOf = class _NgForOf {
   /**
    * The value of the iterable expression, which can be used as a
    * [template input variable](guide/directives/structural-directives#shorthand).
+   * @deprecated The `ngFor` directive is deprecated. Use the `@for` block instead.
    */
   set ngForOf(ngForOf) {
     this._ngForOf = ngForOf;
@@ -2460,10 +2487,11 @@ var NgForOf = class _NgForOf {
    * and the iterable is recreated and re-rendered, but most of the data is still the same).
    *
    * @see {@link TrackByFunction}
+   * @deprecated The `ngFor` directive is deprecated. Use the `@for` block instead.
    */
   set ngForTrackBy(fn) {
     if ((typeof ngDevMode === "undefined" || ngDevMode) && fn != null && typeof fn !== "function") {
-      console.warn(`trackBy must be a function, but received ${JSON.stringify(fn)}. See https://angular.io/api/common/NgForOf#change-propagation for more information.`);
+      console.warn(`trackBy must be a function, but received ${JSON.stringify(fn)}. See https://angular.dev/api/common/NgForOf#change-propagation for more information.`);
     }
     this._trackByFn = fn;
   }
@@ -2484,6 +2512,7 @@ var NgForOf = class _NgForOf {
   /**
    * A reference to the template that is stamped out for each item in the iterable.
    * @see [template reference variable](guide/templates/variables#template-reference-variables)
+   * @deprecated The `ngFor` directive is deprecated. Use the `@for` block instead.
    */
   set ngForTemplate(value) {
     if (value) {
@@ -2609,6 +2638,7 @@ var NgIf = class _NgIf {
   }
   /**
    * The Boolean expression to evaluate as the condition for showing a template.
+   * @deprecated Use the `@if` block instead. Intent to remove in v22
    */
   set ngIf(condition) {
     this._context.$implicit = this._context.ngIf = condition;
@@ -2616,6 +2646,7 @@ var NgIf = class _NgIf {
   }
   /**
    * A template to show if the condition expression evaluates to true.
+   * @deprecated Use the `@if` block instead. Intent to remove in v22
    */
   set ngIfThen(templateRef) {
     assertTemplate(templateRef, (typeof ngDevMode === "undefined" || ngDevMode) && "ngIfThen");
@@ -2625,6 +2656,7 @@ var NgIf = class _NgIf {
   }
   /**
    * A template to show if the condition expression evaluates to false.
+   * @deprecated Use the `@if` block instead. Intent to remove in v22
    */
   set ngIfElse(templateRef) {
     assertTemplate(templateRef, (typeof ngDevMode === "undefined" || ngDevMode) && "ngIfElse");
@@ -2746,6 +2778,7 @@ var NgSwitch = class _NgSwitch {
   _lastCaseCheckIndex = 0;
   _lastCasesMatched = false;
   _ngSwitch;
+  /** @deprecated Use the `@switch` block instead. Intent to remove in v22 */
   set ngSwitch(newValue) {
     this._ngSwitch = newValue;
     if (this._caseCount === 0) {
@@ -2808,6 +2841,7 @@ var NgSwitchCase = class _NgSwitchCase {
   _view;
   /**
    * Stores the HTML template to be selected on match.
+   * @deprecated Use the `@case` block within a `@switch` block instead. Intent to remove in v22
    */
   ngSwitchCase;
   constructor(viewContainer, templateRef, ngSwitch) {
@@ -3159,12 +3193,10 @@ function invalidPipeArgumentError(type, value) {
   return new RuntimeError(2100, ngDevMode && `InvalidPipeArgument: '${value}' for pipe '${stringify(type)}'`);
 }
 var SubscribableStrategy = class {
-  createSubscription(async, updateLatestValue) {
+  createSubscription(async, updateLatestValue, onError) {
     return untracked(() => async.subscribe({
       next: updateLatestValue,
-      error: (e) => {
-        throw e;
-      }
+      error: onError
     }));
   }
   dispose(subscription) {
@@ -3172,18 +3204,17 @@ var SubscribableStrategy = class {
   }
 };
 var PromiseStrategy = class {
-  createSubscription(async, updateLatestValue) {
+  createSubscription(async, updateLatestValue, onError) {
     async.then(
       // Using optional chaining because we may have set it to `null`; since the promise
       // is async, the view might be destroyed by the time the promise resolves.
       (v) => updateLatestValue?.(v),
-      (e) => {
-        throw e;
-      }
+      (e) => onError?.(e)
     );
     return {
       unsubscribe: () => {
         updateLatestValue = null;
+        onError = null;
       }
     };
   }
@@ -3200,6 +3231,7 @@ var AsyncPipe = class _AsyncPipe {
   _subscription = null;
   _obj = null;
   _strategy = null;
+  applicationErrorHandler = inject(INTERNAL_APPLICATION_ERROR_HANDLER);
   constructor(ref) {
     this._ref = ref;
   }
@@ -3230,7 +3262,7 @@ var AsyncPipe = class _AsyncPipe {
   _subscribe(obj) {
     this._obj = obj;
     this._strategy = this._selectStrategy(obj);
-    this._subscription = this._strategy.createSubscription(obj, (value) => this._updateLatestValue(obj, value));
+    this._subscription = this._strategy.createSubscription(obj, (value) => this._updateLatestValue(obj, value), (e) => this.applicationErrorHandler(e));
   }
   _selectStrategy(obj) {
     if (isPromise(obj)) {
@@ -3690,7 +3722,7 @@ var CurrencyPipe = class _CurrencyPipe {
     if (!isValue(value)) return null;
     locale ||= this._locale;
     if (typeof display === "boolean") {
-      if ((typeof ngDevMode === "undefined" || ngDevMode) && console && console.warn) {
+      if (typeof ngDevMode === "undefined" || ngDevMode) {
         console.warn(`Warning: the currency pipe has been changed in Angular v5. The symbolDisplay option (third parameter) is now a string instead of a boolean. The accepted values are "code", "symbol" or "symbol-narrow".`);
       }
       display = display ? "symbol" : "code";
@@ -3747,7 +3779,7 @@ function strToNumber(value) {
     return Number(value);
   }
   if (typeof value !== "number") {
-    throw new Error(`${value} is not a number`);
+    throw new RuntimeError(2309, ngDevMode && `${value} is not a number`);
   }
   return value;
 }
@@ -3800,7 +3832,7 @@ var CommonModule = class _CommonModule {
   }], null, null);
 })();
 
-// node_modules/@angular/common/fesm2022/xhr-BfNfxNDv.mjs
+// node_modules/@angular/common/fesm2022/xhr.mjs
 function parseCookieValue(cookieStr, name) {
   name = encodeURIComponent(name);
   for (const cookie of cookieStr.split(";")) {
@@ -3812,19 +3844,11 @@ function parseCookieValue(cookieStr, name) {
   }
   return null;
 }
-var PLATFORM_BROWSER_ID = "browser";
-var PLATFORM_SERVER_ID = "server";
-function isPlatformBrowser(platformId) {
-  return platformId === PLATFORM_BROWSER_ID;
-}
-function isPlatformServer(platformId) {
-  return platformId === PLATFORM_SERVER_ID;
-}
 var XhrFactory = class {
 };
 
 // node_modules/@angular/common/fesm2022/common.mjs
-var VERSION = new Version("19.2.17");
+var PLATFORM_BROWSER_ID = "browser";
 var ViewportScroller = class _ViewportScroller {
   // De-sugared tree-shakable injection
   // See #23917
@@ -3870,8 +3894,11 @@ var BrowserViewportScroller = class {
    * Sets the scroll position.
    * @param position The new position in screen coordinates.
    */
-  scrollToPosition(position) {
-    this.window.scrollTo(position[0], position[1]);
+  scrollToPosition(position, options) {
+    this.window.scrollTo(__spreadProps(__spreadValues({}, options), {
+      left: position[0],
+      top: position[1]
+    }));
   }
   /**
    * Scrolls to an element and attempts to focus the element.
@@ -3884,10 +3911,10 @@ var BrowserViewportScroller = class {
    * @see https://html.spec.whatwg.org/#the-indicated-part-of-the-document
    * @see https://html.spec.whatwg.org/#scroll-to-fragid
    */
-  scrollToAnchor(target) {
+  scrollToAnchor(target, options) {
     const elSelected = findAnchorFromDocument(this.document, target);
     if (elSelected) {
-      this.scrollToElement(elSelected);
+      this.scrollToElement(elSelected, options);
       elSelected.focus();
     }
   }
@@ -3895,7 +3922,11 @@ var BrowserViewportScroller = class {
    * Disables automatic scroll restoration provided by the browser.
    */
   setHistoryScrollRestoration(scrollRestoration) {
-    this.window.history.scrollRestoration = scrollRestoration;
+    try {
+      this.window.history.scrollRestoration = scrollRestoration;
+    } catch {
+      console.warn(formatRuntimeError(2400, ngDevMode && "Failed to set `window.history.scrollRestoration`. This may occur when:\n\u2022 The script is running inside a sandboxed iframe\n\u2022 The window is partially navigated or inactive\n\u2022 The script is executed in an untrusted or special context (e.g., test runners, browser extensions, or content previews)\nScroll position may not be preserved across navigation."));
+    }
   }
   /**
    * Scrolls to an element using the native offset and the specified offset set on this scroller.
@@ -3903,12 +3934,15 @@ var BrowserViewportScroller = class {
    * The offset can be used when we know that there is a floating header and scrolling naively to an
    * element (ex: `scrollIntoView`) leaves the element hidden behind the floating header.
    */
-  scrollToElement(el) {
+  scrollToElement(el, options) {
     const rect = el.getBoundingClientRect();
     const left = rect.left + this.window.pageXOffset;
     const top = rect.top + this.window.pageYOffset;
     const offset = this.offset();
-    this.window.scrollTo(left - offset[0], top - offset[1]);
+    this.window.scrollTo(__spreadProps(__spreadValues({}, options), {
+      left: left - offset[0],
+      top: top - offset[1]
+    }));
   }
 };
 function findAnchorFromDocument(document2, target) {
@@ -4088,14 +4122,11 @@ function assertDevMode(checkName) {
 var LCPImageObserver = class _LCPImageObserver {
   // Map of full image URLs -> original `ngSrc` values.
   images = /* @__PURE__ */ new Map();
-  window = null;
+  window = inject(DOCUMENT).defaultView;
   observer = null;
   constructor() {
-    const isBrowser = isPlatformBrowser(inject(PLATFORM_ID));
     assertDevMode("LCP checker");
-    const win = inject(DOCUMENT).defaultView;
-    if (isBrowser && typeof PerformanceObserver !== "undefined") {
-      this.window = win;
+    if (typeof PerformanceObserver !== "undefined") {
       this.observer = this.initPerformanceObserver();
     }
   }
@@ -4181,7 +4212,7 @@ function logModifiedWarning(ngSrc) {
   const directiveDetails = imgDirectiveDetails(ngSrc);
   console.warn(formatRuntimeError(2964, `${directiveDetails} this image is the Largest Contentful Paint (LCP) element and has had its "ngSrc" attribute modified. This can cause slower loading performance. It is recommended not to modify the "ngSrc" property on any image which could be the LCP element.`));
 }
-var INTERNAL_PRECONNECT_CHECK_BLOCKLIST = /* @__PURE__ */ new Set(["localhost", "127.0.0.1", "0.0.0.0"]);
+var INTERNAL_PRECONNECT_CHECK_BLOCKLIST = /* @__PURE__ */ new Set(["localhost", "127.0.0.1", "0.0.0.0", "[::1]"]);
 var PRECONNECT_CHECK_BLOCKLIST = new InjectionToken(ngDevMode ? "PRECONNECT_CHECK_BLOCKLIST" : "");
 var PreconnectLinkChecker = class _PreconnectLinkChecker {
   document = inject(DOCUMENT);
@@ -4342,7 +4373,6 @@ var ASPECT_RATIO_TOLERANCE = 0.1;
 var OVERSIZED_IMAGE_TOLERANCE = 1e3;
 var FIXED_SRCSET_WIDTH_LIMIT = 1920;
 var FIXED_SRCSET_HEIGHT_LIMIT = 1080;
-var PLACEHOLDER_BLUR_AMOUNT = 15;
 var PLACEHOLDER_DIMENSION_LIMIT = 1e3;
 var DATA_URL_WARN_LIMIT = 4e3;
 var DATA_URL_ERROR_LIMIT = 1e4;
@@ -4355,6 +4385,7 @@ var NgOptimizedImage = class _NgOptimizedImage {
   renderer = inject(Renderer2);
   imgElement = inject(ElementRef).nativeElement;
   injector = inject(Injector);
+  destroyRef = inject(DestroyRef);
   // An LCP image observer should be injected only in development mode.
   // Do not assign it to `null` to avoid having a redundant property in the production bundle.
   lcpObserver;
@@ -4398,6 +4429,17 @@ var NgOptimizedImage = class _NgOptimizedImage {
    * For fixed size images: the desired rendered height of the image in pixels.
    */
   height;
+  /**
+   * The desired decoding behavior for the image. Defaults to `auto`
+   * if not explicitly set, matching native browser behavior.
+   *
+   * Use `async` to decode the image off the main thread (non-blocking),
+   * `sync` for immediate decoding (blocking), or `auto` to let the
+   * browser decide the optimal strategy.
+   *
+   * [Spec](https://html.spec.whatwg.org/multipage/images.html#image-decoding-hint)
+   */
+  decoding;
   /**
    * The desired loading behavior (lazy, eager, or auto). Defaults to `lazy`,
    * which is recommended for most images.
@@ -4450,8 +4492,7 @@ var NgOptimizedImage = class _NgOptimizedImage {
   constructor() {
     if (ngDevMode) {
       this.lcpObserver = this.injector.get(LCPImageObserver);
-      const destroyRef = inject(DestroyRef);
-      destroyRef.onDestroy(() => {
+      this.destroyRef.onDestroy(() => {
         if (!this.priority && this._renderedSrc !== null) {
           this.lcpObserver.unregisterImage(this._renderedSrc);
         }
@@ -4473,7 +4514,7 @@ var NgOptimizedImage = class _NgOptimizedImage {
       assertNotBlobUrl(this);
       if (this.fill) {
         assertEmptyWidthAndHeight(this);
-        ngZone.runOutsideAngular(() => assertNonZeroRenderedHeight(this, this.imgElement, this.renderer));
+        ngZone.runOutsideAngular(() => assertNonZeroRenderedHeight(this, this.imgElement, this.renderer, this.destroyRef));
       } else {
         assertNonEmptyWidthAndHeight(this);
         if (this.height !== void 0) {
@@ -4482,9 +4523,10 @@ var NgOptimizedImage = class _NgOptimizedImage {
         if (this.width !== void 0) {
           assertGreaterThanZero(this, this.width, "width");
         }
-        ngZone.runOutsideAngular(() => assertNoImageDistortion(this, this.imgElement, this.renderer));
+        ngZone.runOutsideAngular(() => assertNoImageDistortion(this, this.imgElement, this.renderer, this.destroyRef));
       }
       assertValidLoadingInput(this);
+      assertValidDecodingInput(this);
       if (!this.ngSrcset) {
         assertNoComplexSizes(this);
       }
@@ -4518,6 +4560,7 @@ var NgOptimizedImage = class _NgOptimizedImage {
     }
     this.setHostAttribute("loading", this.getLoadingBehavior());
     this.setHostAttribute("fetchpriority", this.getFetchPriority());
+    this.setHostAttribute("decoding", this.getDecoding());
     this.setHostAttribute("ng-img", "true");
     const rewrittenSrcset = this.updateSrcAndSrcset();
     if (this.sizes) {
@@ -4573,6 +4616,12 @@ var NgOptimizedImage = class _NgOptimizedImage {
   }
   getFetchPriority() {
     return this.priority ? "high" : "auto";
+  }
+  getDecoding() {
+    if (this.priority) {
+      return "sync";
+    }
+    return this.decoding ?? "auto";
   }
   getRewrittenSrc() {
     if (!this._renderedSrc) {
@@ -4687,6 +4736,10 @@ var NgOptimizedImage = class _NgOptimizedImage {
     };
     const removeLoadListenerFn = this.renderer.listen(img, "load", callback);
     const removeErrorListenerFn = this.renderer.listen(img, "error", callback);
+    this.destroyRef.onDestroy(() => {
+      removeLoadListenerFn();
+      removeErrorListenerFn();
+    });
     callOnLoadIfImageIsLoaded(img, callback);
   }
   setHostAttribute(name, value) {
@@ -4710,6 +4763,7 @@ var NgOptimizedImage = class _NgOptimizedImage {
       sizes: "sizes",
       width: [2, "width", "width", numberAttribute],
       height: [2, "height", "height", numberAttribute],
+      decoding: "decoding",
       loading: "loading",
       priority: [2, "priority", "priority", booleanAttribute],
       loaderParams: "loaderParams",
@@ -4737,7 +4791,7 @@ var NgOptimizedImage = class _NgOptimizedImage {
         "[style.background-position]": 'placeholder ? "50% 50%" : null',
         "[style.background-repeat]": 'placeholder ? "no-repeat" : null',
         "[style.background-image]": "placeholder ? generatePlaceholder(placeholder) : null",
-        "[style.filter]": `placeholder && shouldBlurPlaceholder(placeholderConfig) ? "blur(${PLACEHOLDER_BLUR_AMOUNT}px)" : null`
+        "[style.filter]": 'placeholder && shouldBlurPlaceholder(placeholderConfig) ? "blur(15px)" : null'
       }
     }]
   }], () => [], {
@@ -4765,6 +4819,9 @@ var NgOptimizedImage = class _NgOptimizedImage {
       args: [{
         transform: numberAttribute
       }]
+    }],
+    decoding: [{
+      type: Input
     }],
     loading: [{
       type: Input
@@ -4926,7 +4983,7 @@ function assertGreaterThanZero(dir, inputValue, inputName) {
     throw new RuntimeError(2952, `${imgDirectiveDetails(dir.ngSrc)} \`${inputName}\` has an invalid value. To fix this, provide \`${inputName}\` as a number greater than 0.`);
   }
 }
-function assertNoImageDistortion(dir, img, renderer) {
+function assertNoImageDistortion(dir, img, renderer, destroyRef) {
   const callback = () => {
     removeLoadListenerFn();
     removeErrorListenerFn();
@@ -4981,6 +5038,10 @@ Note: Recommended intrinsic image size is calculated assuming a maximum DPR of $
     removeLoadListenerFn();
     removeErrorListenerFn();
   });
+  destroyRef.onDestroy(() => {
+    removeLoadListenerFn();
+    removeErrorListenerFn();
+  });
   callOnLoadIfImageIsLoaded(img, callback);
 }
 function assertNonEmptyWidthAndHeight(dir) {
@@ -4996,7 +5057,7 @@ function assertEmptyWidthAndHeight(dir) {
     throw new RuntimeError(2952, `${imgDirectiveDetails(dir.ngSrc)} the attributes \`height\` and/or \`width\` are present along with the \`fill\` attribute. Because \`fill\` mode causes an image to fill its containing element, the size attributes have no effect and should be removed.`);
   }
 }
-function assertNonZeroRenderedHeight(dir, img, renderer) {
+function assertNonZeroRenderedHeight(dir, img, renderer, destroyRef) {
   const callback = () => {
     removeLoadListenerFn();
     removeErrorListenerFn();
@@ -5010,6 +5071,10 @@ function assertNonZeroRenderedHeight(dir, img, renderer) {
     removeLoadListenerFn();
     removeErrorListenerFn();
   });
+  destroyRef.onDestroy(() => {
+    removeLoadListenerFn();
+    removeErrorListenerFn();
+  });
   callOnLoadIfImageIsLoaded(img, callback);
 }
 function assertValidLoadingInput(dir) {
@@ -5019,6 +5084,12 @@ function assertValidLoadingInput(dir) {
   const validInputs = ["auto", "eager", "lazy"];
   if (typeof dir.loading === "string" && !validInputs.includes(dir.loading)) {
     throw new RuntimeError(2952, `${imgDirectiveDetails(dir.ngSrc)} the \`loading\` attribute has an invalid value (\`${dir.loading}\`). To fix this, provide a valid value ("lazy", "eager", or "auto").`);
+  }
+}
+function assertValidDecodingInput(dir) {
+  const validInputs = ["sync", "async", "auto"];
+  if (typeof dir.decoding === "string" && !validInputs.includes(dir.decoding)) {
+    throw new RuntimeError(2952, `${imgDirectiveDetails(dir.ngSrc)} the \`decoding\` attribute has an invalid value (\`${dir.decoding}\`). To fix this, provide a valid value ("sync", "async", or "auto").`);
   }
 }
 function assertNotMissingBuiltInLoader(ngSrc, imageLoader) {
@@ -5087,7 +5158,51 @@ function booleanOrUrlAttribute(value) {
   return booleanAttribute(value);
 }
 
-// node_modules/@angular/platform-browser/fesm2022/dom_renderer-DGKzginR.mjs
+// node_modules/@angular/platform-browser/fesm2022/dom_renderer.mjs
+var EventManagerPlugin = class {
+  _doc;
+  // TODO: remove (has some usage in G3)
+  constructor(_doc) {
+    this._doc = _doc;
+  }
+  // Using non-null assertion because it's set by EventManager's constructor
+  manager;
+};
+var DomEventsPlugin = class _DomEventsPlugin extends EventManagerPlugin {
+  constructor(doc) {
+    super(doc);
+  }
+  // This plugin should come last in the list of plugins, because it accepts all
+  // events.
+  supports(eventName) {
+    return true;
+  }
+  addEventListener(element, eventName, handler, options) {
+    element.addEventListener(eventName, handler, options);
+    return () => this.removeEventListener(element, eventName, handler, options);
+  }
+  removeEventListener(target, eventName, callback, options) {
+    return target.removeEventListener(eventName, callback, options);
+  }
+  static \u0275fac = function DomEventsPlugin_Factory(__ngFactoryType__) {
+    return new (__ngFactoryType__ || _DomEventsPlugin)(\u0275\u0275inject(DOCUMENT));
+  };
+  static \u0275prov = /* @__PURE__ */ \u0275\u0275defineInjectable({
+    token: _DomEventsPlugin,
+    factory: _DomEventsPlugin.\u0275fac
+  });
+};
+(() => {
+  (typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(DomEventsPlugin, [{
+    type: Injectable
+  }], () => [{
+    type: void 0,
+    decorators: [{
+      type: Inject,
+      args: [DOCUMENT]
+    }]
+  }], null);
+})();
 var EVENT_MANAGER_PLUGINS = new InjectionToken(ngDevMode ? "EventManagerPlugins" : "");
 var EventManager = class _EventManager {
   _zone;
@@ -5101,7 +5216,12 @@ var EventManager = class _EventManager {
     plugins.forEach((plugin) => {
       plugin.manager = this;
     });
-    this._plugins = plugins.slice().reverse();
+    const otherPlugins = plugins.filter((p) => !(p instanceof DomEventsPlugin));
+    this._plugins = otherPlugins.slice().reverse();
+    const domEventPlugin = plugins.find((p) => p instanceof DomEventsPlugin);
+    if (domEventPlugin) {
+      this._plugins.push(domEventPlugin);
+    }
   }
   /**
    * Registers a handler for a specific element and event.
@@ -5158,15 +5278,6 @@ var EventManager = class _EventManager {
     type: NgZone
   }], null);
 })();
-var EventManagerPlugin = class {
-  _doc;
-  // TODO: remove (has some usage in G3)
-  constructor(_doc) {
-    this._doc = _doc;
-  }
-  // Using non-null assertion because it's set by EventManager's constructor
-  manager;
-};
 var APP_ID_ATTRIBUTE_NAME = "ng-app-id";
 function removeElements(elements) {
   for (const element of elements) {
@@ -5221,15 +5332,10 @@ var SharedStylesHost = class _SharedStylesHost {
    * Set of host DOM nodes that will have styles attached.
    */
   hosts = /* @__PURE__ */ new Set();
-  /**
-   * Whether the application code is currently executing on a server.
-   */
-  isServer;
   constructor(doc, appId, nonce, platformId = {}) {
     this.doc = doc;
     this.appId = appId;
     this.nonce = nonce;
-    this.isServer = isPlatformServer(platformId);
     addServerStyles(doc, appId, this.inline, this.external);
     this.hosts.add(doc.head);
   }
@@ -5311,7 +5417,7 @@ var SharedStylesHost = class _SharedStylesHost {
     if (this.nonce) {
       element.setAttribute("nonce", this.nonce);
     }
-    if (this.isServer) {
+    if (false) {
       element.setAttribute(APP_ID_ATTRIBUTE_NAME, this.appId);
     }
     return host.appendChild(element);
@@ -5409,31 +5515,29 @@ var DomRendererFactory2 = class _DomRendererFactory2 {
   appId;
   removeStylesOnCompDestroy;
   doc;
-  platformId;
   ngZone;
   nonce;
   tracingService;
   rendererByCompId = /* @__PURE__ */ new Map();
   defaultRenderer;
   platformIsServer;
-  constructor(eventManager, sharedStylesHost, appId, removeStylesOnCompDestroy, doc, platformId, ngZone, nonce = null, tracingService = null) {
+  constructor(eventManager, sharedStylesHost, appId, removeStylesOnCompDestroy, doc, ngZone, nonce = null, tracingService = null) {
     this.eventManager = eventManager;
     this.sharedStylesHost = sharedStylesHost;
     this.appId = appId;
     this.removeStylesOnCompDestroy = removeStylesOnCompDestroy;
     this.doc = doc;
-    this.platformId = platformId;
     this.ngZone = ngZone;
     this.nonce = nonce;
     this.tracingService = tracingService;
-    this.platformIsServer = isPlatformServer(platformId);
+    this.platformIsServer = false;
     this.defaultRenderer = new DefaultDomRenderer2(eventManager, doc, ngZone, this.platformIsServer, this.tracingService);
   }
   createRenderer(element, type) {
     if (!element || !type) {
       return this.defaultRenderer;
     }
-    if (this.platformIsServer && type.encapsulation === ViewEncapsulation.ShadowDom) {
+    if (false) {
       type = __spreadProps(__spreadValues({}, type), {
         encapsulation: ViewEncapsulation.Emulated
       });
@@ -5482,7 +5586,7 @@ var DomRendererFactory2 = class _DomRendererFactory2 {
     this.rendererByCompId.delete(componentId);
   }
   static \u0275fac = function DomRendererFactory2_Factory(__ngFactoryType__) {
-    return new (__ngFactoryType__ || _DomRendererFactory2)(\u0275\u0275inject(EventManager), \u0275\u0275inject(SharedStylesHost), \u0275\u0275inject(APP_ID), \u0275\u0275inject(REMOVE_STYLES_ON_COMPONENT_DESTROY), \u0275\u0275inject(DOCUMENT), \u0275\u0275inject(PLATFORM_ID), \u0275\u0275inject(NgZone), \u0275\u0275inject(CSP_NONCE), \u0275\u0275inject(TracingService, 8));
+    return new (__ngFactoryType__ || _DomRendererFactory2)(\u0275\u0275inject(EventManager), \u0275\u0275inject(SharedStylesHost), \u0275\u0275inject(APP_ID), \u0275\u0275inject(REMOVE_STYLES_ON_COMPONENT_DESTROY), \u0275\u0275inject(DOCUMENT), \u0275\u0275inject(NgZone), \u0275\u0275inject(CSP_NONCE), \u0275\u0275inject(TracingService, 8));
   };
   static \u0275prov = /* @__PURE__ */ \u0275\u0275defineInjectable({
     token: _DomRendererFactory2,
@@ -5513,12 +5617,6 @@ var DomRendererFactory2 = class _DomRendererFactory2 {
     decorators: [{
       type: Inject,
       args: [DOCUMENT]
-    }]
-  }, {
-    type: Object,
-    decorators: [{
-      type: Inject,
-      args: [PLATFORM_ID]
     }]
   }, {
     type: NgZone
@@ -5675,7 +5773,7 @@ var DefaultDomRenderer2 = class {
       if (event === "__ngUnwrap__") {
         return eventHandler;
       }
-      const allowDefaultBehavior = this.platformIsServer ? this.ngZone.runGuarded(() => eventHandler(event)) : eventHandler(event);
+      const allowDefaultBehavior = false ? this.ngZone.runGuarded(() => eventHandler(event)) : eventHandler(event);
       if (allowDefaultBehavior === false) {
         event.preventDefault();
       }
@@ -5774,7 +5872,9 @@ var NoneEncapsulationDomRenderer = class extends DefaultDomRenderer2 {
     if (!this.removeStylesOnCompDestroy) {
       return;
     }
-    this.sharedStylesHost.removeStyles(this.styles, this.styleUrls);
+    if (allLeavingAnimations.size === 0) {
+      this.sharedStylesHost.removeStyles(this.styles, this.styleUrls);
+    }
   }
 };
 var EmulatedEncapsulationDomRenderer2 = class extends NoneEncapsulationDomRenderer {
@@ -5797,7 +5897,7 @@ var EmulatedEncapsulationDomRenderer2 = class extends NoneEncapsulationDomRender
   }
 };
 
-// node_modules/@angular/platform-browser/fesm2022/browser-0WrrQdE0.mjs
+// node_modules/@angular/platform-browser/fesm2022/browser.mjs
 var BrowserDomAdapter = class _BrowserDomAdapter extends DomAdapter {
   supportsDOMEvents = true;
   static makeCurrent() {
@@ -5927,41 +6027,6 @@ var BrowserXhr = class _BrowserXhr {
   (typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(BrowserXhr, [{
     type: Injectable
   }], null, null);
-})();
-var DomEventsPlugin = class _DomEventsPlugin extends EventManagerPlugin {
-  constructor(doc) {
-    super(doc);
-  }
-  // This plugin should come last in the list of plugins, because it accepts all
-  // events.
-  supports(eventName) {
-    return true;
-  }
-  addEventListener(element, eventName, handler, options) {
-    element.addEventListener(eventName, handler, options);
-    return () => this.removeEventListener(element, eventName, handler, options);
-  }
-  removeEventListener(target, eventName, callback, options) {
-    return target.removeEventListener(eventName, callback, options);
-  }
-  static \u0275fac = function DomEventsPlugin_Factory(__ngFactoryType__) {
-    return new (__ngFactoryType__ || _DomEventsPlugin)(\u0275\u0275inject(DOCUMENT));
-  };
-  static \u0275prov = /* @__PURE__ */ \u0275\u0275defineInjectable({
-    token: _DomEventsPlugin,
-    factory: _DomEventsPlugin.\u0275fac
-  });
-};
-(() => {
-  (typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(DomEventsPlugin, [{
-    type: Injectable
-  }], () => [{
-    type: void 0,
-    decorators: [{
-      type: Inject,
-      args: [DOCUMENT]
-    }]
-  }], null);
 })();
 var MODIFIER_KEYS = ["alt", "control", "meta", "shift"];
 var _keyMap = {
@@ -6127,10 +6192,17 @@ var KeyEventsPlugin = class _KeyEventsPlugin extends EventManagerPlugin {
   }], null);
 })();
 function bootstrapApplication(rootComponent, options, context) {
-  return internalCreateApplication(__spreadValues({
+  const config = __spreadValues({
     rootComponent,
     platformRef: context?.platformRef
-  }, createProvidersConfig(options)));
+  }, createProvidersConfig(options));
+  if (false) {
+    return resolveComponentResources(fetch).catch((error) => {
+      console.error(error);
+      return Promise.resolve();
+    }).then(() => internalCreateApplication(config));
+  }
+  return internalCreateApplication(config);
 }
 function createProvidersConfig(options) {
   return {
@@ -6806,7 +6878,6 @@ var HydrationFeatureKind;
   HydrationFeatureKind2[HydrationFeatureKind2["EventReplay"] = 3] = "EventReplay";
   HydrationFeatureKind2[HydrationFeatureKind2["IncrementalHydration"] = 4] = "IncrementalHydration";
 })(HydrationFeatureKind || (HydrationFeatureKind = {}));
-var VERSION2 = new Version("19.2.17");
 
 // node_modules/@angular/forms/fesm2022/forms.mjs
 var BaseControlValueAccessor = class _BaseControlValueAccessor {
@@ -6933,7 +7004,7 @@ var CheckboxControlValueAccessor = class _CheckboxControlValueAccessor extends B
     args: [{
       selector: "input[type=checkbox][formControlName],input[type=checkbox][formControl],input[type=checkbox][ngModel]",
       host: {
-        "(change)": "onChange($event.target.checked)",
+        "(change)": "onChange($any($event.target).checked)",
         "(blur)": "onTouched()"
       },
       providers: [CHECKBOX_VALUE_ACCESSOR],
@@ -7017,10 +7088,10 @@ var DefaultValueAccessor = class _DefaultValueAccessor extends BaseControlValueA
       // https://github.com/angular/angular/issues/3011 is implemented
       // selector: '[ngModel],[formControl],[formControlName]',
       host: {
-        "(input)": "$any(this)._handleInput($event.target.value)",
+        "(input)": "_handleInput($any($event.target).value)",
         "(blur)": "onTouched()",
-        "(compositionstart)": "$any(this)._compositionStart()",
-        "(compositionend)": "$any(this)._compositionEnd($event.target.value)"
+        "(compositionstart)": "_compositionStart()",
+        "(compositionend)": "_compositionEnd($any($event.target).value)"
       },
       providers: [DEFAULT_VALUE_ACCESSOR],
       standalone: false
@@ -8041,8 +8112,12 @@ var AbstractControl = class {
     untracked(() => this.statusReactive.set(v));
   }
   /** @internal */
-  _status = computed(() => this.statusReactive());
-  statusReactive = signal(void 0);
+  _status = computed(() => this.statusReactive(), ...ngDevMode ? [{
+    debugName: "_status"
+  }] : []);
+  statusReactive = signal(void 0, ...ngDevMode ? [{
+    debugName: "statusReactive"
+  }] : []);
   /**
    * A control is `valid` when its `status` is `VALID`.
    *
@@ -8121,8 +8196,12 @@ var AbstractControl = class {
     untracked(() => this.pristineReactive.set(v));
   }
   /** @internal */
-  _pristine = computed(() => this.pristineReactive());
-  pristineReactive = signal(true);
+  _pristine = computed(() => this.pristineReactive(), ...ngDevMode ? [{
+    debugName: "_pristine"
+  }] : []);
+  pristineReactive = signal(true, ...ngDevMode ? [{
+    debugName: "pristineReactive"
+  }] : []);
   /**
    * A control is `dirty` if the user has changed the value
    * in the UI.
@@ -8146,8 +8225,12 @@ var AbstractControl = class {
     untracked(() => this.touchedReactive.set(v));
   }
   /** @internal */
-  _touched = computed(() => this.touchedReactive());
-  touchedReactive = signal(false);
+  _touched = computed(() => this.touchedReactive(), ...ngDevMode ? [{
+    debugName: "_touched"
+  }] : []);
+  touchedReactive = signal(false, ...ngDevMode ? [{
+    debugName: "touchedReactive"
+  }] : []);
   /**
    * True if the control has not been marked as touched
    *
@@ -8174,6 +8257,7 @@ var AbstractControl = class {
    * `events` of the parent control instead.
    * For other event types, the events are emitted after the parent control has been updated.
    *
+   * @see [Unified control state change events](guide/forms/reactive-forms#unified-control-state-change-events)
    */
   events = this._events.asObservable();
   /**
@@ -8375,6 +8459,24 @@ var AbstractControl = class {
     if (changed && opts.emitEvent !== false) {
       this._events.next(new TouchedChangeEvent(true, sourceControl));
     }
+  }
+  /**
+   * Marks the control and all its descendant controls as `dirty`.
+   * @see {@link markAsDirty()}
+   *
+   * @param opts Configuration options that determine how the control propagates changes
+   * and emits events after marking is applied.
+   * * `emitEvent`: When true or not supplied (the default), the `events`
+   * observable emits a `PristineChangeEvent` with the `pristine` property being `false`.
+   * When false, no events are emitted.
+   */
+  markAllAsDirty(opts = {}) {
+    this.markAsDirty({
+      onlySelf: true,
+      emitEvent: opts.emitEvent,
+      sourceControl: this
+    });
+    this._forEachChild((control) => control.markAllAsDirty(opts));
   }
   /**
    * Marks the control and all its descendant controls as `touched`.
@@ -8582,7 +8684,8 @@ var AbstractControl = class {
     if (this.asyncValidator) {
       this.status = PENDING;
       this._hasOwnPendingAsyncValidator = {
-        emitEvent: emitEvent !== false
+        emitEvent: emitEvent !== false,
+        shouldHaveEmitted: shouldHaveEmitted !== false
       };
       const obs = toObservable(this.asyncValidator(this));
       this._asyncValidationSubscription = obs.subscribe((errors) => {
@@ -8597,7 +8700,7 @@ var AbstractControl = class {
   _cancelExistingSubscription() {
     if (this._asyncValidationSubscription) {
       this._asyncValidationSubscription.unsubscribe();
-      const shouldHaveEmitted = this._hasOwnPendingAsyncValidator?.emitEvent ?? false;
+      const shouldHaveEmitted = (this._hasOwnPendingAsyncValidator?.emitEvent || this._hasOwnPendingAsyncValidator?.shouldHaveEmitted) ?? false;
       this._hasOwnPendingAsyncValidator = null;
       return shouldHaveEmitted;
     }
@@ -9059,6 +9162,9 @@ var FormGroup = class extends AbstractControl {
     this._updatePristine(options, this);
     this._updateTouched(options, this);
     this.updateValueAndValidity(options);
+    if (options?.emitEvent !== false) {
+      this._events.next(new FormResetEvent(this));
+    }
   }
   /**
    * The aggregate value of the `FormGroup`, including any disabled controls.
@@ -9383,8 +9489,12 @@ var NgForm = class _NgForm extends ControlContainer {
     return untracked(this.submittedReactive);
   }
   /** @internal */
-  _submitted = computed(() => this.submittedReactive());
-  submittedReactive = signal(false);
+  _submitted = computed(() => this.submittedReactive(), ...ngDevMode ? [{
+    debugName: "_submitted"
+  }] : []);
+  submittedReactive = signal(false, ...ngDevMode ? [{
+    debugName: "submittedReactive"
+  }] : []);
   _directives = /* @__PURE__ */ new Set();
   /**
    * @description
@@ -9577,7 +9687,6 @@ var NgForm = class _NgForm extends ControlContainer {
   resetForm(value = void 0) {
     this.form.reset(value);
     this.submittedReactive.set(false);
-    this.form._events.next(new FormResetEvent(this.form));
   }
   _setUpdateStrategy() {
     if (this.options && this.options.updateOn != null) {
@@ -9716,6 +9825,9 @@ var FormControl = class FormControl2 extends AbstractControl {
     this.markAsUntouched(options);
     this.setValue(this.value, options);
     this._pendingChange = false;
+    if (options?.emitEvent !== false) {
+      this._events.next(new FormResetEvent(this));
+    }
   }
   /**  @internal */
   _updateValue() {
@@ -10327,7 +10439,7 @@ var NumberValueAccessor = class _NumberValueAccessor extends BuiltInControlValue
     args: [{
       selector: "input[type=number][formControlName],input[type=number][formControl],input[type=number][ngModel]",
       host: {
-        "(input)": "onChange($event.target.value)",
+        "(input)": "onChange($any($event.target).value)",
         "(blur)": "onTouched()"
       },
       providers: [NUMBER_VALUE_ACCESSOR],
@@ -10600,8 +10712,8 @@ var RangeValueAccessor = class _RangeValueAccessor extends BuiltInControlValueAc
     args: [{
       selector: "input[type=range][formControlName],input[type=range][formControl],input[type=range][ngModel]",
       host: {
-        "(change)": "onChange($event.target.value)",
-        "(input)": "onChange($event.target.value)",
+        "(change)": "onChange($any($event.target).value)",
+        "(input)": "onChange($any($event.target).value)",
         "(blur)": "onTouched()"
       },
       providers: [RANGE_VALUE_ACCESSOR],
@@ -10840,8 +10952,12 @@ var FormGroupDirective = class _FormGroupDirective extends ControlContainer {
     this._submittedReactive.set(value);
   }
   /** @internal */
-  _submitted = computed(() => this._submittedReactive());
-  _submittedReactive = signal(false);
+  _submitted = computed(() => this._submittedReactive(), ...ngDevMode ? [{
+    debugName: "_submitted"
+  }] : []);
+  _submittedReactive = signal(false, ...ngDevMode ? [{
+    debugName: "_submittedReactive"
+  }] : []);
   /**
    * Reference to an old form group input value, which is needed to cleanup
    * old instance in case it was replaced with a new one.
@@ -11044,12 +11160,11 @@ var FormGroupDirective = class _FormGroupDirective extends ControlContainer {
    * @description
    * Resets the form to an initial value and resets its submitted status.
    *
-   * @param value The new value for the form.
+   * @param value The new value for the form, `undefined` by default
    */
-  resetForm(value = void 0) {
-    this.form.reset(value);
+  resetForm(value = void 0, options = {}) {
+    this.form.reset(value, options);
     this._submittedReactive.set(false);
-    this.form._events.next(new FormResetEvent(this.form));
   }
   /** @internal */
   _updateDomValue() {
@@ -11630,11 +11745,57 @@ var SelectControlValueAccessor = class _SelectControlValueAccessor extends Built
     this._compareWith = fn;
   }
   _compareWith = Object.is;
+  // We need this because we might be in the process of destroying the root
+  // injector, which is marked as destroyed before running destroy hooks.
+  // Attempting to use afterNextRender with the node injector would evntually
+  // run into that already destroyed injector.
+  appRefInjector = inject(ApplicationRef).injector;
+  destroyRef = inject(DestroyRef);
+  cdr = inject(ChangeDetectorRef);
+  _queuedWrite = false;
+  /**
+   * This is needed to efficiently set the select value when adding/removing options. If
+   * writeValue is instead called for every added/removed option, this results in exponentially
+   * more _compareValue calls than the number of option elements (issue #41330).
+   *
+   * Secondly, calling writeValue when rendering individual option elements instead of after they
+   * are all rendered caused an issue in Safari and IE 11 where the first option element failed
+   * to be deselected when no option matched the select ngModel. This was because Angular would
+   * set the select element's value property before appending the option's child text node to the
+   * DOM (issue #14505).
+   *
+   * Finally, this approach is necessary to avoid an issue with delayed element removal when
+   * using the animations module (in all browsers). Otherwise when a selected option is removed
+   * (so no option matches the ngModel anymore), Angular would change the select element value
+   * before actually removing the option from the DOM. Then when the option is finally removed
+   * from the DOM, the browser would change the select value to that of the first option, even
+   * though it doesn't match the ngModel (issue #18430).
+   *
+   * @internal
+   */
+  _writeValueAfterRender() {
+    if (this._queuedWrite || this.appRefInjector.destroyed) {
+      return;
+    }
+    this._queuedWrite = true;
+    afterNextRender({
+      write: () => {
+        if (this.destroyRef.destroyed) {
+          return;
+        }
+        this._queuedWrite = false;
+        this.writeValue(this.value);
+      }
+    }, {
+      injector: this.appRefInjector
+    });
+  }
   /**
    * Sets the "value" property on the select element.
    * @docs-private
    */
   writeValue(value) {
+    this.cdr.markForCheck();
     this.value = value;
     const id = this._getOptionId(value);
     const valueString = _buildValueString$1(id, value);
@@ -11697,7 +11858,7 @@ var SelectControlValueAccessor = class _SelectControlValueAccessor extends Built
     args: [{
       selector: "select:not([multiple])[formControlName],select:not([multiple])[formControl],select:not([multiple])[ngModel]",
       host: {
-        "(change)": "onChange($event.target.value)",
+        "(change)": "onChange($any($event.target).value)",
         "(blur)": "onTouched()"
       },
       providers: [SELECT_VALUE_ACCESSOR],
@@ -11733,7 +11894,7 @@ var NgSelectOption = class _NgSelectOption {
     if (this._select == null) return;
     this._select._optionMap.set(this.id, value);
     this._setElementValue(_buildValueString$1(this.id, value));
-    this._select.writeValue(this._select.value);
+    this._select._writeValueAfterRender();
   }
   /**
    * @description
@@ -11742,7 +11903,7 @@ var NgSelectOption = class _NgSelectOption {
    */
   set value(value) {
     this._setElementValue(value);
-    if (this._select) this._select.writeValue(this._select.value);
+    if (this._select) this._select._writeValueAfterRender();
   }
   /** @internal */
   _setElementValue(value) {
@@ -11752,7 +11913,7 @@ var NgSelectOption = class _NgSelectOption {
   ngOnDestroy() {
     if (this._select) {
       this._select._optionMap.delete(this.id);
-      this._select.writeValue(this._select.value);
+      this._select._writeValueAfterRender();
     }
   }
   static \u0275fac = function NgSelectOption_Factory(__ngFactoryType__) {
@@ -12603,10 +12764,19 @@ var FormArray = class extends AbstractControl {
    * * `emitEvent`: When true or not supplied (the default), both the `statusChanges` and
    * `valueChanges` observables emit events with the latest status and value when the control is
    * inserted. When false, no events are emitted.
+   *
+   * NOTE: Pushing to the FormArray will not mark it dirty. If you want to mark if dirty, call `markAsDirty()`.
    */
   push(control, options = {}) {
-    this.controls.push(control);
-    this._registerControl(control);
+    if (Array.isArray(control)) {
+      control.forEach((ctrl) => {
+        this.controls.push(ctrl);
+        this._registerControl(ctrl);
+      });
+    } else {
+      this.controls.push(control);
+      this._registerControl(control);
+    }
     this.updateValueAndValidity({
       emitEvent: options.emitEvent
     });
@@ -12624,6 +12794,8 @@ var FormArray = class extends AbstractControl {
    * * `emitEvent`: When true or not supplied (the default), both the `statusChanges` and
    * `valueChanges` observables emit events with the latest status and value when the control is
    * inserted. When false, no events are emitted.
+   *
+   * NOTE: Inserting to the FormArray will not mark it dirty. If you want to mark if dirty, call `markAsDirty()`.
    */
   insert(index, control, options = {}) {
     this.controls.splice(index, 0, control);
@@ -12643,6 +12815,8 @@ var FormArray = class extends AbstractControl {
    * * `emitEvent`: When true or not supplied (the default), both the `statusChanges` and
    * `valueChanges` observables emit events with the latest status and value when the control is
    * removed. When false, no events are emitted.
+   *
+   * NOTE: Removing the FormArray will not mark it dirty. If you want to mark if dirty, call `markAsDirty()`.
    */
   removeAt(index, options = {}) {
     let adjustedIndex = this._adjustIndex(index);
@@ -12834,6 +13008,9 @@ var FormArray = class extends AbstractControl {
     this._updatePristine(options, this);
     this._updateTouched(options, this);
     this.updateValueAndValidity(options);
+    if (options?.emitEvent !== false) {
+      this._events.next(new FormResetEvent(this));
+    }
   }
   /**
    * The aggregate value of the array, including any disabled controls.
@@ -13175,7 +13352,6 @@ var UntypedFormBuilder = class _UntypedFormBuilder extends FormBuilder {
     }]
   }], null, null);
 })();
-var VERSION3 = new Version("19.2.17");
 var FormsModule = class _FormsModule {
   /**
    * @description
@@ -13260,7 +13436,7 @@ var ReactiveFormsModule = class _ReactiveFormsModule {
   }], null, null);
 })();
 
-// node_modules/@angular/router/fesm2022/router-Dwfin5Au.mjs
+// node_modules/@angular/router/fesm2022/router2.mjs
 var PRIMARY_OUTLET = "primary";
 var RouteTitleKey = /* @__PURE__ */ Symbol("RouteTitle");
 var ParamsAsMap = class {
@@ -13751,7 +13927,7 @@ var UrlParser = class {
       if (next !== "/" && next !== ")" && next !== ";") {
         throw new RuntimeError(4010, (typeof ngDevMode === "undefined" || ngDevMode) && `Cannot parse url '${this.url}'`);
       }
-      let outletName = void 0;
+      let outletName;
       if (path.indexOf(":") > -1) {
         outletName = path.slice(0, path.indexOf(":"));
         this.capture(outletName);
@@ -13760,7 +13936,7 @@ var UrlParser = class {
         outletName = PRIMARY_OUTLET;
       }
       const children = this.parseChildren();
-      segments[outletName] = Object.keys(children).length === 1 ? children[PRIMARY_OUTLET] : new UrlSegmentGroup([], children);
+      segments[outletName ?? PRIMARY_OUTLET] = Object.keys(children).length === 1 && children[PRIMARY_OUTLET] ? children[PRIMARY_OUTLET] : new UrlSegmentGroup([], children);
       this.consumeOptional("//");
     }
     return segments;
@@ -14203,6 +14379,7 @@ var NavigationCancellationCode;
   NavigationCancellationCode2[NavigationCancellationCode2["SupersededByNewNavigation"] = 1] = "SupersededByNewNavigation";
   NavigationCancellationCode2[NavigationCancellationCode2["NoDataFromResolver"] = 2] = "NoDataFromResolver";
   NavigationCancellationCode2[NavigationCancellationCode2["GuardRejected"] = 3] = "GuardRejected";
+  NavigationCancellationCode2[NavigationCancellationCode2["Aborted"] = 4] = "Aborted";
 })(NavigationCancellationCode || (NavigationCancellationCode = {}));
 var NavigationSkippedCode;
 (function(NavigationSkippedCode2) {
@@ -14404,6 +14581,9 @@ var RedirectRequest = class {
     this.navigationBehaviorOptions = navigationBehaviorOptions;
   }
 };
+function isPublicRouterEvent(e) {
+  return !(e instanceof BeforeActivateRoutes) && !(e instanceof RedirectRequest);
+}
 function stringifyEvent(routerEvent) {
   switch (routerEvent.type) {
     case EventType.ActivationEnd:
@@ -14493,14 +14673,16 @@ function validateNode(route, fullPath, requireStandaloneComponents) {
     if (route.children && route.loadChildren) {
       throw new RuntimeError(4014, `Invalid configuration of route '${fullPath}': children and loadChildren cannot be used together`);
     }
-    if (route.redirectTo && (route.component || route.loadComponent)) {
-      throw new RuntimeError(4014, `Invalid configuration of route '${fullPath}': redirectTo and component/loadComponent cannot be used together`);
-    }
     if (route.component && route.loadComponent) {
       throw new RuntimeError(4014, `Invalid configuration of route '${fullPath}': component and loadComponent cannot be used together`);
     }
-    if (route.redirectTo && route.canActivate) {
-      throw new RuntimeError(4014, `Invalid configuration of route '${fullPath}': redirectTo and canActivate cannot be used together. Redirects happen before activation so canActivate will never be executed.`);
+    if (route.redirectTo) {
+      if (route.component || route.loadComponent) {
+        throw new RuntimeError(4014, `Invalid configuration of route '${fullPath}': redirectTo and component/loadComponent cannot be used together`);
+      }
+      if (route.canMatch || route.canActivate) {
+        throw new RuntimeError(4014, `Invalid configuration of route '${fullPath}': redirectTo and ${route.canMatch ? "canMatch" : "canActivate"} cannot be used together.Redirects happen before guards are executed.`);
+      }
     }
     if (route.path && route.matcher) {
       throw new RuntimeError(4014, `Invalid configuration of route '${fullPath}': path and matcher cannot be used together`);
@@ -15026,7 +15208,9 @@ var RouterOutlet = class _RouterOutlet {
    *
    * When unset, the value of the token is `undefined` by default.
    */
-  routerOutletData = input(void 0);
+  routerOutletData = input(...ngDevMode ? [void 0, {
+    debugName: "routerOutletData"
+  }] : []);
   parentContexts = inject(ChildrenOutletContexts);
   location = inject(ViewContainerRef);
   changeDetector = inject(ChangeDetectorRef);
@@ -15197,6 +15381,14 @@ var RouterOutlet = class _RouterOutlet {
     detachEvents: [{
       type: Output,
       args: ["detach"]
+    }],
+    routerOutletData: [{
+      type: Input,
+      args: [{
+        isSignal: true,
+        alias: "routerOutletData",
+        required: false
+      }]
     }]
   });
 })();
@@ -15869,38 +16061,16 @@ var ApplyRedirects = class {
     }
   }
   applyRedirectCommands(segments, redirectTo, posParams, currentSnapshot, injector) {
-    if (typeof redirectTo !== "string") {
-      const redirectToFn = redirectTo;
-      const {
-        queryParams,
-        fragment,
-        routeConfig,
-        url,
-        outlet,
-        params,
-        data,
-        title
-      } = currentSnapshot;
-      const newRedirect = runInInjectionContext(injector, () => redirectToFn({
-        params,
-        data,
-        queryParams,
-        fragment,
-        routeConfig,
-        url,
-        outlet,
-        title
-      }));
-      if (newRedirect instanceof UrlTree) {
-        throw new AbsoluteRedirect(newRedirect);
+    return getRedirectResult(redirectTo, currentSnapshot, injector).pipe(map((redirect) => {
+      if (redirect instanceof UrlTree) {
+        throw new AbsoluteRedirect(redirect);
       }
-      redirectTo = newRedirect;
-    }
-    const newTree = this.applyRedirectCreateUrlTree(redirectTo, this.urlSerializer.parse(redirectTo), segments, posParams);
-    if (redirectTo[0] === "/") {
-      throw new AbsoluteRedirect(newTree);
-    }
-    return newTree;
+      const newTree = this.applyRedirectCreateUrlTree(redirect, this.urlSerializer.parse(redirect), segments, posParams);
+      if (redirect[0] === "/") {
+        throw new AbsoluteRedirect(newTree);
+      }
+      return newTree;
+    }));
   }
   applyRedirectCreateUrlTree(redirectTo, urlTree, segments, posParams) {
     const newRoot = this.createSegmentGroup(redirectTo, urlTree.root, segments, posParams);
@@ -15947,6 +16117,32 @@ var ApplyRedirects = class {
     return redirectToUrlSegment;
   }
 };
+function getRedirectResult(redirectTo, currentSnapshot, injector) {
+  if (typeof redirectTo === "string") {
+    return of(redirectTo);
+  }
+  const redirectToFn = redirectTo;
+  const {
+    queryParams,
+    fragment,
+    routeConfig,
+    url,
+    outlet,
+    params,
+    data,
+    title
+  } = currentSnapshot;
+  return wrapIntoObservable(runInInjectionContext(injector, () => redirectToFn({
+    params,
+    data,
+    queryParams,
+    fragment,
+    routeConfig,
+    url,
+    outlet,
+    title
+  })));
+}
 var noMatch = {
   matched: false,
   consumedSegments: [],
@@ -16219,8 +16415,8 @@ This is currently a dev mode only error but will become a call stack size exceed
     const inherited = getInherited(currentSnapshot, parentRoute, this.paramsInheritanceStrategy);
     currentSnapshot.params = Object.freeze(inherited.params);
     currentSnapshot.data = Object.freeze(inherited.data);
-    const newTree = this.applyRedirects.applyRedirectCommands(consumedSegments, route.redirectTo, positionalParamSegments, currentSnapshot, injector);
-    return this.applyRedirects.lineralizeSegments(route, newTree).pipe(mergeMap((newSegments) => {
+    const newTree$ = this.applyRedirects.applyRedirectCommands(consumedSegments, route.redirectTo, positionalParamSegments, currentSnapshot, injector);
+    return newTree$.pipe(switchMap((newTree) => this.applyRedirects.lineralizeSegments(route, newTree)), mergeMap((newSegments) => {
       return this.processSegment(injector, routes2, segmentGroup, newSegments.concat(remainingSegments), outlet, false, parentRoute);
     }));
   }
@@ -16400,11 +16596,14 @@ function runResolve(futureARS, futureRSS, paramsInheritanceStrategy, injector) {
   if (config?.title !== void 0 && !hasStaticTitle(config)) {
     resolve[RouteTitleKey] = config.title;
   }
-  return resolveNode(resolve, futureARS, futureRSS, injector).pipe(map((resolvedData) => {
-    futureARS._resolvedData = resolvedData;
+  return defer(() => {
     futureARS.data = getInherited(futureARS, futureARS.parent, paramsInheritanceStrategy).resolve;
-    return null;
-  }));
+    return resolveNode(resolve, futureARS, futureRSS, injector).pipe(map((resolvedData) => {
+      futureARS._resolvedData = resolvedData;
+      futureARS.data = __spreadValues(__spreadValues({}, futureARS.data), resolvedData);
+      return null;
+    }));
+  });
 }
 function resolveNode(resolve, futureARS, futureRSS, injector) {
   const keys = getDataKeys(resolve);
@@ -16519,7 +16718,7 @@ var RouterConfigLoader = class _RouterConfigLoader {
   onLoadStartListener;
   onLoadEndListener;
   compiler = inject(Compiler);
-  loadComponent(route) {
+  loadComponent(injector, route) {
     if (this.componentLoaders.get(route)) {
       return this.componentLoaders.get(route);
     } else if (route._loadedComponent) {
@@ -16528,7 +16727,7 @@ var RouterConfigLoader = class _RouterConfigLoader {
     if (this.onLoadStartListener) {
       this.onLoadStartListener(route);
     }
-    const loadRunner = wrapIntoObservable(route.loadComponent()).pipe(map(maybeUnwrapDefaultExport), tap((component) => {
+    const loadRunner = wrapIntoObservable(runInInjectionContext(injector, () => route.loadComponent())).pipe(map(maybeUnwrapDefaultExport), switchMap(maybeResolveResources), tap((component) => {
       if (this.onLoadEndListener) {
         this.onLoadEndListener(route);
       }
@@ -16579,7 +16778,7 @@ var RouterConfigLoader = class _RouterConfigLoader {
   }], null, null);
 })();
 function loadChildren(route, compiler, parentInjector, onLoadEndListener) {
-  return wrapIntoObservable(route.loadChildren()).pipe(map(maybeUnwrapDefaultExport), mergeMap((t) => {
+  return wrapIntoObservable(runInInjectionContext(parentInjector, () => route.loadChildren())).pipe(map(maybeUnwrapDefaultExport), switchMap(maybeResolveResources), mergeMap((t) => {
     if (t instanceof NgModuleFactory$1 || Array.isArray(t)) {
       return of(t);
     } else {
@@ -16615,6 +16814,15 @@ function isWrappedDefaultExport(value) {
 }
 function maybeUnwrapDefaultExport(input2) {
   return isWrappedDefaultExport(input2) ? input2["default"] : input2;
+}
+function maybeResolveResources(value) {
+  if (false) {
+    return resolveComponentResources(fetch).catch((error) => {
+      console.error(error);
+      return Promise.resolve();
+    }).then(() => value);
+  }
+  return of(value);
 }
 var UrlHandlingStrategy = class _UrlHandlingStrategy {
   static \u0275fac = function UrlHandlingStrategy_Factory(__ngFactoryType__) {
@@ -16667,31 +16875,34 @@ var VIEW_TRANSITION_OPTIONS = new InjectionToken(ngDevMode ? "view transition op
 function createViewTransition(injector, from2, to) {
   const transitionOptions = injector.get(VIEW_TRANSITION_OPTIONS);
   const document2 = injector.get(DOCUMENT);
-  return injector.get(NgZone).runOutsideAngular(() => {
-    if (!document2.startViewTransition || transitionOptions.skipNextTransition) {
-      transitionOptions.skipNextTransition = false;
-      return new Promise((resolve) => setTimeout(resolve));
-    }
-    let resolveViewTransitionStarted;
-    const viewTransitionStarted = new Promise((resolve) => {
-      resolveViewTransitionStarted = resolve;
-    });
-    const transition = document2.startViewTransition(() => {
-      resolveViewTransitionStarted();
-      return createRenderPromise(injector);
-    });
-    const {
-      onViewTransitionCreated
-    } = transitionOptions;
-    if (onViewTransitionCreated) {
-      runInInjectionContext(injector, () => onViewTransitionCreated({
-        transition,
-        from: from2,
-        to
-      }));
-    }
-    return viewTransitionStarted;
+  if (!document2.startViewTransition || transitionOptions.skipNextTransition) {
+    transitionOptions.skipNextTransition = false;
+    return new Promise((resolve) => setTimeout(resolve));
+  }
+  let resolveViewTransitionStarted;
+  const viewTransitionStarted = new Promise((resolve) => {
+    resolveViewTransitionStarted = resolve;
   });
+  const transition = document2.startViewTransition(() => {
+    resolveViewTransitionStarted();
+    return createRenderPromise(injector);
+  });
+  transition.ready.catch((error) => {
+    if (typeof ngDevMode === "undefined" || ngDevMode) {
+      console.error(error);
+    }
+  });
+  const {
+    onViewTransitionCreated
+  } = transitionOptions;
+  if (onViewTransitionCreated) {
+    runInInjectionContext(injector, () => onViewTransitionCreated({
+      transition,
+      from: from2,
+      to
+    }));
+  }
+  return viewTransitionStarted;
 }
 function createRenderPromise(injector) {
   return new Promise((resolve) => {
@@ -16704,7 +16915,13 @@ function createRenderPromise(injector) {
 }
 var NAVIGATION_ERROR_HANDLER = new InjectionToken(typeof ngDevMode === "undefined" || ngDevMode ? "navigation error handler" : "");
 var NavigationTransitions = class _NavigationTransitions {
-  currentNavigation = null;
+  // Some G3 targets expect the navigation object to be mutated (and not getting a new reference on changes).
+  currentNavigation = signal(null, ...ngDevMode ? [{
+    debugName: "currentNavigation",
+    equal: () => false
+  }] : [{
+    equal: () => false
+  }]);
   currentTransition = null;
   lastSuccessfulNavigation = null;
   /**
@@ -16716,7 +16933,7 @@ var NavigationTransitions = class _NavigationTransitions {
   /**
    * Used to abort the current transition with an error.
    */
-  transitionAbortSubject = new Subject();
+  transitionAbortWithErrorSubject = new Subject();
   configLoader = inject(RouterConfigLoader);
   environmentInjector = inject(EnvironmentInjector);
   destroyRef = inject(DestroyRef);
@@ -16767,17 +16984,20 @@ var NavigationTransitions = class _NavigationTransitions {
   }
   handleNavigationRequest(request) {
     const id = ++this.navigationId;
-    this.transitions?.next(__spreadProps(__spreadValues({}, request), {
-      extractedUrl: this.urlHandlingStrategy.extract(request.rawUrl),
-      targetSnapshot: null,
-      targetRouterState: null,
-      guards: {
-        canActivateChecks: [],
-        canDeactivateChecks: []
-      },
-      guardsResult: null,
-      id
-    }));
+    untracked(() => {
+      this.transitions?.next(__spreadProps(__spreadValues({}, request), {
+        extractedUrl: this.urlHandlingStrategy.extract(request.rawUrl),
+        targetSnapshot: null,
+        targetRouterState: null,
+        guards: {
+          canActivateChecks: [],
+          canDeactivateChecks: []
+        },
+        guardsResult: null,
+        abortController: new AbortController(),
+        id
+      }));
+    });
   }
   setupNavigations(router) {
     this.transitions = new BehaviorSubject(null);
@@ -16785,8 +17005,7 @@ var NavigationTransitions = class _NavigationTransitions {
       filter((t) => t !== null),
       // Using switchMap so we cancel executing navigations when a new one comes in
       switchMap((overallTransitionState) => {
-        let completed = false;
-        let errored = false;
+        let completedOrAborted = false;
         return of(overallTransitionState).pipe(
           switchMap((t) => {
             if (this.navigationId > overallTransitionState.id) {
@@ -16795,7 +17014,7 @@ var NavigationTransitions = class _NavigationTransitions {
               return EMPTY;
             }
             this.currentTransition = overallTransitionState;
-            this.currentNavigation = {
+            this.currentNavigation.set({
               id: t.id,
               initialUrl: t.rawUrl,
               extractedUrl: t.extractedUrl,
@@ -16804,8 +17023,9 @@ var NavigationTransitions = class _NavigationTransitions {
               extras: t.extras,
               previousNavigation: !this.lastSuccessfulNavigation ? null : __spreadProps(__spreadValues({}, this.lastSuccessfulNavigation), {
                 previousNavigation: null
-              })
-            };
+              }),
+              abort: () => t.abortController.abort()
+            });
             const urlTransition = !router.navigated || this.isUpdatingInternalState() || this.isUpdatedBrowserUrl();
             const onSameUrlNavigation = t.extras.onSameUrlNavigation ?? router.onSameUrlNavigation;
             if (!urlTransition && onSameUrlNavigation !== "reload") {
@@ -16830,8 +17050,9 @@ var NavigationTransitions = class _NavigationTransitions {
                 tap((t2) => {
                   overallTransitionState.targetSnapshot = t2.targetSnapshot;
                   overallTransitionState.urlAfterRedirects = t2.urlAfterRedirects;
-                  this.currentNavigation = __spreadProps(__spreadValues({}, this.currentNavigation), {
-                    finalUrl: t2.urlAfterRedirects
+                  this.currentNavigation.update((nav) => {
+                    nav.finalUrl = t2.urlAfterRedirects;
+                    return nav;
                   });
                   const routesRecognized = new RoutesRecognized(t2.id, this.urlSerializer.serialize(t2.extractedUrl), this.urlSerializer.serialize(t2.urlAfterRedirects), t2.targetSnapshot);
                   this.events.next(routesRecognized);
@@ -16856,7 +17077,10 @@ var NavigationTransitions = class _NavigationTransitions {
                   replaceUrl: false
                 })
               });
-              this.currentNavigation.finalUrl = extractedUrl;
+              this.currentNavigation.update((nav) => {
+                nav.finalUrl = extractedUrl;
+                return nav;
+              });
               return of(overallTransitionState);
             } else {
               const reason = typeof ngDevMode === "undefined" || ngDevMode ? `Navigation was ignored because the UrlHandlingStrategy indicated neither the current URL ${t.currentRawUrl} nor target URL ${t.rawUrl} should be processed.` : "";
@@ -16919,8 +17143,9 @@ var NavigationTransitions = class _NavigationTransitions {
           switchTap((t) => {
             const loadComponents = (route) => {
               const loaders = [];
-              if (route.routeConfig?.loadComponent && !route.routeConfig._loadedComponent) {
-                loaders.push(this.configLoader.loadComponent(route.routeConfig).pipe(tap((loadedComponent) => {
+              if (route.routeConfig?.loadComponent) {
+                const injector = getClosestRouteInjector(route) ?? this.environmentInjector;
+                loaders.push(this.configLoader.loadComponent(injector, route.routeConfig).pipe(tap((loadedComponent) => {
                   route.component = loadedComponent;
                 }), map(() => void 0)));
               }
@@ -16945,7 +17170,10 @@ var NavigationTransitions = class _NavigationTransitions {
             this.currentTransition = overallTransitionState = __spreadProps(__spreadValues({}, t), {
               targetRouterState
             });
-            this.currentNavigation.targetRouterState = targetRouterState;
+            this.currentNavigation.update((nav) => {
+              nav.targetRouterState = targetRouterState;
+              return nav;
+            });
             return overallTransitionState;
           }),
           tap(() => {
@@ -16956,16 +17184,28 @@ var NavigationTransitions = class _NavigationTransitions {
           // complete, the navigation still finalizes This should never happen, but
           // this is done as a safety measure to avoid surfacing this error (#49567).
           take(1),
+          takeUntil(new Observable((subscriber) => {
+            const abortSignal = overallTransitionState.abortController.signal;
+            const handler = () => subscriber.next();
+            abortSignal.addEventListener("abort", handler);
+            return () => abortSignal.removeEventListener("abort", handler);
+          }).pipe(
+            // Ignore aborts if we are already completed, canceled, or are in the activation stage (we have targetRouterState)
+            filter(() => !completedOrAborted && !overallTransitionState.targetRouterState),
+            tap(() => {
+              this.cancelNavigationTransition(overallTransitionState, overallTransitionState.abortController.signal.reason + "", NavigationCancellationCode.Aborted);
+            })
+          )),
           tap({
             next: (t) => {
-              completed = true;
-              this.lastSuccessfulNavigation = this.currentNavigation;
+              completedOrAborted = true;
+              this.lastSuccessfulNavigation = untracked(this.currentNavigation);
               this.events.next(new NavigationEnd(t.id, this.urlSerializer.serialize(t.extractedUrl), this.urlSerializer.serialize(t.urlAfterRedirects)));
               this.titleStrategy?.updateTitle(t.targetRouterState.snapshot);
               t.resolve(true);
             },
             complete: () => {
-              completed = true;
+              completedOrAborted = true;
             }
           }),
           // There used to be a lot more logic happening directly within the
@@ -16975,16 +17215,16 @@ var NavigationTransitions = class _NavigationTransitions {
           // required in the future to support something like the abort signal of the
           // Navigation API where the navigation gets aborted from outside the
           // transition.
-          takeUntil(this.transitionAbortSubject.pipe(tap((err) => {
+          takeUntil(this.transitionAbortWithErrorSubject.pipe(tap((err) => {
             throw err;
           }))),
           finalize(() => {
-            if (!completed && !errored) {
+            if (!completedOrAborted) {
               const cancelationReason = typeof ngDevMode === "undefined" || ngDevMode ? `Navigation ID ${overallTransitionState.id} is not equal to the current navigation id ${this.navigationId}` : "";
               this.cancelNavigationTransition(overallTransitionState, cancelationReason, NavigationCancellationCode.SupersededByNewNavigation);
             }
             if (this.currentTransition?.id === overallTransitionState.id) {
-              this.currentNavigation = null;
+              this.currentNavigation.set(null);
               this.currentTransition = null;
             }
           }),
@@ -16993,7 +17233,7 @@ var NavigationTransitions = class _NavigationTransitions {
               overallTransitionState.resolve(false);
               return EMPTY;
             }
-            errored = true;
+            completedOrAborted = true;
             if (isNavigationCancelingError(e)) {
               this.events.next(new NavigationCancel(overallTransitionState.id, this.urlSerializer.serialize(overallTransitionState.extractedUrl), e.message, e.cancellationCode));
               if (!isRedirectingNavigationCancelingError(e)) {
@@ -17049,8 +17289,9 @@ var NavigationTransitions = class _NavigationTransitions {
    */
   isUpdatedBrowserUrl() {
     const currentBrowserUrl = this.urlHandlingStrategy.extract(this.urlSerializer.parse(this.location.path(true)));
-    const targetBrowserUrl = this.currentNavigation?.targetBrowserUrl ?? this.currentNavigation?.extractedUrl;
-    return currentBrowserUrl.toString() !== targetBrowserUrl?.toString() && !this.currentNavigation?.extras.skipLocationChange;
+    const currentNavigation = untracked(this.currentNavigation);
+    const targetBrowserUrl = currentNavigation?.targetBrowserUrl ?? currentNavigation?.extractedUrl;
+    return currentBrowserUrl.toString() !== targetBrowserUrl?.toString() && !currentNavigation?.extras.skipLocationChange;
   }
   static \u0275fac = function NavigationTransitions_Factory(__ngFactoryType__) {
     return new (__ngFactoryType__ || _NavigationTransitions)();
@@ -17307,7 +17548,7 @@ var HistoryStateManager = class _HistoryStateManager extends StateManager {
       if (this.urlUpdateStrategy === "deferred" && !currentTransition.extras.skipLocationChange) {
         this.setBrowserUrl(this.createBrowserPath(currentTransition), currentTransition);
       }
-    } else if (e instanceof NavigationCancel && (e.code === NavigationCancellationCode.GuardRejected || e.code === NavigationCancellationCode.NoDataFromResolver)) {
+    } else if (e instanceof NavigationCancel && e.code !== NavigationCancellationCode.SupersededByNewNavigation && e.code !== NavigationCancellationCode.Redirect) {
       this.restoreHistory(currentTransition);
     } else if (e instanceof NavigationError) {
       this.restoreHistory(currentTransition, true);
@@ -17434,6 +17675,7 @@ var Router = class _Router {
   urlSerializer = inject(UrlSerializer);
   location = inject(Location);
   urlHandlingStrategy = inject(UrlHandlingStrategy);
+  injector = inject(EnvironmentInjector);
   /**
    * The private `Subject` type for the public events exposed in the getter. This is used internally
    * to push events to. The separate field allows us to expose separate types in the public API
@@ -17486,6 +17728,12 @@ var Router = class _Router {
   componentInputBindingEnabled = !!inject(INPUT_BINDER, {
     optional: true
   });
+  /**
+   * Signal of the current `Navigation` object when the router is navigating, and `null` when idle.
+   *
+   * Note: The current navigation becomes to null after the NavigationEnd event is emitted.
+   */
+  currentNavigation = this.navigationTransitions.currentNavigation.asReadonly();
   constructor() {
     this.resetConfig(this.config);
     this.navigationTransitions.setupNavigations(this).subscribe({
@@ -17500,7 +17748,7 @@ var Router = class _Router {
     const subscription = this.navigationTransitions.events.subscribe((e) => {
       try {
         const currentTransition = this.navigationTransitions.currentTransition;
-        const currentNavigation = this.navigationTransitions.currentNavigation;
+        const currentNavigation = untracked(this.navigationTransitions.currentNavigation);
         if (currentTransition !== null && currentNavigation !== null) {
           this.stateManager.handleRouterEvent(e, currentNavigation);
           if (e instanceof NavigationCancel && e.code !== NavigationCancellationCode.Redirect && e.code !== NavigationCancellationCode.SupersededByNewNavigation) {
@@ -17531,7 +17779,7 @@ var Router = class _Router {
           this._events.next(e);
         }
       } catch (e2) {
-        this.navigationTransitions.transitionAbortSubject.next(e2);
+        this.navigationTransitions.transitionAbortWithErrorSubject.next(e2);
       }
     });
     this.eventsSubscription.add(subscription);
@@ -17581,7 +17829,12 @@ var Router = class _Router {
       }
     }
     const urlTree = this.parseUrl(url);
-    this.scheduleNavigation(urlTree, source, restoredState, extras);
+    this.scheduleNavigation(urlTree, source, restoredState, extras).catch((e) => {
+      if (this.disposed) {
+        return;
+      }
+      this.injector.get(INTERNAL_APPLICATION_ERROR_HANDLER)(e);
+    });
   }
   /** The current URL. */
   get url() {
@@ -17590,9 +17843,11 @@ var Router = class _Router {
   /**
    * Returns the current `Navigation` object when the router is navigating,
    * and `null` when idle.
+   *
+   * @deprecated 20.2 Use the `currentNavigation` signal instead.
    */
   getCurrentNavigation() {
-    return this.navigationTransitions.currentNavigation;
+    return untracked(this.navigationTransitions.currentNavigation);
   }
   /**
    * The `Navigation` object of the most recent navigation to succeed and `null` if there
@@ -17795,7 +18050,9 @@ var Router = class _Router {
   parseUrl(url) {
     try {
       return this.urlSerializer.parse(url);
-    } catch {
+    } catch (e) {
+      this.console.warn(formatRuntimeError(4018, ngDevMode && `Error parsing URL ${url}. Falling back to '/' instead. 
+` + e));
       return this.urlSerializer.parse("/");
     }
   }
@@ -17885,11 +18142,8 @@ function validateCommands(commands) {
     }
   }
 }
-function isPublicRouterEvent(e) {
-  return !(e instanceof BeforeActivateRoutes) && !(e instanceof RedirectRequest);
-}
 
-// node_modules/@angular/router/fesm2022/router_module-DTJgGWLd.mjs
+// node_modules/@angular/router/fesm2022/router_module.mjs
 var RouterLink = class _RouterLink {
   router;
   route;
@@ -17897,14 +18151,26 @@ var RouterLink = class _RouterLink {
   renderer;
   el;
   locationStrategy;
+  /** @nodoc */
+  reactiveHref = signal(null, ...ngDevMode ? [{
+    debugName: "reactiveHref"
+  }] : []);
   /**
    * Represents an `href` attribute value applied to a host element,
-   * when a host element is `<a>`. For other tags, the value is `null`.
+   * when a host element is an `<a>`/`<area>` tag or a compatible custom element.
+   * For other tags, the value is `null`.
    */
-  href = null;
+  get href() {
+    return untracked(this.reactiveHref);
+  }
+  /** @deprecated */
+  set href(value) {
+    this.reactiveHref.set(value);
+  }
   /**
    * Represents the `target` attribute on a host element.
-   * This is only used when the host element is an `<a>` tag.
+   * This is only used when the host element is
+   * an `<a>`/`<area>` tag or a compatible custom element.
    */
   target;
   /**
@@ -17952,11 +18218,15 @@ var RouterLink = class _RouterLink {
    * @see {@link Router#createUrlTree}
    */
   relativeTo;
-  /** Whether a host element is an `<a>` tag. */
+  /** Whether a host element is an `<a>`/`<area>` tag or a compatible custom element. */
   isAnchorElement;
   subscription;
   /** @internal */
   onChanges = new Subject();
+  applicationErrorHandler = inject(INTERNAL_APPLICATION_ERROR_HANDLER);
+  options = inject(ROUTER_CONFIGURATION, {
+    optional: true
+  });
   constructor(router, route, tabIndexAttribute, renderer, el, locationStrategy) {
     this.router = router;
     this.route = route;
@@ -17964,17 +18234,36 @@ var RouterLink = class _RouterLink {
     this.renderer = renderer;
     this.el = el;
     this.locationStrategy = locationStrategy;
+    this.reactiveHref.set(inject(new HostAttributeToken("href"), {
+      optional: true
+    }));
     const tagName = el.nativeElement.tagName?.toLowerCase();
-    this.isAnchorElement = tagName === "a" || tagName === "area";
-    if (this.isAnchorElement) {
-      this.subscription = router.events.subscribe((s) => {
-        if (s instanceof NavigationEnd) {
-          this.updateHref();
-        }
-      });
+    this.isAnchorElement = tagName === "a" || tagName === "area" || !!// Avoid breaking in an SSR context where customElements might not be defined.
+    (typeof customElements === "object" && // observedAttributes is an optional static property/getter on a custom element.
+    // The spec states that this must be an array of strings.
+    customElements.get(tagName)?.observedAttributes?.includes?.("href"));
+    if (!this.isAnchorElement) {
+      this.subscribeToNavigationEventsIfNecessary();
     } else {
       this.setTabIndexIfNotOnNativeEl("0");
     }
+  }
+  subscribeToNavigationEventsIfNecessary() {
+    if (this.subscription !== void 0 || !this.isAnchorElement) {
+      return;
+    }
+    let createSubcription = this.preserveFragment;
+    const dependsOnRouterState = (handling) => handling === "merge" || handling === "preserve";
+    createSubcription ||= dependsOnRouterState(this.queryParamsHandling);
+    createSubcription ||= !this.queryParamsHandling && !dependsOnRouterState(this.options?.defaultQueryParamsHandling);
+    if (!createSubcription) {
+      return;
+    }
+    this.subscription = this.router.events.subscribe((s) => {
+      if (s instanceof NavigationEnd) {
+        this.updateHref();
+      }
+    });
   }
   /**
    * Passed to {@link Router#createUrlTree} as part of the
@@ -18011,10 +18300,11 @@ var RouterLink = class _RouterLink {
   // TODO(atscott): Remove changes parameter in major version as a breaking change.
   ngOnChanges(changes) {
     if (ngDevMode && isUrlTree(this.routerLinkInput) && (this.fragment !== void 0 || this.queryParams || this.queryParamsHandling || this.preserveFragment || this.relativeTo)) {
-      throw new RuntimeError(4016, "Cannot configure queryParams or fragment when using a UrlTree as the routerLink input value.");
+      throw new RuntimeError(4017, "Cannot configure queryParams or fragment when using a UrlTree as the routerLink input value.");
     }
     if (this.isAnchorElement) {
       this.updateHref();
+      this.subscribeToNavigationEventsIfNecessary();
     }
     this.onChanges.next(this);
   }
@@ -18061,7 +18351,9 @@ var RouterLink = class _RouterLink {
       state: this.state,
       info: this.info
     };
-    this.router.navigateByUrl(urlTree, extras);
+    this.router.navigateByUrl(urlTree, extras)?.catch((e) => {
+      this.applicationErrorHandler(e);
+    });
     return !this.isAnchorElement;
   }
   /** @docs-private */
@@ -18070,21 +18362,7 @@ var RouterLink = class _RouterLink {
   }
   updateHref() {
     const urlTree = this.urlTree;
-    this.href = urlTree !== null && this.locationStrategy ? this.locationStrategy?.prepareExternalUrl(this.router.serializeUrl(urlTree)) : null;
-    const sanitizedValue = this.href === null ? null : (
-      // This class represents a directive that can be added to both `<a>` elements,
-      // as well as other elements. As a result, we can't define security context at
-      // compile time. So the security context is deferred to runtime.
-      // The `ɵɵsanitizeUrlOrResourceUrl` selects the necessary sanitizer function
-      // based on the tag and property names. The logic mimics the one from
-      // `packages/compiler/src/schema/dom_security_schema.ts`, which is used at compile time.
-      //
-      // Note: we should investigate whether we can switch to using `@HostBinding('attr.href')`
-      // instead of applying a value via a renderer, after a final merge of the
-      // `RouterLinkWithHref` directive.
-      \u0275\u0275sanitizeUrlOrResourceUrl(this.href, this.el.nativeElement.tagName.toLowerCase(), "href")
-    );
-    this.applyAttributeValue("href", sanitizedValue);
+    this.reactiveHref.set(urlTree !== null && this.locationStrategy ? this.locationStrategy?.prepareExternalUrl(this.router.serializeUrl(urlTree)) ?? "" : null);
   }
   applyAttributeValue(attrName, attrValue) {
     const renderer = this.renderer;
@@ -18117,7 +18395,7 @@ var RouterLink = class _RouterLink {
   static \u0275dir = /* @__PURE__ */ \u0275\u0275defineDirective({
     type: _RouterLink,
     selectors: [["", "routerLink", ""]],
-    hostVars: 1,
+    hostVars: 2,
     hostBindings: function RouterLink_HostBindings(rf, ctx) {
       if (rf & 1) {
         \u0275\u0275listener("click", function RouterLink_click_HostBindingHandler($event) {
@@ -18125,7 +18403,7 @@ var RouterLink = class _RouterLink {
         });
       }
       if (rf & 2) {
-        \u0275\u0275attribute("target", ctx.target);
+        \u0275\u0275attribute("href", ctx.reactiveHref(), \u0275\u0275sanitizeUrlOrResourceUrl)("target", ctx.target);
       }
     },
     inputs: {
@@ -18148,7 +18426,10 @@ var RouterLink = class _RouterLink {
   (typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(RouterLink, [{
     type: Directive,
     args: [{
-      selector: "[routerLink]"
+      selector: "[routerLink]",
+      host: {
+        "[attr.href]": "reactiveHref()"
+      }
     }]
   }], () => [{
     type: Router
@@ -18519,7 +18800,7 @@ var RouterPreloader = class _RouterPreloader {
         return this.processRoutes(config.injector ?? injector, config.routes);
       }));
       if (route.loadComponent && !route._loadedComponent) {
-        const loadComponent$ = this.loader.loadComponent(route);
+        const loadComponent$ = this.loader.loadComponent(injector, route);
         return from([recursiveLoadChildren$, loadComponent$]).pipe(mergeAll());
       } else {
         return recursiveLoadChildren$;
@@ -18561,7 +18842,7 @@ var RouterScroller = class _RouterScroller {
   routerEventsSubscription;
   scrollEventsSubscription;
   lastId = 0;
-  lastSource = "imperative";
+  lastSource = IMPERATIVE_NAVIGATION;
   restoredId = 0;
   store = {};
   /** @docs-private */
@@ -18600,11 +18881,14 @@ var RouterScroller = class _RouterScroller {
   consumeScrollEvents() {
     return this.transitions.events.subscribe((e) => {
       if (!(e instanceof Scroll)) return;
+      const instantScroll = {
+        behavior: "instant"
+      };
       if (e.position) {
         if (this.options.scrollPositionRestoration === "top") {
-          this.viewportScroller.scrollToPosition([0, 0]);
+          this.viewportScroller.scrollToPosition([0, 0], instantScroll);
         } else if (this.options.scrollPositionRestoration === "enabled") {
-          this.viewportScroller.scrollToPosition(e.position);
+          this.viewportScroller.scrollToPosition(e.position, instantScroll);
         }
       } else {
         if (e.anchor && this.options.anchorScrolling === "enabled") {
@@ -18616,13 +18900,17 @@ var RouterScroller = class _RouterScroller {
     });
   }
   scheduleScrollEvent(routerEvent, anchor) {
-    this.zone.runOutsideAngular(() => {
-      setTimeout(() => {
-        this.zone.run(() => {
-          this.transitions.events.next(new Scroll(routerEvent, this.lastSource === "popstate" ? this.store[this.restoredId] : null, anchor));
-        });
-      }, 0);
-    });
+    this.zone.runOutsideAngular(() => __async(this, null, function* () {
+      yield new Promise((resolve) => {
+        setTimeout(resolve);
+        if (typeof requestAnimationFrame !== "undefined") {
+          requestAnimationFrame(resolve);
+        }
+      });
+      this.zone.run(() => {
+        this.transitions.events.next(new Scroll(routerEvent, this.lastSource === "popstate" ? this.store[this.restoredId] : null, anchor));
+      });
+    }));
   }
   /** @docs-private */
   ngOnDestroy() {
@@ -18652,7 +18940,26 @@ var RouterScroller = class _RouterScroller {
     type: void 0
   }], null);
 })();
+function getLoadedRoutes(route) {
+  return route._loadedRoutes;
+}
+function getRouterInstance(injector) {
+  return injector.get(Router, null, {
+    optional: true
+  });
+}
+function navigateByUrl(router, url) {
+  if (!(router instanceof Router)) {
+    throw new Error("The provided router is not an Angular Router.");
+  }
+  return router.navigateByUrl(url);
+}
 function provideRouter(routes2, ...features) {
+  if (typeof ngDevMode === "undefined" || ngDevMode) {
+    publishExternalGlobalUtil("\u0275getLoadedRoutes", getLoadedRoutes);
+    publishExternalGlobalUtil("\u0275getRouterInstance", getRouterInstance);
+    publishExternalGlobalUtil("\u0275navigateByUrl", navigateByUrl);
+  }
   return makeEnvironmentProviders([{
     provide: ROUTES,
     multi: true,
@@ -18695,8 +19002,12 @@ function getBootstrapListener() {
     if (injector.get(INITIAL_NAVIGATION) === 1) {
       router.initialNavigation();
     }
-    injector.get(ROUTER_PRELOADER, null, InjectFlags.Optional)?.setUpPreloading();
-    injector.get(ROUTER_SCROLLER, null, InjectFlags.Optional)?.init();
+    injector.get(ROUTER_PRELOADER, null, {
+      optional: true
+    })?.setUpPreloading();
+    injector.get(ROUTER_SCROLLER, null, {
+      optional: true
+    })?.init();
     router.resetRootComponentType(ref.componentTypes[0]);
     if (!bootstrapDone.closed) {
       bootstrapDone.next();
@@ -18717,6 +19028,9 @@ var INITIAL_NAVIGATION = new InjectionToken(typeof ngDevMode === "undefined" || 
 });
 function withEnabledBlockingInitialNavigation() {
   const providers = [{
+    provide: IS_ENABLED_BLOCKING_INITIAL_NAVIGATION,
+    useValue: true
+  }, {
     provide: INITIAL_NAVIGATION,
     useValue: 0
     /* InitialNavigation.EnabledBlocking */
@@ -18970,33 +19284,27 @@ function provideRouterInitializer() {
   ];
 }
 
-// node_modules/@angular/router/fesm2022/router.mjs
-var VERSION4 = new Version("19.2.17");
-
 // src/app/advanced-components/auth-message/auth-message.component.ts
-var AuthMessageComponent = class _AuthMessageComponent {
+var _AuthMessageComponent = class _AuthMessageComponent {
   constructor() {
     this.days = 7;
   }
-  static {
-    this.\u0275fac = function AuthMessageComponent_Factory(__ngFactoryType__) {
-      return new (__ngFactoryType__ || _AuthMessageComponent)();
-    };
-  }
-  static {
-    this.\u0275cmp = /* @__PURE__ */ \u0275\u0275defineComponent({ type: _AuthMessageComponent, selectors: [["auth-message"]], decls: 2, vars: 1, template: function AuthMessageComponent_Template(rf, ctx) {
-      if (rf & 1) {
-        \u0275\u0275elementStart(0, "div");
-        \u0275\u0275text(1);
-        \u0275\u0275elementEnd();
-      }
-      if (rf & 2) {
-        \u0275\u0275advance();
-        \u0275\u0275textInterpolate1("auth-message: You will be logged in for ", ctx.days, " days");
-      }
-    }, encapsulation: 2 });
-  }
 };
+_AuthMessageComponent.\u0275fac = function AuthMessageComponent_Factory(__ngFactoryType__) {
+  return new (__ngFactoryType__ || _AuthMessageComponent)();
+};
+_AuthMessageComponent.\u0275cmp = /* @__PURE__ */ \u0275\u0275defineComponent({ type: _AuthMessageComponent, selectors: [["auth-message"]], decls: 2, vars: 1, template: function AuthMessageComponent_Template(rf, ctx) {
+  if (rf & 1) {
+    \u0275\u0275domElementStart(0, "div");
+    \u0275\u0275text(1);
+    \u0275\u0275domElementEnd();
+  }
+  if (rf & 2) {
+    \u0275\u0275advance();
+    \u0275\u0275textInterpolate1("auth-message: You will be logged in for ", ctx.days, " days");
+  }
+}, encapsulation: 2 });
+var AuthMessageComponent = _AuthMessageComponent;
 (() => {
   (typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(AuthMessageComponent, [{
     type: Component,
@@ -19008,40 +19316,37 @@ var AuthMessageComponent = class _AuthMessageComponent {
 })();
 
 // src/app/advanced-components/auth-remember/auth-remember.component.ts
-var AuthRememberComponent = class _AuthRememberComponent {
+var _AuthRememberComponent = class _AuthRememberComponent {
   constructor() {
     this.checked = output();
   }
   onChecked(value) {
     this.checked.emit(value);
   }
-  static {
-    this.\u0275fac = function AuthRememberComponent_Factory(__ngFactoryType__) {
-      return new (__ngFactoryType__ || _AuthRememberComponent)();
-    };
-  }
-  static {
-    this.\u0275cmp = /* @__PURE__ */ \u0275\u0275defineComponent({ type: _AuthRememberComponent, selectors: [["auth-remember"]], outputs: { checked: "checked" }, decls: 4, vars: 0, consts: [["inputBox", ""], ["type", "checkbox", 3, "change"]], template: function AuthRememberComponent_Template(rf, ctx) {
-      if (rf & 1) {
-        const _r1 = \u0275\u0275getCurrentView();
-        \u0275\u0275elementStart(0, "label")(1, "input", 1, 0);
-        \u0275\u0275listener("change", function AuthRememberComponent_Template_input_change_1_listener() {
-          \u0275\u0275restoreView(_r1);
-          const inputBox_r2 = \u0275\u0275reference(2);
-          return \u0275\u0275resetView(ctx.onChecked(inputBox_r2.checked));
-        });
-        \u0275\u0275elementEnd();
-        \u0275\u0275text(3, " Keep me logged in\n");
-        \u0275\u0275elementEnd();
-      }
-    }, encapsulation: 2 });
-  }
 };
+_AuthRememberComponent.\u0275fac = function AuthRememberComponent_Factory(__ngFactoryType__) {
+  return new (__ngFactoryType__ || _AuthRememberComponent)();
+};
+_AuthRememberComponent.\u0275cmp = /* @__PURE__ */ \u0275\u0275defineComponent({ type: _AuthRememberComponent, selectors: [["auth-remember"]], outputs: { checked: "checked" }, decls: 4, vars: 0, consts: [["inputBox", ""], ["type", "checkbox", 3, "change"]], template: function AuthRememberComponent_Template(rf, ctx) {
+  if (rf & 1) {
+    const _r1 = \u0275\u0275getCurrentView();
+    \u0275\u0275domElementStart(0, "label")(1, "input", 1, 0);
+    \u0275\u0275domListener("change", function AuthRememberComponent_Template_input_change_1_listener() {
+      \u0275\u0275restoreView(_r1);
+      const inputBox_r2 = \u0275\u0275reference(2);
+      return \u0275\u0275resetView(ctx.onChecked(inputBox_r2.checked));
+    });
+    \u0275\u0275domElementEnd();
+    \u0275\u0275text(3, " Keep me logged in\n");
+    \u0275\u0275domElementEnd();
+  }
+}, encapsulation: 2 });
+var AuthRememberComponent = _AuthRememberComponent;
 (() => {
   (typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(AuthRememberComponent, [{
     type: Component,
     args: [{ selector: "auth-remember", template: '<label>\r\n  <input type="checkbox" #inputBox (change)="onChecked(inputBox.checked)" />\r\n  Keep me logged in\r\n</label>\r\n' }]
-  }], null, null);
+  }], null, { checked: [{ type: Output, args: ["checked"] }] });
 })();
 (() => {
   (typeof ngDevMode === "undefined" || ngDevMode) && \u0275setClassDebugInfo(AuthRememberComponent, { className: "AuthRememberComponent", filePath: "src/app/advanced-components/auth-remember/auth-remember.component.ts", lineNumber: 8 });
@@ -19079,16 +19384,16 @@ function AuthFormComponent_Conditional_16_Template(rf, ctx) {
     \u0275\u0275elementEnd();
   }
 }
-var AuthFormComponent = class _AuthFormComponent {
+var _AuthFormComponent = class _AuthFormComponent {
   constructor() {
     this.submitted = output();
-    this.remember = contentChild(AuthRememberComponent);
-    this.rememberList = contentChildren(AuthRememberComponent);
+    this.remember = contentChild(AuthRememberComponent, ...ngDevMode ? [{ debugName: "remember" }] : []);
+    this.rememberList = contentChildren(AuthRememberComponent, ...ngDevMode ? [{ debugName: "rememberList" }] : []);
     this.message = viewChild.required(AuthMessageComponent);
-    this.messages = viewChildren(AuthMessageComponent);
+    this.messages = viewChildren(AuthMessageComponent, ...ngDevMode ? [{ debugName: "messages" }] : []);
     this.email = viewChild.required("email");
     this.password = viewChild.required("password");
-    this.createButton = viewChild("createButton");
+    this.createButton = viewChild("createButton", ...ngDevMode ? [{ debugName: "createButton" }] : []);
     this.changeDetector = inject(ChangeDetectorRef);
     this.renderer = inject(Renderer2);
     this.showMessage = false;
@@ -19147,74 +19452,72 @@ var AuthFormComponent = class _AuthFormComponent {
   onSubmit(value) {
     this.submitted.emit(value);
   }
-  static {
-    this.\u0275fac = function AuthFormComponent_Factory(__ngFactoryType__) {
-      return new (__ngFactoryType__ || _AuthFormComponent)();
-    };
-  }
-  static {
-    this.\u0275cmp = /* @__PURE__ */ \u0275\u0275defineComponent({ type: _AuthFormComponent, selectors: [["auth-form"]], contentQueries: function AuthFormComponent_ContentQueries(rf, ctx, dirIndex) {
-      if (rf & 1) {
-        \u0275\u0275contentQuerySignal(dirIndex, ctx.remember, AuthRememberComponent, 5);
-        \u0275\u0275contentQuerySignal(dirIndex, ctx.rememberList, AuthRememberComponent, 4);
-      }
-      if (rf & 2) {
-        \u0275\u0275queryAdvance(2);
-      }
-    }, viewQuery: function AuthFormComponent_Query(rf, ctx) {
-      if (rf & 1) {
-        \u0275\u0275viewQuerySignal(ctx.message, AuthMessageComponent, 5);
-        \u0275\u0275viewQuerySignal(ctx.messages, AuthMessageComponent, 5);
-        \u0275\u0275viewQuerySignal(ctx.email, _c0, 5);
-        \u0275\u0275viewQuerySignal(ctx.password, _c1, 5);
-        \u0275\u0275viewQuerySignal(ctx.createButton, _c2, 5);
-      }
-      if (rf & 2) {
-        \u0275\u0275queryAdvance(5);
-      }
-    }, outputs: { submitted: "submitted" }, ngContentSelectors: _c4, decls: 20, vars: 9, consts: [["form", "ngForm"], ["email", ""], ["password", ""], ["createButton", ""], [3, "ngSubmit"], ["type", "email", "name", "email", "ngModel", ""], ["type", "password", "name", "password", "ngModel", ""], ["name", "createButton"]], template: function AuthFormComponent_Template(rf, ctx) {
-      if (rf & 1) {
-        const _r1 = \u0275\u0275getCurrentView();
-        \u0275\u0275projectionDef(_c3);
-        \u0275\u0275elementStart(0, "div")(1, "form", 4, 0);
-        \u0275\u0275listener("ngSubmit", function AuthFormComponent_Template_form_ngSubmit_1_listener() {
-          \u0275\u0275restoreView(_r1);
-          const form_r2 = \u0275\u0275reference(2);
-          return \u0275\u0275resetView(ctx.onSubmit(form_r2.value));
-        });
-        \u0275\u0275projection(3);
-        \u0275\u0275template(4, AuthFormComponent_Conditional_4_Template, 2, 1, "h3");
-        \u0275\u0275elementStart(5, "label");
-        \u0275\u0275text(6, " Email address ");
-        \u0275\u0275element(7, "input", 5, 1);
-        \u0275\u0275elementEnd();
-        \u0275\u0275elementStart(9, "label");
-        \u0275\u0275text(10, " Password ");
-        \u0275\u0275element(11, "input", 6, 2);
-        \u0275\u0275elementEnd();
-        \u0275\u0275projection(13, 1);
-        \u0275\u0275projection(14, 2);
-        \u0275\u0275template(15, AuthFormComponent_Conditional_15_Template, 3, 0, "button", 7)(16, AuthFormComponent_Conditional_16_Template, 2, 0, "div");
-        \u0275\u0275element(17, "auth-message")(18, "auth-message")(19, "auth-message");
-        \u0275\u0275elementEnd()();
-      }
-      if (rf & 2) {
-        \u0275\u0275advance(4);
-        \u0275\u0275conditional(ctx.title === "Dynamic Create" ? 4 : -1);
-        \u0275\u0275advance(11);
-        \u0275\u0275conditional(ctx.title === "Dynamic Create" ? 15 : -1);
-        \u0275\u0275advance();
-        \u0275\u0275conditional(ctx.showMessage ? 16 : -1);
-        \u0275\u0275advance();
-        \u0275\u0275styleProp("display", ctx.showMessage ? "inherit" : "none");
-        \u0275\u0275advance();
-        \u0275\u0275styleProp("display", ctx.showMessage ? "inherit" : "none");
-        \u0275\u0275advance();
-        \u0275\u0275styleProp("display", ctx.showMessage ? "inherit" : "none");
-      }
-    }, dependencies: [FormsModule, \u0275NgNoValidate, DefaultValueAccessor, NgControlStatus, NgControlStatusGroup, NgModel, NgForm, AuthMessageComponent], styles: ["\n\n.email[_ngcontent-%COMP%] {\n  border-color: purple;\n}"] });
-  }
 };
+_AuthFormComponent.\u0275fac = function AuthFormComponent_Factory(__ngFactoryType__) {
+  return new (__ngFactoryType__ || _AuthFormComponent)();
+};
+_AuthFormComponent.\u0275cmp = /* @__PURE__ */ \u0275\u0275defineComponent({ type: _AuthFormComponent, selectors: [["auth-form"]], contentQueries: function AuthFormComponent_ContentQueries(rf, ctx, dirIndex) {
+  if (rf & 1) {
+    \u0275\u0275contentQuerySignal(dirIndex, ctx.remember, AuthRememberComponent, 5);
+    \u0275\u0275contentQuerySignal(dirIndex, ctx.rememberList, AuthRememberComponent, 4);
+  }
+  if (rf & 2) {
+    \u0275\u0275queryAdvance(2);
+  }
+}, viewQuery: function AuthFormComponent_Query(rf, ctx) {
+  if (rf & 1) {
+    \u0275\u0275viewQuerySignal(ctx.message, AuthMessageComponent, 5);
+    \u0275\u0275viewQuerySignal(ctx.messages, AuthMessageComponent, 5);
+    \u0275\u0275viewQuerySignal(ctx.email, _c0, 5);
+    \u0275\u0275viewQuerySignal(ctx.password, _c1, 5);
+    \u0275\u0275viewQuerySignal(ctx.createButton, _c2, 5);
+  }
+  if (rf & 2) {
+    \u0275\u0275queryAdvance(5);
+  }
+}, outputs: { submitted: "submitted" }, ngContentSelectors: _c4, decls: 20, vars: 9, consts: [["form", "ngForm"], ["email", ""], ["password", ""], ["createButton", ""], [3, "ngSubmit"], ["type", "email", "name", "email", "ngModel", ""], ["type", "password", "name", "password", "ngModel", ""], ["name", "createButton"]], template: function AuthFormComponent_Template(rf, ctx) {
+  if (rf & 1) {
+    const _r1 = \u0275\u0275getCurrentView();
+    \u0275\u0275projectionDef(_c3);
+    \u0275\u0275elementStart(0, "div")(1, "form", 4, 0);
+    \u0275\u0275listener("ngSubmit", function AuthFormComponent_Template_form_ngSubmit_1_listener() {
+      \u0275\u0275restoreView(_r1);
+      const form_r2 = \u0275\u0275reference(2);
+      return \u0275\u0275resetView(ctx.onSubmit(form_r2.value));
+    });
+    \u0275\u0275projection(3);
+    \u0275\u0275conditionalCreate(4, AuthFormComponent_Conditional_4_Template, 2, 1, "h3");
+    \u0275\u0275elementStart(5, "label");
+    \u0275\u0275text(6, " Email address ");
+    \u0275\u0275element(7, "input", 5, 1);
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(9, "label");
+    \u0275\u0275text(10, " Password ");
+    \u0275\u0275element(11, "input", 6, 2);
+    \u0275\u0275elementEnd();
+    \u0275\u0275projection(13, 1);
+    \u0275\u0275projection(14, 2);
+    \u0275\u0275conditionalCreate(15, AuthFormComponent_Conditional_15_Template, 3, 0, "button", 7);
+    \u0275\u0275conditionalCreate(16, AuthFormComponent_Conditional_16_Template, 2, 0, "div");
+    \u0275\u0275element(17, "auth-message")(18, "auth-message")(19, "auth-message");
+    \u0275\u0275elementEnd()();
+  }
+  if (rf & 2) {
+    \u0275\u0275advance(4);
+    \u0275\u0275conditional(ctx.title === "Dynamic Create" ? 4 : -1);
+    \u0275\u0275advance(11);
+    \u0275\u0275conditional(ctx.title === "Dynamic Create" ? 15 : -1);
+    \u0275\u0275advance();
+    \u0275\u0275conditional(ctx.showMessage ? 16 : -1);
+    \u0275\u0275advance();
+    \u0275\u0275styleProp("display", ctx.showMessage ? "inherit" : "none");
+    \u0275\u0275advance();
+    \u0275\u0275styleProp("display", ctx.showMessage ? "inherit" : "none");
+    \u0275\u0275advance();
+    \u0275\u0275styleProp("display", ctx.showMessage ? "inherit" : "none");
+  }
+}, dependencies: [FormsModule, \u0275NgNoValidate, DefaultValueAccessor, NgControlStatus, NgControlStatusGroup, NgModel, NgForm, AuthMessageComponent], styles: ["\n\n.email[_ngcontent-%COMP%] {\n  border-color: purple;\n}"] });
+var AuthFormComponent = _AuthFormComponent;
 (() => {
   (typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(AuthFormComponent, [{
     type: Component,
@@ -19246,7 +19549,7 @@ var AuthFormComponent = class _AuthFormComponent {
     </form>
 </div>
 `, styles: ["/* src/app/advanced-components/auth-form/auth-form.component.scss */\n.email {\n  border-color: purple;\n}\n"] }]
-  }], () => [], null);
+  }], () => [], { submitted: [{ type: Output, args: ["submitted"] }], remember: [{ type: ContentChild, args: [forwardRef(() => AuthRememberComponent), { isSignal: true }] }], rememberList: [{ type: ContentChildren, args: [forwardRef(() => AuthRememberComponent), { isSignal: true }] }], message: [{ type: ViewChild, args: [forwardRef(() => AuthMessageComponent), { isSignal: true }] }], messages: [{ type: ViewChildren, args: [forwardRef(() => AuthMessageComponent), { isSignal: true }] }], email: [{ type: ViewChild, args: ["email", { isSignal: true }] }], password: [{ type: ViewChild, args: ["password", { isSignal: true }] }], createButton: [{ type: ViewChild, args: ["createButton", { isSignal: true }] }] });
 })();
 (() => {
   (typeof ngDevMode === "undefined" || ngDevMode) && \u0275setClassDebugInfo(AuthFormComponent, { className: "AuthFormComponent", filePath: "src/app/advanced-components/auth-form/auth-form.component.ts", lineNumber: 29 });
@@ -19262,10 +19565,10 @@ function TemplateContainerComponent_ng_template_8_Template(rf, ctx) {
   if (rf & 2) {
     const name_r1 = ctx.$implicit;
     const location_r2 = ctx.location;
-    \u0275\u0275textInterpolate2("", name_r1, " : ", location_r2, "");
+    \u0275\u0275textInterpolate2("", name_r1, " : ", location_r2);
   }
 }
-var TemplateContainerComponent = class _TemplateContainerComponent {
+var _TemplateContainerComponent = class _TemplateContainerComponent {
   constructor() {
     this.context = {
       $implicit: "Noran Diaconu",
@@ -19280,67 +19583,61 @@ var TemplateContainerComponent = class _TemplateContainerComponent {
       location: "North Carolina"
     });
   }
-  static {
-    this.\u0275fac = function TemplateContainerComponent_Factory(__ngFactoryType__) {
-      return new (__ngFactoryType__ || _TemplateContainerComponent)();
-    };
-  }
-  static {
-    this.\u0275cmp = /* @__PURE__ */ \u0275\u0275defineComponent({ type: _TemplateContainerComponent, selectors: [["template-container"]], viewQuery: function TemplateContainerComponent_Query(rf, ctx) {
-      if (rf & 1) {
-        \u0275\u0275viewQuerySignal(ctx.entry, _c02, 5, ViewContainerRef);
-        \u0275\u0275viewQuerySignal(ctx.template, _c12, 5);
-      }
-      if (rf & 2) {
-        \u0275\u0275queryAdvance(2);
-      }
-    }, decls: 10, vars: 2, consts: [["entry", ""], ["template", ""], [3, "ngTemplateOutlet", "ngTemplateOutletContext"]], template: function TemplateContainerComponent_Template(rf, ctx) {
-      if (rf & 1) {
-        \u0275\u0275elementStart(0, "div");
-        \u0275\u0275element(1, "hr");
-        \u0275\u0275elementStart(2, "h2");
-        \u0275\u0275text(3, "ng-template / ng-container");
-        \u0275\u0275elementEnd();
-        \u0275\u0275element(4, "div", null, 0)(6, "br");
-        \u0275\u0275elementContainer(7, 2);
-        \u0275\u0275template(8, TemplateContainerComponent_ng_template_8_Template, 1, 2, "ng-template", null, 1, \u0275\u0275templateRefExtractor);
-        \u0275\u0275elementEnd();
-      }
-      if (rf & 2) {
-        const template_r3 = \u0275\u0275reference(9);
-        \u0275\u0275advance(7);
-        \u0275\u0275property("ngTemplateOutlet", template_r3)("ngTemplateOutletContext", ctx.context);
-      }
-    }, dependencies: [NgTemplateOutlet], encapsulation: 2 });
-  }
 };
+_TemplateContainerComponent.\u0275fac = function TemplateContainerComponent_Factory(__ngFactoryType__) {
+  return new (__ngFactoryType__ || _TemplateContainerComponent)();
+};
+_TemplateContainerComponent.\u0275cmp = /* @__PURE__ */ \u0275\u0275defineComponent({ type: _TemplateContainerComponent, selectors: [["template-container"]], viewQuery: function TemplateContainerComponent_Query(rf, ctx) {
+  if (rf & 1) {
+    \u0275\u0275viewQuerySignal(ctx.entry, _c02, 5, ViewContainerRef);
+    \u0275\u0275viewQuerySignal(ctx.template, _c12, 5);
+  }
+  if (rf & 2) {
+    \u0275\u0275queryAdvance(2);
+  }
+}, decls: 10, vars: 2, consts: [["entry", ""], ["template", ""], [3, "ngTemplateOutlet", "ngTemplateOutletContext"]], template: function TemplateContainerComponent_Template(rf, ctx) {
+  if (rf & 1) {
+    \u0275\u0275elementStart(0, "div");
+    \u0275\u0275element(1, "hr");
+    \u0275\u0275elementStart(2, "h2");
+    \u0275\u0275text(3, "ng-template / ng-container");
+    \u0275\u0275elementEnd();
+    \u0275\u0275element(4, "div", null, 0)(6, "br");
+    \u0275\u0275elementContainer(7, 2);
+    \u0275\u0275template(8, TemplateContainerComponent_ng_template_8_Template, 1, 2, "ng-template", null, 1, \u0275\u0275templateRefExtractor);
+    \u0275\u0275elementEnd();
+  }
+  if (rf & 2) {
+    const template_r3 = \u0275\u0275reference(9);
+    \u0275\u0275advance(7);
+    \u0275\u0275property("ngTemplateOutlet", template_r3)("ngTemplateOutletContext", ctx.context);
+  }
+}, dependencies: [NgTemplateOutlet], encapsulation: 2 });
+var TemplateContainerComponent = _TemplateContainerComponent;
 (() => {
   (typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(TemplateContainerComponent, [{
     type: Component,
     args: [{ selector: "template-container", imports: [NgTemplateOutlet], template: '<div>\r\n  <hr />\r\n  <h2>ng-template / ng-container</h2>\r\n  <div #entry></div>\r\n  <br />\r\n  <ng-container\r\n    [ngTemplateOutlet]="template"\r\n    [ngTemplateOutletContext]="context"\r\n  ></ng-container>\r\n  <ng-template #template let-name let-location="location"\r\n    >{{ name }} : {{ location }}</ng-template\r\n  >\r\n</div>\r\n' }]
-  }], null, null);
+  }], null, { entry: [{ type: ViewChild, args: ["entry", __spreadProps(__spreadValues({}, { read: ViewContainerRef }), { isSignal: true })] }], template: [{ type: ViewChild, args: ["template", { isSignal: true }] }] });
 })();
 (() => {
   (typeof ngDevMode === "undefined" || ngDevMode) && \u0275setClassDebugInfo(TemplateContainerComponent, { className: "TemplateContainerComponent", filePath: "src/app/advanced-components/template-container/template-container.component.ts", lineNumber: 10 });
 })();
 
 // src/app/advanced-components/view-encapsulation/example-one/example-one.component.ts
-var ExampleOneComponent = class _ExampleOneComponent {
-  static {
-    this.\u0275fac = function ExampleOneComponent_Factory(__ngFactoryType__) {
-      return new (__ngFactoryType__ || _ExampleOneComponent)();
-    };
-  }
-  static {
-    this.\u0275cmp = /* @__PURE__ */ \u0275\u0275defineComponent({ type: _ExampleOneComponent, selectors: [["example-one"]], decls: 2, vars: 0, consts: [[1, "example-one"]], template: function ExampleOneComponent_Template(rf, ctx) {
-      if (rf & 1) {
-        \u0275\u0275elementStart(0, "div", 0);
-        \u0275\u0275text(1, "Example One");
-        \u0275\u0275elementEnd();
-      }
-    }, styles: ["\n\n.example-one[_ngcontent-%COMP%] {\n  background: purple;\n  font-size: 19px;\n  color: white;\n  margin-bottom: 50px;\n  padding: 10px 20px;\n}"] });
-  }
+var _ExampleOneComponent = class _ExampleOneComponent {
 };
+_ExampleOneComponent.\u0275fac = function ExampleOneComponent_Factory(__ngFactoryType__) {
+  return new (__ngFactoryType__ || _ExampleOneComponent)();
+};
+_ExampleOneComponent.\u0275cmp = /* @__PURE__ */ \u0275\u0275defineComponent({ type: _ExampleOneComponent, selectors: [["example-one"]], decls: 2, vars: 0, consts: [[1, "example-one"]], template: function ExampleOneComponent_Template(rf, ctx) {
+  if (rf & 1) {
+    \u0275\u0275domElementStart(0, "div", 0);
+    \u0275\u0275text(1, "Example One");
+    \u0275\u0275domElementEnd();
+  }
+}, styles: ["\n\n.example-one[_ngcontent-%COMP%] {\n  background: purple;\n  font-size: 19px;\n  color: white;\n  margin-bottom: 50px;\n  padding: 10px 20px;\n}"] });
+var ExampleOneComponent = _ExampleOneComponent;
 (() => {
   (typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(ExampleOneComponent, [{
     type: Component,
@@ -19352,25 +19649,22 @@ var ExampleOneComponent = class _ExampleOneComponent {
 })();
 
 // src/app/advanced-components/view-encapsulation/example-two/example-two.component.ts
-var ExampleTwoComponent = class _ExampleTwoComponent {
-  static {
-    this.\u0275fac = function ExampleTwoComponent_Factory(__ngFactoryType__) {
-      return new (__ngFactoryType__ || _ExampleTwoComponent)();
-    };
-  }
-  static {
-    this.\u0275cmp = /* @__PURE__ */ \u0275\u0275defineComponent({ type: _ExampleTwoComponent, selectors: [["example-two"]], decls: 4, vars: 0, consts: [[1, "example-two"], [1, "example-one"]], template: function ExampleTwoComponent_Template(rf, ctx) {
-      if (rf & 1) {
-        \u0275\u0275elementStart(0, "div", 0);
-        \u0275\u0275text(1, "Example Two");
-        \u0275\u0275elementEnd();
-        \u0275\u0275elementStart(2, "div", 1);
-        \u0275\u0275text(3, "Example One!");
-        \u0275\u0275elementEnd();
-      }
-    }, styles: ["/* src/app/advanced-components/view-encapsulation/example-two/example-two.component.scss */\n.example-two {\n  background: purple;\n  font-size: 19px;\n  color: white;\n  margin-bottom: 10px;\n  padding: 5px 7px;\n}\n.example-one {\n  border: 3px solid purple;\n  font-size: 14px;\n  color: purple;\n  padding: 5px 7px;\n}\n"], encapsulation: 3 });
-  }
+var _ExampleTwoComponent = class _ExampleTwoComponent {
 };
+_ExampleTwoComponent.\u0275fac = function ExampleTwoComponent_Factory(__ngFactoryType__) {
+  return new (__ngFactoryType__ || _ExampleTwoComponent)();
+};
+_ExampleTwoComponent.\u0275cmp = /* @__PURE__ */ \u0275\u0275defineComponent({ type: _ExampleTwoComponent, selectors: [["example-two"]], decls: 4, vars: 0, consts: [[1, "example-two"], [1, "example-one"]], template: function ExampleTwoComponent_Template(rf, ctx) {
+  if (rf & 1) {
+    \u0275\u0275domElementStart(0, "div", 0);
+    \u0275\u0275text(1, "Example Two");
+    \u0275\u0275domElementEnd();
+    \u0275\u0275domElementStart(2, "div", 1);
+    \u0275\u0275text(3, "Example One!");
+    \u0275\u0275domElementEnd();
+  }
+}, styles: ["/* src/app/advanced-components/view-encapsulation/example-two/example-two.component.scss */\n.example-two {\n  background: purple;\n  font-size: 19px;\n  color: white;\n  margin-bottom: 10px;\n  padding: 5px 7px;\n}\n.example-one {\n  border: 3px solid purple;\n  font-size: 14px;\n  color: purple;\n  padding: 5px 7px;\n}\n"], encapsulation: 3 });
+var ExampleTwoComponent = _ExampleTwoComponent;
 (() => {
   (typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(ExampleTwoComponent, [{
     type: Component,
@@ -19382,25 +19676,22 @@ var ExampleTwoComponent = class _ExampleTwoComponent {
 })();
 
 // src/app/advanced-components/view-encapsulation/example-three/example-three.component.ts
-var ExampleThreeComponent = class _ExampleThreeComponent {
-  static {
-    this.\u0275fac = function ExampleThreeComponent_Factory(__ngFactoryType__) {
-      return new (__ngFactoryType__ || _ExampleThreeComponent)();
-    };
-  }
-  static {
-    this.\u0275cmp = /* @__PURE__ */ \u0275\u0275defineComponent({ type: _ExampleThreeComponent, selectors: [["example-three"]], decls: 4, vars: 0, consts: [[1, "example-three"], [1, "example-one"]], template: function ExampleThreeComponent_Template(rf, ctx) {
-      if (rf & 1) {
-        \u0275\u0275elementStart(0, "div", 0);
-        \u0275\u0275text(1, "Example Three");
-        \u0275\u0275elementEnd();
-        \u0275\u0275elementStart(2, "div", 1);
-        \u0275\u0275text(3, "Example One!");
-        \u0275\u0275elementEnd();
-      }
-    }, styles: ["/* src/app/advanced-components/view-encapsulation/example-three/example-three.component.scss */\n.example-one {\n  border: 2px solid green;\n}\n"], encapsulation: 2 });
-  }
+var _ExampleThreeComponent = class _ExampleThreeComponent {
 };
+_ExampleThreeComponent.\u0275fac = function ExampleThreeComponent_Factory(__ngFactoryType__) {
+  return new (__ngFactoryType__ || _ExampleThreeComponent)();
+};
+_ExampleThreeComponent.\u0275cmp = /* @__PURE__ */ \u0275\u0275defineComponent({ type: _ExampleThreeComponent, selectors: [["example-three"]], decls: 4, vars: 0, consts: [[1, "example-three"], [1, "example-one"]], template: function ExampleThreeComponent_Template(rf, ctx) {
+  if (rf & 1) {
+    \u0275\u0275domElementStart(0, "div", 0);
+    \u0275\u0275text(1, "Example Three");
+    \u0275\u0275domElementEnd();
+    \u0275\u0275domElementStart(2, "div", 1);
+    \u0275\u0275text(3, "Example One!");
+    \u0275\u0275domElementEnd();
+  }
+}, styles: ["/* src/app/advanced-components/view-encapsulation/example-three/example-three.component.scss */\n.example-one {\n  border: 2px solid green;\n}\n"], encapsulation: 2 });
+var ExampleThreeComponent = _ExampleThreeComponent;
 (() => {
   (typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(ExampleThreeComponent, [{
     type: Component,
@@ -19412,26 +19703,23 @@ var ExampleThreeComponent = class _ExampleThreeComponent {
 })();
 
 // src/app/advanced-components/view-encapsulation/view-encapsulation.component.ts
-var ViewEncapsulationComponent = class _ViewEncapsulationComponent {
-  static {
-    this.\u0275fac = function ViewEncapsulationComponent_Factory(__ngFactoryType__) {
-      return new (__ngFactoryType__ || _ViewEncapsulationComponent)();
-    };
-  }
-  static {
-    this.\u0275cmp = /* @__PURE__ */ \u0275\u0275defineComponent({ type: _ViewEncapsulationComponent, selectors: [["view-encapsulation"]], decls: 7, vars: 0, template: function ViewEncapsulationComponent_Template(rf, ctx) {
-      if (rf & 1) {
-        \u0275\u0275elementStart(0, "div");
-        \u0275\u0275element(1, "hr");
-        \u0275\u0275elementStart(2, "h2");
-        \u0275\u0275text(3, "View Encapsulation");
-        \u0275\u0275elementEnd();
-        \u0275\u0275element(4, "example-one")(5, "example-two")(6, "example-three");
-        \u0275\u0275elementEnd();
-      }
-    }, dependencies: [ExampleOneComponent, ExampleTwoComponent, ExampleThreeComponent], encapsulation: 2 });
-  }
+var _ViewEncapsulationComponent = class _ViewEncapsulationComponent {
 };
+_ViewEncapsulationComponent.\u0275fac = function ViewEncapsulationComponent_Factory(__ngFactoryType__) {
+  return new (__ngFactoryType__ || _ViewEncapsulationComponent)();
+};
+_ViewEncapsulationComponent.\u0275cmp = /* @__PURE__ */ \u0275\u0275defineComponent({ type: _ViewEncapsulationComponent, selectors: [["view-encapsulation"]], decls: 7, vars: 0, template: function ViewEncapsulationComponent_Template(rf, ctx) {
+  if (rf & 1) {
+    \u0275\u0275elementStart(0, "div");
+    \u0275\u0275element(1, "hr");
+    \u0275\u0275elementStart(2, "h2");
+    \u0275\u0275text(3, "View Encapsulation");
+    \u0275\u0275elementEnd();
+    \u0275\u0275element(4, "example-one")(5, "example-two")(6, "example-three");
+    \u0275\u0275elementEnd();
+  }
+}, dependencies: [ExampleOneComponent, ExampleTwoComponent, ExampleThreeComponent], encapsulation: 2 });
+var ViewEncapsulationComponent = _ViewEncapsulationComponent;
 (() => {
   (typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(ViewEncapsulationComponent, [{
     type: Component,
@@ -19443,137 +19731,131 @@ var ViewEncapsulationComponent = class _ViewEncapsulationComponent {
 })();
 
 // src/app/advanced-components/change-detection/example-1/example-1.component.ts
-var Example1Component = class _Example1Component {
+var _Example1Component = class _Example1Component {
   constructor() {
     this.user = input({
       email: "",
       password: ""
-    });
+    }, ...ngDevMode ? [{ debugName: "user" }] : []);
   }
   update() {
     this.user().name = "Matt Skiba";
   }
-  static {
-    this.\u0275fac = function Example1Component_Factory(__ngFactoryType__) {
-      return new (__ngFactoryType__ || _Example1Component)();
-    };
-  }
-  static {
-    this.\u0275cmp = /* @__PURE__ */ \u0275\u0275defineComponent({ type: _Example1Component, selectors: [["example-1"]], inputs: { user: [1, "user"] }, decls: 15, vars: 4, consts: [[1, "example-1"], [3, "click"]], template: function Example1Component_Template(rf, ctx) {
-      if (rf & 1) {
-        \u0275\u0275elementStart(0, "div", 0)(1, "h3");
-        \u0275\u0275text(2, "OnPush");
-        \u0275\u0275elementEnd();
-        \u0275\u0275elementStart(3, "h4");
-        \u0275\u0275text(4);
-        \u0275\u0275elementEnd();
-        \u0275\u0275elementStart(5, "h5");
-        \u0275\u0275text(6);
-        \u0275\u0275elementEnd();
-        \u0275\u0275text(7);
-        \u0275\u0275element(8, "br");
-        \u0275\u0275text(9);
-        \u0275\u0275element(10, "br");
-        \u0275\u0275elementStart(11, "button", 1);
-        \u0275\u0275listener("click", function Example1Component_Template_button_click_11_listener() {
-          return ctx.update();
-        });
-        \u0275\u0275text(12, "Internal update");
-        \u0275\u0275elementEnd();
-        \u0275\u0275elementStart(13, "p");
-        \u0275\u0275text(14, "* should not update");
-        \u0275\u0275elementEnd()();
-      }
-      if (rf & 2) {
-        \u0275\u0275advance(4);
-        \u0275\u0275textInterpolate(ctx.user().name);
-        \u0275\u0275advance(2);
-        \u0275\u0275textInterpolate1("", ctx.user().age, " years old");
-        \u0275\u0275advance();
-        \u0275\u0275textInterpolate1(" ", ctx.user().location, " ");
-        \u0275\u0275advance(2);
-        \u0275\u0275textInterpolate1(" ", ctx.user().email, " ");
-      }
-    }, styles: ["\n\n.example-1[_ngcontent-%COMP%] {\n  font-size: 19px;\n  margin-bottom: 10px;\n}"], changeDetection: 0 });
-  }
 };
+_Example1Component.\u0275fac = function Example1Component_Factory(__ngFactoryType__) {
+  return new (__ngFactoryType__ || _Example1Component)();
+};
+_Example1Component.\u0275cmp = /* @__PURE__ */ \u0275\u0275defineComponent({ type: _Example1Component, selectors: [["example-1"]], inputs: { user: [1, "user"] }, decls: 15, vars: 4, consts: [[1, "example-1"], [3, "click"]], template: function Example1Component_Template(rf, ctx) {
+  if (rf & 1) {
+    \u0275\u0275domElementStart(0, "div", 0)(1, "h3");
+    \u0275\u0275text(2, "OnPush");
+    \u0275\u0275domElementEnd();
+    \u0275\u0275domElementStart(3, "h4");
+    \u0275\u0275text(4);
+    \u0275\u0275domElementEnd();
+    \u0275\u0275domElementStart(5, "h5");
+    \u0275\u0275text(6);
+    \u0275\u0275domElementEnd();
+    \u0275\u0275text(7);
+    \u0275\u0275domElement(8, "br");
+    \u0275\u0275text(9);
+    \u0275\u0275domElement(10, "br");
+    \u0275\u0275domElementStart(11, "button", 1);
+    \u0275\u0275domListener("click", function Example1Component_Template_button_click_11_listener() {
+      return ctx.update();
+    });
+    \u0275\u0275text(12, "Internal update");
+    \u0275\u0275domElementEnd();
+    \u0275\u0275domElementStart(13, "p");
+    \u0275\u0275text(14, "* should not update");
+    \u0275\u0275domElementEnd()();
+  }
+  if (rf & 2) {
+    \u0275\u0275advance(4);
+    \u0275\u0275textInterpolate(ctx.user().name);
+    \u0275\u0275advance(2);
+    \u0275\u0275textInterpolate1("", ctx.user().age, " years old");
+    \u0275\u0275advance();
+    \u0275\u0275textInterpolate1(" ", ctx.user().location, " ");
+    \u0275\u0275advance(2);
+    \u0275\u0275textInterpolate1(" ", ctx.user().email, " ");
+  }
+}, styles: ["\n\n.example-1[_ngcontent-%COMP%] {\n  font-size: 19px;\n  margin-bottom: 10px;\n}"], changeDetection: 0 });
+var Example1Component = _Example1Component;
 (() => {
   (typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(Example1Component, [{
     type: Component,
     args: [{ selector: "example-1", changeDetection: ChangeDetectionStrategy.OnPush, template: '<div class="example-1">\r\n  <h3>OnPush</h3>\r\n  <h4>{{ user().name }}</h4>\r\n  <h5>{{ user().age }} years old</h5>\r\n  {{ user().location }} <br />\r\n  {{ user().email }} <br />\r\n  <button (click)="update()">Internal update</button>\r\n  <p>* should not update</p>\r\n</div>\r\n', styles: ["/* src/app/advanced-components/change-detection/example-1/example-1.component.scss */\n.example-1 {\n  font-size: 19px;\n  margin-bottom: 10px;\n}\n"] }]
-  }], null, null);
+  }], null, { user: [{ type: Input, args: [{ isSignal: true, alias: "user", required: false }] }] });
 })();
 (() => {
   (typeof ngDevMode === "undefined" || ngDevMode) && \u0275setClassDebugInfo(Example1Component, { className: "Example1Component", filePath: "src/app/advanced-components/change-detection/example-1/example-1.component.ts", lineNumber: 10 });
 })();
 
 // src/app/advanced-components/change-detection/example-2/example-2.component.ts
-var Example2Component = class _Example2Component {
+var _Example2Component = class _Example2Component {
   constructor() {
     this.user = input({
       email: "",
       password: ""
-    });
+    }, ...ngDevMode ? [{ debugName: "user" }] : []);
   }
   update() {
     this.user().name = "Matt Skiba";
   }
-  static {
-    this.\u0275fac = function Example2Component_Factory(__ngFactoryType__) {
-      return new (__ngFactoryType__ || _Example2Component)();
-    };
-  }
-  static {
-    this.\u0275cmp = /* @__PURE__ */ \u0275\u0275defineComponent({ type: _Example2Component, selectors: [["example-2"]], inputs: { user: [1, "user"] }, decls: 15, vars: 4, consts: [[1, "example-2"], [3, "click"]], template: function Example2Component_Template(rf, ctx) {
-      if (rf & 1) {
-        \u0275\u0275elementStart(0, "div", 0)(1, "h3");
-        \u0275\u0275text(2, "Default");
-        \u0275\u0275elementEnd();
-        \u0275\u0275elementStart(3, "h4");
-        \u0275\u0275text(4);
-        \u0275\u0275elementEnd();
-        \u0275\u0275elementStart(5, "h5");
-        \u0275\u0275text(6);
-        \u0275\u0275elementEnd();
-        \u0275\u0275text(7);
-        \u0275\u0275element(8, "br");
-        \u0275\u0275text(9);
-        \u0275\u0275element(10, "br");
-        \u0275\u0275elementStart(11, "button", 1);
-        \u0275\u0275listener("click", function Example2Component_Template_button_click_11_listener() {
-          return ctx.update();
-        });
-        \u0275\u0275text(12, "Internal update");
-        \u0275\u0275elementEnd();
-        \u0275\u0275elementStart(13, "p");
-        \u0275\u0275text(14, "* should update");
-        \u0275\u0275elementEnd()();
-      }
-      if (rf & 2) {
-        \u0275\u0275advance(4);
-        \u0275\u0275textInterpolate(ctx.user().name);
-        \u0275\u0275advance(2);
-        \u0275\u0275textInterpolate1("", ctx.user().age, " years old");
-        \u0275\u0275advance();
-        \u0275\u0275textInterpolate1(" ", ctx.user().location, " ");
-        \u0275\u0275advance(2);
-        \u0275\u0275textInterpolate1(" ", ctx.user().email, " ");
-      }
-    }, styles: ["\n\n.example-2[_ngcontent-%COMP%] {\n  font-size: 19px;\n  margin-bottom: 10px;\n}"] });
-  }
 };
+_Example2Component.\u0275fac = function Example2Component_Factory(__ngFactoryType__) {
+  return new (__ngFactoryType__ || _Example2Component)();
+};
+_Example2Component.\u0275cmp = /* @__PURE__ */ \u0275\u0275defineComponent({ type: _Example2Component, selectors: [["example-2"]], inputs: { user: [1, "user"] }, decls: 15, vars: 4, consts: [[1, "example-2"], [3, "click"]], template: function Example2Component_Template(rf, ctx) {
+  if (rf & 1) {
+    \u0275\u0275domElementStart(0, "div", 0)(1, "h3");
+    \u0275\u0275text(2, "Default");
+    \u0275\u0275domElementEnd();
+    \u0275\u0275domElementStart(3, "h4");
+    \u0275\u0275text(4);
+    \u0275\u0275domElementEnd();
+    \u0275\u0275domElementStart(5, "h5");
+    \u0275\u0275text(6);
+    \u0275\u0275domElementEnd();
+    \u0275\u0275text(7);
+    \u0275\u0275domElement(8, "br");
+    \u0275\u0275text(9);
+    \u0275\u0275domElement(10, "br");
+    \u0275\u0275domElementStart(11, "button", 1);
+    \u0275\u0275domListener("click", function Example2Component_Template_button_click_11_listener() {
+      return ctx.update();
+    });
+    \u0275\u0275text(12, "Internal update");
+    \u0275\u0275domElementEnd();
+    \u0275\u0275domElementStart(13, "p");
+    \u0275\u0275text(14, "* should update");
+    \u0275\u0275domElementEnd()();
+  }
+  if (rf & 2) {
+    \u0275\u0275advance(4);
+    \u0275\u0275textInterpolate(ctx.user().name);
+    \u0275\u0275advance(2);
+    \u0275\u0275textInterpolate1("", ctx.user().age, " years old");
+    \u0275\u0275advance();
+    \u0275\u0275textInterpolate1(" ", ctx.user().location, " ");
+    \u0275\u0275advance(2);
+    \u0275\u0275textInterpolate1(" ", ctx.user().email, " ");
+  }
+}, styles: ["\n\n.example-2[_ngcontent-%COMP%] {\n  font-size: 19px;\n  margin-bottom: 10px;\n}"] });
+var Example2Component = _Example2Component;
 (() => {
   (typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(Example2Component, [{
     type: Component,
     args: [{ selector: "example-2", changeDetection: ChangeDetectionStrategy.Default, template: '<div class="example-2">\r\n  <h3>Default</h3>\r\n  <h4>{{ user().name }}</h4>\r\n  <h5>{{ user().age }} years old</h5>\r\n  {{ user().location }} <br />\r\n  {{ user().email }} <br />\r\n  <button (click)="update()">Internal update</button>\r\n  <p>* should update</p>\r\n</div>\r\n', styles: ["/* src/app/advanced-components/change-detection/example-2/example-2.component.scss */\n.example-2 {\n  font-size: 19px;\n  margin-bottom: 10px;\n}\n"] }]
-  }], null, null);
+  }], null, { user: [{ type: Input, args: [{ isSignal: true, alias: "user", required: false }] }] });
 })();
 (() => {
   (typeof ngDevMode === "undefined" || ngDevMode) && \u0275setClassDebugInfo(Example2Component, { className: "Example2Component", filePath: "src/app/advanced-components/change-detection/example-2/example-2.component.ts", lineNumber: 10 });
 })();
 
 // src/app/advanced-components/change-detection/change-detection.component.ts
-var ChangeDetectionComponent = class _ChangeDetectionComponent {
+var _ChangeDetectionComponent = class _ChangeDetectionComponent {
   constructor() {
     this.user = {
       name: "Mark Hoppus",
@@ -19594,53 +19876,50 @@ var ChangeDetectionComponent = class _ChangeDetectionComponent {
   changeName() {
     this.user.name = "Travis Barker";
   }
-  static {
-    this.\u0275fac = function ChangeDetectionComponent_Factory(__ngFactoryType__) {
-      return new (__ngFactoryType__ || _ChangeDetectionComponent)();
-    };
-  }
-  static {
-    this.\u0275cmp = /* @__PURE__ */ \u0275\u0275defineComponent({ type: _ChangeDetectionComponent, selectors: [["change-detection"]], decls: 16, vars: 2, consts: [[1, "buttons"], [3, "click"], [1, "users"], [3, "user"]], template: function ChangeDetectionComponent_Template(rf, ctx) {
-      if (rf & 1) {
-        \u0275\u0275elementStart(0, "div");
-        \u0275\u0275element(1, "hr");
-        \u0275\u0275elementStart(2, "h2");
-        \u0275\u0275text(3, "Change Detection Strategy");
-        \u0275\u0275elementEnd();
-        \u0275\u0275elementStart(4, "div", 0)(5, "button", 1);
-        \u0275\u0275listener("click", function ChangeDetectionComponent_Template_button_click_5_listener() {
-          return ctx.addProp();
-        });
-        \u0275\u0275text(6, "Add property");
-        \u0275\u0275elementEnd();
-        \u0275\u0275elementStart(7, "button", 1);
-        \u0275\u0275listener("click", function ChangeDetectionComponent_Template_button_click_7_listener() {
-          return ctx.changeUser();
-        });
-        \u0275\u0275text(8, "Change user object");
-        \u0275\u0275elementEnd();
-        \u0275\u0275elementStart(9, "button", 1);
-        \u0275\u0275listener("click", function ChangeDetectionComponent_Template_button_click_9_listener() {
-          return ctx.changeName();
-        });
-        \u0275\u0275text(10, "Change name property");
-        \u0275\u0275elementEnd()();
-        \u0275\u0275elementStart(11, "div", 2)(12, "div");
-        \u0275\u0275element(13, "example-1", 3);
-        \u0275\u0275elementEnd();
-        \u0275\u0275elementStart(14, "div");
-        \u0275\u0275element(15, "example-2", 3);
-        \u0275\u0275elementEnd()()();
-      }
-      if (rf & 2) {
-        \u0275\u0275advance(13);
-        \u0275\u0275property("user", ctx.user);
-        \u0275\u0275advance(2);
-        \u0275\u0275property("user", ctx.user);
-      }
-    }, dependencies: [Example1Component, Example2Component], styles: ["\n\n.users[_ngcontent-%COMP%] {\n  display: flex;\n  justify-content: space-evenly;\n}\n.buttons[_ngcontent-%COMP%] {\n  display: flex;\n  justify-content: center;\n}\n.buttons[_ngcontent-%COMP%]   button[_ngcontent-%COMP%] {\n  margin: 10px;\n}"] });
-  }
 };
+_ChangeDetectionComponent.\u0275fac = function ChangeDetectionComponent_Factory(__ngFactoryType__) {
+  return new (__ngFactoryType__ || _ChangeDetectionComponent)();
+};
+_ChangeDetectionComponent.\u0275cmp = /* @__PURE__ */ \u0275\u0275defineComponent({ type: _ChangeDetectionComponent, selectors: [["change-detection"]], decls: 16, vars: 2, consts: [[1, "buttons"], [3, "click"], [1, "users"], [3, "user"]], template: function ChangeDetectionComponent_Template(rf, ctx) {
+  if (rf & 1) {
+    \u0275\u0275elementStart(0, "div");
+    \u0275\u0275element(1, "hr");
+    \u0275\u0275elementStart(2, "h2");
+    \u0275\u0275text(3, "Change Detection Strategy");
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(4, "div", 0)(5, "button", 1);
+    \u0275\u0275listener("click", function ChangeDetectionComponent_Template_button_click_5_listener() {
+      return ctx.addProp();
+    });
+    \u0275\u0275text(6, "Add property");
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(7, "button", 1);
+    \u0275\u0275listener("click", function ChangeDetectionComponent_Template_button_click_7_listener() {
+      return ctx.changeUser();
+    });
+    \u0275\u0275text(8, "Change user object");
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(9, "button", 1);
+    \u0275\u0275listener("click", function ChangeDetectionComponent_Template_button_click_9_listener() {
+      return ctx.changeName();
+    });
+    \u0275\u0275text(10, "Change name property");
+    \u0275\u0275elementEnd()();
+    \u0275\u0275elementStart(11, "div", 2)(12, "div");
+    \u0275\u0275element(13, "example-1", 3);
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(14, "div");
+    \u0275\u0275element(15, "example-2", 3);
+    \u0275\u0275elementEnd()()();
+  }
+  if (rf & 2) {
+    \u0275\u0275advance(13);
+    \u0275\u0275property("user", ctx.user);
+    \u0275\u0275advance(2);
+    \u0275\u0275property("user", ctx.user);
+  }
+}, dependencies: [Example1Component, Example2Component], styles: ["\n\n.users[_ngcontent-%COMP%] {\n  display: flex;\n  justify-content: space-evenly;\n}\n.buttons[_ngcontent-%COMP%] {\n  display: flex;\n  justify-content: center;\n}\n.buttons[_ngcontent-%COMP%]   button[_ngcontent-%COMP%] {\n  margin: 10px;\n}"] });
+var ChangeDetectionComponent = _ChangeDetectionComponent;
 (() => {
   (typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(ChangeDetectionComponent, [{
     type: Component,
@@ -19656,7 +19935,7 @@ var _c03 = ["template"];
 var _c13 = ["entry"];
 function AdvancedComponentsComponent_ng_template_27_Template(rf, ctx) {
 }
-var AdvancedComponentsComponent = class _AdvancedComponentsComponent {
+var _AdvancedComponentsComponent = class _AdvancedComponentsComponent {
   constructor() {
     this.template = viewChild.required("template");
     this.rememberMe = false;
@@ -19688,109 +19967,106 @@ var AdvancedComponentsComponent = class _AdvancedComponentsComponent {
   moveComponent() {
     this.entry().move(this.component.hostView, 1);
   }
-  static {
-    this.\u0275fac = function AdvancedComponentsComponent_Factory(__ngFactoryType__) {
-      return new (__ngFactoryType__ || _AdvancedComponentsComponent)();
-    };
-  }
-  static {
-    this.\u0275cmp = /* @__PURE__ */ \u0275\u0275defineComponent({ type: _AdvancedComponentsComponent, selectors: [["advanced-components"]], viewQuery: function AdvancedComponentsComponent_Query(rf, ctx) {
-      if (rf & 1) {
-        \u0275\u0275viewQuerySignal(ctx.template, _c03, 5);
-        \u0275\u0275viewQuerySignal(ctx.entry, _c13, 5, ViewContainerRef);
-      }
-      if (rf & 2) {
-        \u0275\u0275queryAdvance(2);
-      }
-    }, decls: 38, vars: 0, consts: [["entry", ""], [1, "routes"], ["routerLink", "/", 1, "route"], ["routerLink", "/route"], [1, "row"], ["width", "50", "alt", "Angular Logo", "src", "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNTAgMjUwIj4KICAgIDxwYXRoIGZpbGw9IiNERDAwMzEiIGQ9Ik0xMjUgMzBMMzEuOSA2My4ybDE0LjIgMTIzLjFMMTI1IDIzMGw3OC45LTQzLjcgMTQuMi0xMjMuMXoiIC8+CiAgICA8cGF0aCBmaWxsPSIjQzMwMDJGIiBkPSJNMTI1IDMwdjIyLjItLjFWMjMwbDc4LjktNDMuNyAxNC4yLTEyMy4xTDEyNSAzMHoiIC8+CiAgICA8cGF0aCAgZmlsbD0iI0ZGRkZGRiIgZD0iTTEyNSA1Mi4xTDY2LjggMTgyLjZoMjEuN2wxMS43LTI5LjJoNDkuNGwxMS43IDI5LjJIMTgzTDEyNSA1Mi4xem0xNyA4My4zaC0zNGwxNy00MC45IDE3IDQwLjl6IiAvPgogIDwvc3ZnPg=="], [3, "submitted"], ["type", "submit"], [3, "checked"], [3, "click"]], template: function AdvancedComponentsComponent_Template(rf, ctx) {
-      if (rf & 1) {
-        const _r1 = \u0275\u0275getCurrentView();
-        \u0275\u0275elementStart(0, "nav", 1)(1, "a", 2);
-        \u0275\u0275text(2, "Home");
-        \u0275\u0275elementEnd();
-        \u0275\u0275elementStart(3, "a", 3);
-        \u0275\u0275text(4, "Route");
-        \u0275\u0275elementEnd()();
-        \u0275\u0275element(5, "router-outlet");
-        \u0275\u0275elementStart(6, "div", 4)(7, "h2");
-        \u0275\u0275text(8, "Static Components");
-        \u0275\u0275elementEnd();
-        \u0275\u0275element(9, "img", 5);
-        \u0275\u0275elementEnd();
-        \u0275\u0275elementStart(10, "div")(11, "auth-form", 6);
-        \u0275\u0275listener("submitted", function AdvancedComponentsComponent_Template_auth_form_submitted_11_listener($event) {
-          \u0275\u0275restoreView(_r1);
-          return \u0275\u0275resetView(ctx.createUser($event));
-        });
-        \u0275\u0275elementStart(12, "h3");
-        \u0275\u0275text(13, "Create Account");
-        \u0275\u0275elementEnd();
-        \u0275\u0275elementStart(14, "button", 7);
-        \u0275\u0275text(15, " Join Us ");
-        \u0275\u0275elementEnd()();
-        \u0275\u0275elementStart(16, "auth-form", 6);
-        \u0275\u0275listener("submitted", function AdvancedComponentsComponent_Template_auth_form_submitted_16_listener($event) {
-          \u0275\u0275restoreView(_r1);
-          return \u0275\u0275resetView(ctx.loginUser($event));
-        });
-        \u0275\u0275elementStart(17, "h3");
-        \u0275\u0275text(18, "Login");
-        \u0275\u0275elementEnd();
-        \u0275\u0275elementStart(19, "auth-remember", 8);
-        \u0275\u0275listener("checked", function AdvancedComponentsComponent_Template_auth_remember_checked_19_listener($event) {
-          \u0275\u0275restoreView(_r1);
-          return \u0275\u0275resetView(ctx.rememberUser($event));
-        });
-        \u0275\u0275elementEnd();
-        \u0275\u0275elementStart(20, "auth-remember", 8);
-        \u0275\u0275listener("checked", function AdvancedComponentsComponent_Template_auth_remember_checked_20_listener($event) {
-          \u0275\u0275restoreView(_r1);
-          return \u0275\u0275resetView(ctx.rememberUser($event));
-        });
-        \u0275\u0275elementEnd();
-        \u0275\u0275elementStart(21, "auth-remember", 8);
-        \u0275\u0275listener("checked", function AdvancedComponentsComponent_Template_auth_remember_checked_21_listener($event) {
-          \u0275\u0275restoreView(_r1);
-          return \u0275\u0275resetView(ctx.rememberUser($event));
-        });
-        \u0275\u0275elementEnd();
-        \u0275\u0275elementStart(22, "button", 7);
-        \u0275\u0275text(23, " Login ");
-        \u0275\u0275elementEnd()()();
-        \u0275\u0275element(24, "hr");
-        \u0275\u0275elementStart(25, "h2");
-        \u0275\u0275text(26, "Dynamic Components");
-        \u0275\u0275elementEnd();
-        \u0275\u0275template(27, AdvancedComponentsComponent_ng_template_27_Template, 0, 0, "ng-template", null, 0, \u0275\u0275templateRefExtractor);
-        \u0275\u0275element(29, "br");
-        \u0275\u0275elementStart(30, "button", 9);
-        \u0275\u0275listener("click", function AdvancedComponentsComponent_Template_button_click_30_listener() {
-          \u0275\u0275restoreView(_r1);
-          return \u0275\u0275resetView(ctx.destroyComponent());
-        });
-        \u0275\u0275text(31, "Destroy");
-        \u0275\u0275elementEnd();
-        \u0275\u0275text(32, "\xA0\n");
-        \u0275\u0275elementStart(33, "button", 9);
-        \u0275\u0275listener("click", function AdvancedComponentsComponent_Template_button_click_33_listener() {
-          \u0275\u0275restoreView(_r1);
-          return \u0275\u0275resetView(ctx.moveComponent());
-        });
-        \u0275\u0275text(34, "Move");
-        \u0275\u0275elementEnd();
-        \u0275\u0275element(35, "template-container")(36, "view-encapsulation")(37, "change-detection");
-      }
-    }, dependencies: [
-      RouterLink,
-      RouterOutlet,
-      AuthFormComponent,
-      AuthRememberComponent,
-      TemplateContainerComponent,
-      ViewEncapsulationComponent,
-      ChangeDetectionComponent
-    ], styles: ["\n\n.row[_ngcontent-%COMP%] {\n  display: flex;\n  justify-content: space-between;\n}\n.routes[_ngcontent-%COMP%] {\n  display: flex;\n}\n.route[_ngcontent-%COMP%] {\n  margin-right: 5px;\n}"] });
-  }
 };
+_AdvancedComponentsComponent.\u0275fac = function AdvancedComponentsComponent_Factory(__ngFactoryType__) {
+  return new (__ngFactoryType__ || _AdvancedComponentsComponent)();
+};
+_AdvancedComponentsComponent.\u0275cmp = /* @__PURE__ */ \u0275\u0275defineComponent({ type: _AdvancedComponentsComponent, selectors: [["advanced-components"]], viewQuery: function AdvancedComponentsComponent_Query(rf, ctx) {
+  if (rf & 1) {
+    \u0275\u0275viewQuerySignal(ctx.template, _c03, 5);
+    \u0275\u0275viewQuerySignal(ctx.entry, _c13, 5, ViewContainerRef);
+  }
+  if (rf & 2) {
+    \u0275\u0275queryAdvance(2);
+  }
+}, decls: 38, vars: 0, consts: [["entry", ""], [1, "routes"], ["routerLink", "/", 1, "route"], ["routerLink", "/route"], [1, "row"], ["width", "50", "alt", "Angular Logo", "src", "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNTAgMjUwIj4KICAgIDxwYXRoIGZpbGw9IiNERDAwMzEiIGQ9Ik0xMjUgMzBMMzEuOSA2My4ybDE0LjIgMTIzLjFMMTI1IDIzMGw3OC45LTQzLjcgMTQuMi0xMjMuMXoiIC8+CiAgICA8cGF0aCBmaWxsPSIjQzMwMDJGIiBkPSJNMTI1IDMwdjIyLjItLjFWMjMwbDc4LjktNDMuNyAxNC4yLTEyMy4xTDEyNSAzMHoiIC8+CiAgICA8cGF0aCAgZmlsbD0iI0ZGRkZGRiIgZD0iTTEyNSA1Mi4xTDY2LjggMTgyLjZoMjEuN2wxMS43LTI5LjJoNDkuNGwxMS43IDI5LjJIMTgzTDEyNSA1Mi4xem0xNyA4My4zaC0zNGwxNy00MC45IDE3IDQwLjl6IiAvPgogIDwvc3ZnPg=="], [3, "submitted"], ["type", "submit"], [3, "checked"], [3, "click"]], template: function AdvancedComponentsComponent_Template(rf, ctx) {
+  if (rf & 1) {
+    const _r1 = \u0275\u0275getCurrentView();
+    \u0275\u0275elementStart(0, "nav", 1)(1, "a", 2);
+    \u0275\u0275text(2, "Home");
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(3, "a", 3);
+    \u0275\u0275text(4, "Route");
+    \u0275\u0275elementEnd()();
+    \u0275\u0275element(5, "router-outlet");
+    \u0275\u0275elementStart(6, "div", 4)(7, "h2");
+    \u0275\u0275text(8, "Static Components");
+    \u0275\u0275elementEnd();
+    \u0275\u0275element(9, "img", 5);
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(10, "div")(11, "auth-form", 6);
+    \u0275\u0275listener("submitted", function AdvancedComponentsComponent_Template_auth_form_submitted_11_listener($event) {
+      \u0275\u0275restoreView(_r1);
+      return \u0275\u0275resetView(ctx.createUser($event));
+    });
+    \u0275\u0275elementStart(12, "h3");
+    \u0275\u0275text(13, "Create Account");
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(14, "button", 7);
+    \u0275\u0275text(15, " Join Us ");
+    \u0275\u0275elementEnd()();
+    \u0275\u0275elementStart(16, "auth-form", 6);
+    \u0275\u0275listener("submitted", function AdvancedComponentsComponent_Template_auth_form_submitted_16_listener($event) {
+      \u0275\u0275restoreView(_r1);
+      return \u0275\u0275resetView(ctx.loginUser($event));
+    });
+    \u0275\u0275elementStart(17, "h3");
+    \u0275\u0275text(18, "Login");
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(19, "auth-remember", 8);
+    \u0275\u0275listener("checked", function AdvancedComponentsComponent_Template_auth_remember_checked_19_listener($event) {
+      \u0275\u0275restoreView(_r1);
+      return \u0275\u0275resetView(ctx.rememberUser($event));
+    });
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(20, "auth-remember", 8);
+    \u0275\u0275listener("checked", function AdvancedComponentsComponent_Template_auth_remember_checked_20_listener($event) {
+      \u0275\u0275restoreView(_r1);
+      return \u0275\u0275resetView(ctx.rememberUser($event));
+    });
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(21, "auth-remember", 8);
+    \u0275\u0275listener("checked", function AdvancedComponentsComponent_Template_auth_remember_checked_21_listener($event) {
+      \u0275\u0275restoreView(_r1);
+      return \u0275\u0275resetView(ctx.rememberUser($event));
+    });
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(22, "button", 7);
+    \u0275\u0275text(23, " Login ");
+    \u0275\u0275elementEnd()()();
+    \u0275\u0275element(24, "hr");
+    \u0275\u0275elementStart(25, "h2");
+    \u0275\u0275text(26, "Dynamic Components");
+    \u0275\u0275elementEnd();
+    \u0275\u0275template(27, AdvancedComponentsComponent_ng_template_27_Template, 0, 0, "ng-template", null, 0, \u0275\u0275templateRefExtractor);
+    \u0275\u0275element(29, "br");
+    \u0275\u0275elementStart(30, "button", 9);
+    \u0275\u0275listener("click", function AdvancedComponentsComponent_Template_button_click_30_listener() {
+      \u0275\u0275restoreView(_r1);
+      return \u0275\u0275resetView(ctx.destroyComponent());
+    });
+    \u0275\u0275text(31, "Destroy");
+    \u0275\u0275elementEnd();
+    \u0275\u0275text(32, "\xA0\n");
+    \u0275\u0275elementStart(33, "button", 9);
+    \u0275\u0275listener("click", function AdvancedComponentsComponent_Template_button_click_33_listener() {
+      \u0275\u0275restoreView(_r1);
+      return \u0275\u0275resetView(ctx.moveComponent());
+    });
+    \u0275\u0275text(34, "Move");
+    \u0275\u0275elementEnd();
+    \u0275\u0275element(35, "template-container")(36, "view-encapsulation")(37, "change-detection");
+  }
+}, dependencies: [
+  RouterLink,
+  RouterOutlet,
+  AuthFormComponent,
+  AuthRememberComponent,
+  TemplateContainerComponent,
+  ViewEncapsulationComponent,
+  ChangeDetectionComponent
+], styles: ["\n\n.row[_ngcontent-%COMP%] {\n  display: flex;\n  justify-content: space-between;\n}\n.routes[_ngcontent-%COMP%] {\n  display: flex;\n}\n.route[_ngcontent-%COMP%] {\n  margin-right: 5px;\n}"] });
+var AdvancedComponentsComponent = _AdvancedComponentsComponent;
 (() => {
   (typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(AdvancedComponentsComponent, [{
     type: Component,
@@ -19803,14 +20079,14 @@ var AdvancedComponentsComponent = class _AdvancedComponentsComponent {
       ViewEncapsulationComponent,
       ChangeDetectionComponent
     ], template: '<nav class="routes">\r\n  <a routerLink="/" class="route">Home</a>\r\n  <a routerLink="/route">Route</a>\r\n</nav>\r\n<router-outlet />\r\n<div class="row">\r\n  <h2>Static Components</h2>\r\n  <img\r\n    width="50"\r\n    alt="Angular Logo"\r\n    src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNTAgMjUwIj4KICAgIDxwYXRoIGZpbGw9IiNERDAwMzEiIGQ9Ik0xMjUgMzBMMzEuOSA2My4ybDE0LjIgMTIzLjFMMTI1IDIzMGw3OC45LTQzLjcgMTQuMi0xMjMuMXoiIC8+CiAgICA8cGF0aCBmaWxsPSIjQzMwMDJGIiBkPSJNMTI1IDMwdjIyLjItLjFWMjMwbDc4LjktNDMuNyAxNC4yLTEyMy4xTDEyNSAzMHoiIC8+CiAgICA8cGF0aCAgZmlsbD0iI0ZGRkZGRiIgZD0iTTEyNSA1Mi4xTDY2LjggMTgyLjZoMjEuN2wxMS43LTI5LjJoNDkuNGwxMS43IDI5LjJIMTgzTDEyNSA1Mi4xem0xNyA4My4zaC0zNGwxNy00MC45IDE3IDQwLjl6IiAvPgogIDwvc3ZnPg=="\r\n  />\r\n</div>\r\n<div>\r\n  <auth-form (submitted)="createUser($event)">\r\n    <h3>Create Account</h3>\r\n    <button type="submit">\r\n      Join Us\r\n    </button>\r\n  </auth-form>\r\n  <auth-form (submitted)="loginUser($event)">\r\n    <h3>Login</h3>\r\n    <auth-remember (checked)="rememberUser($event)"></auth-remember>\r\n    <auth-remember (checked)="rememberUser($event)"></auth-remember>\r\n    <auth-remember (checked)="rememberUser($event)"></auth-remember>\r\n    <button type="submit">\r\n      Login\r\n    </button>\r\n  </auth-form>\r\n</div>\r\n<hr />\r\n<h2>Dynamic Components</h2>\r\n<ng-template #entry />\r\n<br />\r\n<button (click)="destroyComponent()">Destroy</button>&nbsp;\r\n<button (click)="moveComponent()">Move</button>\r\n<template-container />\r\n<view-encapsulation />\r\n<change-detection />\r\n', styles: ["/* src/app/advanced-components/advanced-components.component.scss */\n.row {\n  display: flex;\n  justify-content: space-between;\n}\n.routes {\n  display: flex;\n}\n.route {\n  margin-right: 5px;\n}\n"] }]
-  }], null, null);
+  }], null, { template: [{ type: ViewChild, args: ["template", { isSignal: true }] }], entry: [{ type: ViewChild, args: ["entry", __spreadProps(__spreadValues({}, { read: ViewContainerRef }), { isSignal: true })] }] });
 })();
 (() => {
   (typeof ngDevMode === "undefined" || ngDevMode) && \u0275setClassDebugInfo(AdvancedComponentsComponent, { className: "AdvancedComponentsComponent", filePath: "src/app/advanced-components/advanced-components.component.ts", lineNumber: 35 });
 })();
 
 // src/app/directives/credit-card/credit-card.directive.ts
-var CreditCardDirective = class _CreditCardDirective {
+var _CreditCardDirective = class _CreditCardDirective {
   constructor() {
     this.border = "";
   }
@@ -19830,24 +20106,21 @@ var CreditCardDirective = class _CreditCardDirective {
       this.border = "5px solid red";
     }
   }
-  static {
-    this.\u0275fac = function CreditCardDirective_Factory(__ngFactoryType__) {
-      return new (__ngFactoryType__ || _CreditCardDirective)();
-    };
-  }
-  static {
-    this.\u0275dir = /* @__PURE__ */ \u0275\u0275defineDirective({ type: _CreditCardDirective, selectors: [["", "credit-card", ""]], hostVars: 2, hostBindings: function CreditCardDirective_HostBindings(rf, ctx) {
-      if (rf & 1) {
-        \u0275\u0275listener("input", function CreditCardDirective_input_HostBindingHandler($event) {
-          return ctx.onKeyDown($event);
-        });
-      }
-      if (rf & 2) {
-        \u0275\u0275styleProp("border", ctx.border);
-      }
-    } });
-  }
 };
+_CreditCardDirective.\u0275fac = function CreditCardDirective_Factory(__ngFactoryType__) {
+  return new (__ngFactoryType__ || _CreditCardDirective)();
+};
+_CreditCardDirective.\u0275dir = /* @__PURE__ */ \u0275\u0275defineDirective({ type: _CreditCardDirective, selectors: [["", "credit-card", ""]], hostVars: 2, hostBindings: function CreditCardDirective_HostBindings(rf, ctx) {
+  if (rf & 1) {
+    \u0275\u0275listener("input", function CreditCardDirective_input_HostBindingHandler($event) {
+      return ctx.onKeyDown($event);
+    });
+  }
+  if (rf & 2) {
+    \u0275\u0275styleProp("border", ctx.border);
+  }
+} });
+var CreditCardDirective = _CreditCardDirective;
 (() => {
   (typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(CreditCardDirective, [{
     type: Directive,
@@ -19864,9 +20137,9 @@ var CreditCardDirective = class _CreditCardDirective {
 })();
 
 // src/app/directives/tooltip/tooltip.directive.ts
-var TooltipDirective = class _TooltipDirective {
+var _TooltipDirective = class _TooltipDirective {
   constructor() {
-    this.tooltip = input("");
+    this.tooltip = input("", ...ngDevMode ? [{ debugName: "tooltip" }] : []);
     this.tooltipElement = document.createElement("div");
     this.visible = false;
     this.element = inject(ElementRef);
@@ -19890,15 +20163,12 @@ var TooltipDirective = class _TooltipDirective {
   getVisible() {
     return this.visible;
   }
-  static {
-    this.\u0275fac = function TooltipDirective_Factory(__ngFactoryType__) {
-      return new (__ngFactoryType__ || _TooltipDirective)();
-    };
-  }
-  static {
-    this.\u0275dir = /* @__PURE__ */ \u0275\u0275defineDirective({ type: _TooltipDirective, selectors: [["", "tooltip", ""]], inputs: { tooltip: [1, "tooltip"] }, exportAs: ["tooltip"] });
-  }
 };
+_TooltipDirective.\u0275fac = function TooltipDirective_Factory(__ngFactoryType__) {
+  return new (__ngFactoryType__ || _TooltipDirective)();
+};
+_TooltipDirective.\u0275dir = /* @__PURE__ */ \u0275\u0275defineDirective({ type: _TooltipDirective, selectors: [["", "tooltip", ""]], inputs: { tooltip: [1, "tooltip"] }, exportAs: ["tooltip"] });
+var TooltipDirective = _TooltipDirective;
 (() => {
   (typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(TooltipDirective, [{
     type: Directive,
@@ -19906,13 +20176,13 @@ var TooltipDirective = class _TooltipDirective {
       selector: "[tooltip]",
       exportAs: "tooltip"
     }]
-  }], () => [], null);
+  }], () => [], { tooltip: [{ type: Input, args: [{ isSignal: true, alias: "tooltip", required: false }] }] });
 })();
 
 // src/app/directives/my-for/my-for.directive.ts
-var MyForDirective = class _MyForDirective {
+var _MyForDirective = class _MyForDirective {
   constructor() {
-    this.myForOf = input();
+    this.myForOf = input(...ngDevMode ? [void 0, { debugName: "myForOf" }] : []);
     this.view = inject(ViewContainerRef);
     this.template = inject(TemplateRef);
     effect(() => {
@@ -19925,40 +20195,34 @@ var MyForDirective = class _MyForDirective {
       });
     });
   }
-  static {
-    this.\u0275fac = function MyForDirective_Factory(__ngFactoryType__) {
-      return new (__ngFactoryType__ || _MyForDirective)();
-    };
-  }
-  static {
-    this.\u0275dir = /* @__PURE__ */ \u0275\u0275defineDirective({ type: _MyForDirective, selectors: [["", "myFor", "", "myForOf", ""]], inputs: { myForOf: [1, "myForOf"] } });
-  }
 };
+_MyForDirective.\u0275fac = function MyForDirective_Factory(__ngFactoryType__) {
+  return new (__ngFactoryType__ || _MyForDirective)();
+};
+_MyForDirective.\u0275dir = /* @__PURE__ */ \u0275\u0275defineDirective({ type: _MyForDirective, selectors: [["", "myFor", "", "myForOf", ""]], inputs: { myForOf: [1, "myForOf"] } });
+var MyForDirective = _MyForDirective;
 (() => {
   (typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(MyForDirective, [{
     type: Directive,
     args: [{
       selector: "[myFor][myForOf]"
     }]
-  }], () => [], null);
+  }], () => [], { myForOf: [{ type: Input, args: [{ isSignal: true, alias: "myForOf", required: false }] }] });
 })();
 
 // src/app/directives/highlight/highlight.directive.ts
-var HighlightDirective = class _HighlightDirective {
+var _HighlightDirective = class _HighlightDirective {
   constructor() {
     this.el = inject(ElementRef);
     this.el.nativeElement.style.backgroundColor = "yellow";
     this.el.nativeElement.style.color = "red";
   }
-  static {
-    this.\u0275fac = function HighlightDirective_Factory(__ngFactoryType__) {
-      return new (__ngFactoryType__ || _HighlightDirective)();
-    };
-  }
-  static {
-    this.\u0275dir = /* @__PURE__ */ \u0275\u0275defineDirective({ type: _HighlightDirective, selectors: [["", "highlight", ""]] });
-  }
 };
+_HighlightDirective.\u0275fac = function HighlightDirective_Factory(__ngFactoryType__) {
+  return new (__ngFactoryType__ || _HighlightDirective)();
+};
+_HighlightDirective.\u0275dir = /* @__PURE__ */ \u0275\u0275defineDirective({ type: _HighlightDirective, selectors: [["", "highlight", ""]] });
+var HighlightDirective = _HighlightDirective;
 (() => {
   (typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(HighlightDirective, [{
     type: Directive,
@@ -19985,7 +20249,7 @@ function DirectivesComponent_For_22_Template(rf, ctx) {
     const item_r3 = ctx.$implicit;
     const \u0275$index_36_r4 = ctx.$index;
     \u0275\u0275advance();
-    \u0275\u0275textInterpolate2("", \u0275$index_36_r4, " Member: ", \u0275\u0275pipeBind1(2, 2, item_r3.name), "");
+    \u0275\u0275textInterpolate2("", \u0275$index_36_r4, " Member: ", \u0275\u0275pipeBind1(2, 2, item_r3.name));
   }
 }
 function DirectivesComponent_For_27_Template(rf, ctx) {
@@ -19999,7 +20263,7 @@ function DirectivesComponent_For_27_Template(rf, ctx) {
     const item_r5 = ctx.$implicit;
     const \u0275$index_46_r6 = ctx.$index;
     \u0275\u0275advance();
-    \u0275\u0275textInterpolate2("", \u0275$index_46_r6, " Member: ", \u0275\u0275pipeBind1(2, 2, item_r5.name), "");
+    \u0275\u0275textInterpolate2("", \u0275$index_46_r6, " Member: ", \u0275\u0275pipeBind1(2, 2, item_r5.name));
   }
 }
 function DirectivesComponent_li_31_Template(rf, ctx) {
@@ -20013,7 +20277,7 @@ function DirectivesComponent_li_31_Template(rf, ctx) {
     const item_r7 = ctx.$implicit;
     const i_r8 = ctx.index;
     \u0275\u0275advance();
-    \u0275\u0275textInterpolate2("", i_r8, " Member: ", \u0275\u0275pipeBind1(2, 2, item_r7.name), "");
+    \u0275\u0275textInterpolate2("", i_r8, " Member: ", \u0275\u0275pipeBind1(2, 2, item_r7.name));
   }
 }
 function DirectivesComponent_ng_template_35_Template(rf, ctx) {
@@ -20027,10 +20291,10 @@ function DirectivesComponent_ng_template_35_Template(rf, ctx) {
     const item_r9 = ctx.$implicit;
     const i_r10 = ctx.index;
     \u0275\u0275advance();
-    \u0275\u0275textInterpolate2("", i_r10, " Member: ", \u0275\u0275pipeBind1(2, 2, item_r9.name), "");
+    \u0275\u0275textInterpolate2("", i_r10, " Member: ", \u0275\u0275pipeBind1(2, 2, item_r9.name));
   }
 }
-var DirectivesComponent = class _DirectivesComponent {
+var _DirectivesComponent = class _DirectivesComponent {
   constructor() {
     this.items = [
       { name: "Mark Hoppus", age: 48, location: "California" },
@@ -20048,82 +20312,79 @@ var DirectivesComponent = class _DirectivesComponent {
       ];
     }, 5e3);
   }
-  static {
-    this.\u0275fac = function DirectivesComponent_Factory(__ngFactoryType__) {
-      return new (__ngFactoryType__ || _DirectivesComponent)();
-    };
-  }
-  static {
-    this.\u0275cmp = /* @__PURE__ */ \u0275\u0275defineComponent({ type: _DirectivesComponent, selectors: [["directives"]], decls: 38, vars: 3, consts: [["myTooltip", "tooltip"], ["name", "credit-card", "type", "text", "placeholder", "Enter your 16-digit card number", "credit-card", ""], ["type", "text"], ["tooltip", "", 1, "myTooltip"], [3, "mouseover", "mouseout"], ["tooltip", "3 digits, back of your card", 1, "myTooltip"], [4, "myFor", "myForOf"], ["myFor", "", 3, "myForOf"], ["highlight", ""]], template: function DirectivesComponent_Template(rf, ctx) {
-      if (rf & 1) {
-        const _r1 = \u0275\u0275getCurrentView();
-        \u0275\u0275elementStart(0, "div");
-        \u0275\u0275element(1, "hr");
-        \u0275\u0275elementStart(2, "h2");
-        \u0275\u0275text(3, "Directives");
-        \u0275\u0275elementEnd();
-        \u0275\u0275elementStart(4, "label");
-        \u0275\u0275text(5, " Credit Card Number\xA0 ");
-        \u0275\u0275element(6, "input", 1);
-        \u0275\u0275elementEnd();
-        \u0275\u0275element(7, "br");
-        \u0275\u0275elementStart(8, "label");
-        \u0275\u0275text(9, " Enter your security code\xA0 ");
-        \u0275\u0275element(10, "input", 2);
-        \u0275\u0275text(11, "\xA0 ");
-        \u0275\u0275elementStart(12, "div", 3, 0)(14, "span", 4);
-        \u0275\u0275listener("mouseover", function DirectivesComponent_Template_span_mouseover_14_listener() {
-          \u0275\u0275restoreView(_r1);
-          const myTooltip_r2 = \u0275\u0275reference(13);
-          return \u0275\u0275resetView(myTooltip_r2.show());
-        })("mouseout", function DirectivesComponent_Template_span_mouseout_14_listener() {
-          \u0275\u0275restoreView(_r1);
-          const myTooltip_r2 = \u0275\u0275reference(13);
-          return \u0275\u0275resetView(myTooltip_r2.hide());
-        });
-        \u0275\u0275text(15, "(?)\xA0 ");
-        \u0275\u0275template(16, DirectivesComponent_Conditional_16_Template, 1, 0, "label", 5);
-        \u0275\u0275elementEnd()()();
-        \u0275\u0275elementStart(17, "ul")(18, "div")(19, "strong");
-        \u0275\u0275text(20, "Normal For");
-        \u0275\u0275elementEnd();
-        \u0275\u0275repeaterCreate(21, DirectivesComponent_For_22_Template, 3, 4, "li", null, \u0275\u0275repeaterTrackByIdentity);
-        \u0275\u0275elementEnd();
-        \u0275\u0275elementStart(23, "div")(24, "strong");
-        \u0275\u0275text(25, "Normal ForOf");
-        \u0275\u0275elementEnd();
-        \u0275\u0275repeaterCreate(26, DirectivesComponent_For_27_Template, 3, 4, "li", null, \u0275\u0275repeaterTrackByIdentity);
-        \u0275\u0275elementEnd();
-        \u0275\u0275elementStart(28, "div")(29, "strong");
-        \u0275\u0275text(30, "My For");
-        \u0275\u0275elementEnd();
-        \u0275\u0275template(31, DirectivesComponent_li_31_Template, 3, 4, "li", 6);
-        \u0275\u0275elementEnd();
-        \u0275\u0275elementStart(32, "div")(33, "strong");
-        \u0275\u0275text(34, "My ForOf");
-        \u0275\u0275elementEnd();
-        \u0275\u0275template(35, DirectivesComponent_ng_template_35_Template, 3, 4, "ng-template", 7);
-        \u0275\u0275elementEnd()();
-        \u0275\u0275elementStart(36, "div", 8);
-        \u0275\u0275text(37, "Highlight Directive");
-        \u0275\u0275elementEnd()();
-      }
-      if (rf & 2) {
-        const myTooltip_r2 = \u0275\u0275reference(13);
-        \u0275\u0275advance(16);
-        \u0275\u0275conditional(myTooltip_r2.getVisible() ? 16 : -1);
-        \u0275\u0275advance(5);
-        \u0275\u0275repeater(ctx.items);
-        \u0275\u0275advance(5);
-        \u0275\u0275repeater(ctx.items);
-        \u0275\u0275advance(5);
-        \u0275\u0275property("myForOf", ctx.items);
-        \u0275\u0275advance(4);
-        \u0275\u0275property("myForOf", ctx.items);
-      }
-    }, dependencies: [CreditCardDirective, TooltipDirective, MyForDirective, HighlightDirective, JsonPipe], styles: ["\n\n.myTooltip[_ngcontent-%COMP%] {\n  display: inline-flex;\n}\nul[_ngcontent-%COMP%] {\n  display: flex;\n  justify-content: space-evenly;\n}"] });
-  }
 };
+_DirectivesComponent.\u0275fac = function DirectivesComponent_Factory(__ngFactoryType__) {
+  return new (__ngFactoryType__ || _DirectivesComponent)();
+};
+_DirectivesComponent.\u0275cmp = /* @__PURE__ */ \u0275\u0275defineComponent({ type: _DirectivesComponent, selectors: [["directives"]], decls: 38, vars: 3, consts: [["myTooltip", "tooltip"], ["name", "credit-card", "type", "text", "placeholder", "Enter your 16-digit card number", "credit-card", ""], ["type", "text"], ["tooltip", "", 1, "myTooltip"], [3, "mouseover", "mouseout"], ["tooltip", "3 digits, back of your card", 1, "myTooltip"], [4, "myFor", "myForOf"], ["myFor", "", 3, "myForOf"], ["highlight", ""]], template: function DirectivesComponent_Template(rf, ctx) {
+  if (rf & 1) {
+    const _r1 = \u0275\u0275getCurrentView();
+    \u0275\u0275elementStart(0, "div");
+    \u0275\u0275element(1, "hr");
+    \u0275\u0275elementStart(2, "h2");
+    \u0275\u0275text(3, "Directives");
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(4, "label");
+    \u0275\u0275text(5, " Credit Card Number\xA0 ");
+    \u0275\u0275element(6, "input", 1);
+    \u0275\u0275elementEnd();
+    \u0275\u0275element(7, "br");
+    \u0275\u0275elementStart(8, "label");
+    \u0275\u0275text(9, " Enter your security code\xA0 ");
+    \u0275\u0275element(10, "input", 2);
+    \u0275\u0275text(11, "\xA0 ");
+    \u0275\u0275elementStart(12, "div", 3, 0)(14, "span", 4);
+    \u0275\u0275listener("mouseover", function DirectivesComponent_Template_span_mouseover_14_listener() {
+      \u0275\u0275restoreView(_r1);
+      const myTooltip_r2 = \u0275\u0275reference(13);
+      return \u0275\u0275resetView(myTooltip_r2.show());
+    })("mouseout", function DirectivesComponent_Template_span_mouseout_14_listener() {
+      \u0275\u0275restoreView(_r1);
+      const myTooltip_r2 = \u0275\u0275reference(13);
+      return \u0275\u0275resetView(myTooltip_r2.hide());
+    });
+    \u0275\u0275text(15, "(?)\xA0 ");
+    \u0275\u0275conditionalCreate(16, DirectivesComponent_Conditional_16_Template, 1, 0, "label", 5);
+    \u0275\u0275elementEnd()()();
+    \u0275\u0275elementStart(17, "ul")(18, "div")(19, "strong");
+    \u0275\u0275text(20, "Normal For");
+    \u0275\u0275elementEnd();
+    \u0275\u0275repeaterCreate(21, DirectivesComponent_For_22_Template, 3, 4, "li", null, \u0275\u0275repeaterTrackByIdentity);
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(23, "div")(24, "strong");
+    \u0275\u0275text(25, "Normal ForOf");
+    \u0275\u0275elementEnd();
+    \u0275\u0275repeaterCreate(26, DirectivesComponent_For_27_Template, 3, 4, "li", null, \u0275\u0275repeaterTrackByIdentity);
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(28, "div")(29, "strong");
+    \u0275\u0275text(30, "My For");
+    \u0275\u0275elementEnd();
+    \u0275\u0275template(31, DirectivesComponent_li_31_Template, 3, 4, "li", 6);
+    \u0275\u0275elementEnd();
+    \u0275\u0275elementStart(32, "div")(33, "strong");
+    \u0275\u0275text(34, "My ForOf");
+    \u0275\u0275elementEnd();
+    \u0275\u0275template(35, DirectivesComponent_ng_template_35_Template, 3, 4, "ng-template", 7);
+    \u0275\u0275elementEnd()();
+    \u0275\u0275elementStart(36, "div", 8);
+    \u0275\u0275text(37, "Highlight Directive");
+    \u0275\u0275elementEnd()();
+  }
+  if (rf & 2) {
+    const myTooltip_r2 = \u0275\u0275reference(13);
+    \u0275\u0275advance(16);
+    \u0275\u0275conditional(myTooltip_r2.getVisible() ? 16 : -1);
+    \u0275\u0275advance(5);
+    \u0275\u0275repeater(ctx.items);
+    \u0275\u0275advance(5);
+    \u0275\u0275repeater(ctx.items);
+    \u0275\u0275advance(5);
+    \u0275\u0275property("myForOf", ctx.items);
+    \u0275\u0275advance(4);
+    \u0275\u0275property("myForOf", ctx.items);
+  }
+}, dependencies: [CreditCardDirective, TooltipDirective, MyForDirective, HighlightDirective, JsonPipe], styles: ["\n\n.myTooltip[_ngcontent-%COMP%] {\n  display: inline-flex;\n}\nul[_ngcontent-%COMP%] {\n  display: flex;\n  justify-content: space-evenly;\n}"] });
+var DirectivesComponent = _DirectivesComponent;
 (() => {
   (typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(DirectivesComponent, [{
     type: Component,
@@ -20137,30 +20398,30 @@ var DirectivesComponent = class _DirectivesComponent {
 // src/app/custom-pipes/custom-pipes.component.ts
 function CustomPipesComponent_For_9_Template(rf, ctx) {
   if (rf & 1) {
-    \u0275\u0275elementStart(0, "div")(1, "div");
+    \u0275\u0275domElementStart(0, "div")(1, "div");
     \u0275\u0275text(2);
     \u0275\u0275pipe(3, "filesize");
-    \u0275\u0275elementEnd()();
+    \u0275\u0275domElementEnd()();
   }
   if (rf & 2) {
     const file_r1 = ctx.$implicit;
     \u0275\u0275advance(2);
-    \u0275\u0275textInterpolate2("", file_r1.name, ":\xA0", \u0275\u0275pipeBind2(3, 2, file_r1.size, " MB"), "");
+    \u0275\u0275textInterpolate2("", file_r1.name, ":\xA0", \u0275\u0275pipeBind2(3, 2, file_r1.size, " MB"));
   }
 }
 function CustomPipesComponent_For_14_Template(rf, ctx) {
   if (rf & 1) {
-    \u0275\u0275elementStart(0, "div")(1, "div");
+    \u0275\u0275domElementStart(0, "div")(1, "div");
     \u0275\u0275text(2);
-    \u0275\u0275elementEnd()();
+    \u0275\u0275domElementEnd()();
   }
   if (rf & 2) {
     const file_r2 = ctx.$implicit;
     \u0275\u0275advance(2);
-    \u0275\u0275textInterpolate2("", file_r2.name, ":\xA0", file_r2.size, "");
+    \u0275\u0275textInterpolate2("", file_r2.name, ":\xA0", file_r2.size);
   }
 }
-var CustomPipesComponent = class _CustomPipesComponent {
+var _CustomPipesComponent = class _CustomPipesComponent {
   constructor() {
     this.files = [];
     this.mapped = [];
@@ -20193,39 +20454,36 @@ var CustomPipesComponent = class _CustomPipesComponent {
       };
     });
   }
-  static {
-    this.\u0275fac = function CustomPipesComponent_Factory(__ngFactoryType__) {
-      return new (__ngFactoryType__ || _CustomPipesComponent)();
-    };
-  }
-  static {
-    this.\u0275cmp = /* @__PURE__ */ \u0275\u0275defineComponent({ type: _CustomPipesComponent, selectors: [["custom-pipes"]], decls: 15, vars: 0, consts: [[1, "transform"], [1, "files"]], template: function CustomPipesComponent_Template(rf, ctx) {
-      if (rf & 1) {
-        \u0275\u0275elementStart(0, "div");
-        \u0275\u0275element(1, "hr");
-        \u0275\u0275elementStart(2, "h2");
-        \u0275\u0275text(3, "Custom Pipes");
-        \u0275\u0275elementEnd();
-        \u0275\u0275elementStart(4, "div", 0)(5, "div", 1)(6, "strong");
-        \u0275\u0275text(7, "Normal Transform");
-        \u0275\u0275elementEnd();
-        \u0275\u0275repeaterCreate(8, CustomPipesComponent_For_9_Template, 4, 5, "div", null, \u0275\u0275repeaterTrackByIdentity);
-        \u0275\u0275elementEnd();
-        \u0275\u0275elementStart(10, "div", 1)(11, "strong");
-        \u0275\u0275text(12, "Mapped Transform");
-        \u0275\u0275elementEnd();
-        \u0275\u0275repeaterCreate(13, CustomPipesComponent_For_14_Template, 3, 2, "div", null, \u0275\u0275repeaterTrackByIdentity);
-        \u0275\u0275elementEnd()()();
-      }
-      if (rf & 2) {
-        \u0275\u0275advance(8);
-        \u0275\u0275repeater(ctx.files);
-        \u0275\u0275advance(5);
-        \u0275\u0275repeater(ctx.mapped);
-      }
-    }, dependencies: [FilesizePipe], styles: ["\n\n.transform[_ngcontent-%COMP%] {\n  display: flex;\n  flex-direction: row;\n  justify-content: space-evenly;\n}\n.files[_ngcontent-%COMP%] {\n  display: flex;\n  flex-direction: column;\n}"] });
-  }
 };
+_CustomPipesComponent.\u0275fac = function CustomPipesComponent_Factory(__ngFactoryType__) {
+  return new (__ngFactoryType__ || _CustomPipesComponent)();
+};
+_CustomPipesComponent.\u0275cmp = /* @__PURE__ */ \u0275\u0275defineComponent({ type: _CustomPipesComponent, selectors: [["custom-pipes"]], decls: 15, vars: 0, consts: [[1, "transform"], [1, "files"]], template: function CustomPipesComponent_Template(rf, ctx) {
+  if (rf & 1) {
+    \u0275\u0275domElementStart(0, "div");
+    \u0275\u0275domElement(1, "hr");
+    \u0275\u0275domElementStart(2, "h2");
+    \u0275\u0275text(3, "Custom Pipes");
+    \u0275\u0275domElementEnd();
+    \u0275\u0275domElementStart(4, "div", 0)(5, "div", 1)(6, "strong");
+    \u0275\u0275text(7, "Normal Transform");
+    \u0275\u0275domElementEnd();
+    \u0275\u0275repeaterCreate(8, CustomPipesComponent_For_9_Template, 4, 5, "div", null, \u0275\u0275repeaterTrackByIdentity);
+    \u0275\u0275domElementEnd();
+    \u0275\u0275domElementStart(10, "div", 1)(11, "strong");
+    \u0275\u0275text(12, "Mapped Transform");
+    \u0275\u0275domElementEnd();
+    \u0275\u0275repeaterCreate(13, CustomPipesComponent_For_14_Template, 3, 2, "div", null, \u0275\u0275repeaterTrackByIdentity);
+    \u0275\u0275domElementEnd()()();
+  }
+  if (rf & 2) {
+    \u0275\u0275advance(8);
+    \u0275\u0275repeater(ctx.files);
+    \u0275\u0275advance(5);
+    \u0275\u0275repeater(ctx.mapped);
+  }
+}, dependencies: [FilesizePipe], styles: ["\n\n.transform[_ngcontent-%COMP%] {\n  display: flex;\n  flex-direction: row;\n  justify-content: space-evenly;\n}\n.files[_ngcontent-%COMP%] {\n  display: flex;\n  flex-direction: column;\n}"] });
+var CustomPipesComponent = _CustomPipesComponent;
 (() => {
   (typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(CustomPipesComponent, [{
     type: Component,
@@ -20237,23 +20495,20 @@ var CustomPipesComponent = class _CustomPipesComponent {
 })();
 
 // src/app/app.component.ts
-var AppComponent = class _AppComponent {
+var _AppComponent = class _AppComponent {
   constructor() {
     this.title = "angular-pro";
   }
-  static {
-    this.\u0275fac = function AppComponent_Factory(__ngFactoryType__) {
-      return new (__ngFactoryType__ || _AppComponent)();
-    };
-  }
-  static {
-    this.\u0275cmp = /* @__PURE__ */ \u0275\u0275defineComponent({ type: _AppComponent, selectors: [["app-root"]], decls: 3, vars: 0, template: function AppComponent_Template(rf, ctx) {
-      if (rf & 1) {
-        \u0275\u0275element(0, "advanced-components")(1, "directives")(2, "custom-pipes");
-      }
-    }, dependencies: [AdvancedComponentsComponent, DirectivesComponent, CustomPipesComponent], encapsulation: 2 });
-  }
 };
+_AppComponent.\u0275fac = function AppComponent_Factory(__ngFactoryType__) {
+  return new (__ngFactoryType__ || _AppComponent)();
+};
+_AppComponent.\u0275cmp = /* @__PURE__ */ \u0275\u0275defineComponent({ type: _AppComponent, selectors: [["app-root"]], decls: 3, vars: 0, template: function AppComponent_Template(rf, ctx) {
+  if (rf & 1) {
+    \u0275\u0275element(0, "advanced-components")(1, "directives")(2, "custom-pipes");
+  }
+}, dependencies: [AdvancedComponentsComponent, DirectivesComponent, CustomPipesComponent], encapsulation: 2 });
+var AppComponent = _AppComponent;
 (() => {
   (typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(AppComponent, [{
     type: Component,
@@ -20265,7 +20520,7 @@ var AppComponent = class _AppComponent {
 })();
 
 // src/main.ts
-var routes = [{ path: "route", loadComponent: () => import("./routes.component-VJTDD3RC.js").then((m) => m.RoutesComponent) }];
+var routes = [{ path: "route", loadComponent: () => import("./routes.component-2R63UBUE.js").then((m) => m.RoutesComponent) }];
 if (environment.production) {
   enableProdMode();
 }
@@ -20274,21 +20529,20 @@ bootstrapApplication(AppComponent, {
 }).catch((err) => console.error(err));
 /*! Bundled license information:
 
-@angular/common/fesm2022/dom_tokens-rA0ACyx7.mjs:
-@angular/common/fesm2022/location-Dq4mJT-A.mjs:
-@angular/common/fesm2022/common_module-Dx7dWex5.mjs:
-@angular/common/fesm2022/xhr-BfNfxNDv.mjs:
+@angular/common/fesm2022/location.mjs:
+@angular/common/fesm2022/common_module.mjs:
+@angular/common/fesm2022/xhr.mjs:
 @angular/common/fesm2022/common.mjs:
-@angular/platform-browser/fesm2022/dom_renderer-DGKzginR.mjs:
-@angular/platform-browser/fesm2022/browser-0WrrQdE0.mjs:
+@angular/platform-browser/fesm2022/dom_renderer.mjs:
+@angular/platform-browser/fesm2022/browser.mjs:
 @angular/platform-browser/fesm2022/platform-browser.mjs:
 @angular/forms/fesm2022/forms.mjs:
-@angular/router/fesm2022/router-Dwfin5Au.mjs:
-@angular/router/fesm2022/router_module-DTJgGWLd.mjs:
+@angular/router/fesm2022/router2.mjs:
+@angular/router/fesm2022/router_module.mjs:
 @angular/router/fesm2022/router.mjs:
   (**
-   * @license Angular v19.2.17
-   * (c) 2010-2025 Google LLC. https://angular.io/
+   * @license Angular v20.3.16
+   * (c) 2010-2025 Google LLC. https://angular.dev/
    * License: MIT
    *)
 */
