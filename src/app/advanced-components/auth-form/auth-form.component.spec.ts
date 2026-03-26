@@ -14,7 +14,7 @@ describe('AuthFormComponent', () => {
         }).compileComponents();
         fixture = TestBed.createComponent(AuthFormComponent);
         component = fixture.componentInstance;
-        jest.spyOn(console, 'log').mockImplementation(() => {});
+        vi.spyOn(console, 'log').mockImplementation(() => {});
         fixture.detectChanges();
     });
 

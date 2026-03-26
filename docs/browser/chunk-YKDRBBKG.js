@@ -1,0 +1,1 @@
+import{Ba as o,Ya as n,Za as s,mb as m}from"./chunk-4XJRWJ6E.js";var a=class t{static \u0275fac=function(e){return new(e||t)};static \u0275cmp=o({type:t,selectors:[["routes"]],decls:2,vars:0,template:function(e,p){e&1&&(n(0,"p"),m(1,"Route"),s())},encapsulation:2})};export{a as RoutesComponent};

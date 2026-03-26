@@ -13,7 +13,7 @@ describe('CustomPipesComponent', () => {
         }).compileComponents();
         fixture = TestBed.createComponent(CustomPipesComponent);
         component = fixture.componentInstance;
-        jest.spyOn(console, 'log').mockImplementation(() => {});
+        vi.spyOn(console, 'log').mockImplementation(() => {});
         fixture.detectChanges();
     });
 

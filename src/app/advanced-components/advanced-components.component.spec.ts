@@ -42,7 +42,7 @@ describe('AdvancedComponentsComponent', () => {
         fixture = TestBed.createComponent(AdvancedComponentsComponent);
         component = fixture.componentInstance;
         component.ngAfterContentInit();
-        jest.spyOn(console, 'log').mockImplementation(() => {});
+        vi.spyOn(console, 'log').mockImplementation(() => {});
     });
 
     it('should create', () => {
@@ -50,13 +50,13 @@ describe('AdvancedComponentsComponent', () => {
     });
 
     it('should create user', () => {
-        jest.spyOn(window.console, 'log');
+        vi.spyOn(window.console, 'log');
         component['createUser']({ email: 'email', password: 'password' });
         expect(window.console.log).toHaveBeenCalledWith('Create Account', { email: 'email', password: 'password' });
     });
 
     it('should login user', () => {
-        jest.spyOn(window.console, 'log');
+        vi.spyOn(window.console, 'log');
         component['loginUser']({ email: 'email', password: 'password' });
         expect(window.console.log).toHaveBeenCalledWith('Login Account', { email: 'email', password: 'password' }, false);
     });

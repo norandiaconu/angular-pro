@@ -49,7 +49,7 @@ describe('AppComponent', () => {
             declarations: [NgForm],
             providers: [FilesizePipe, provideRouter(routes)]
         }).compileComponents();
-        jest.spyOn(console, 'log').mockImplementation(() => {});
+        vi.spyOn(console, 'log').mockImplementation(() => {});
     });
 
     beforeEach(() => {

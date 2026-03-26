@@ -3,7 +3,7 @@ import { HighlightDirective } from './highlight.directive';
 import { TestBed } from '@angular/core/testing';
 
 export class MockElementRef extends ElementRef {
-    nativeElement = {
+    override nativeElement = {
         style: {
             backgroundColor: 'red',
             color: 'yellow'

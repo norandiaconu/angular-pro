@@ -8,7 +8,7 @@ export class CreditCardDirective {
     protected border: string = '';
 
     @HostListener('input', ['$event'])
-    onKeyDown(event: KeyboardEvent): void {
+    onKeyDown(event: Event): void {
         const input = event.target as HTMLInputElement;
         // better regex: /\D+/g
         let trimmed = input.value.replace(/\s+/g, '');
