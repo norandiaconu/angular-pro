@@ -1,5 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { FormsModule } from '@angular/forms';
+import { provideRouter, RouterOutlet, Routes } from '@angular/router';
+import { describe, it, beforeEach, expect } from 'vitest';
 import { AdvancedComponentsComponent } from './advanced-components.component';
 import { AuthFormComponent } from './auth-form/auth-form.component';
 import { AuthMessageComponent } from './auth-message/auth-message.component';
@@ -12,7 +14,6 @@ import { ExampleOneComponent } from './view-encapsulation/example-one/example-on
 import { ExampleThreeComponent } from './view-encapsulation/example-three/example-three.component';
 import { ExampleTwoComponent } from './view-encapsulation/example-two/example-two.component';
 import { ViewEncapsulationComponent } from './view-encapsulation/view-encapsulation.component';
-import { provideRouter, RouterOutlet, Routes } from '@angular/router';
 
 describe('AdvancedComponentsComponent', () => {
     let component: AdvancedComponentsComponent;

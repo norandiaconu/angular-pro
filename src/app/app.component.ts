@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { AdvancedComponentsComponent } from './advanced-components/advanced-components.component';
-import { DirectivesComponent } from './directives/directives.component';
 import { CustomPipesComponent } from './custom-pipes/custom-pipes.component';
+import { DirectivesComponent } from './directives/directives.component';
 
 @Component({
     selector: 'app-root',

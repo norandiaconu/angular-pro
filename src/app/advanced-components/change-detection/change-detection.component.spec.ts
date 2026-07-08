@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { describe, it, beforeEach, expect } from 'vitest';
 import { ChangeDetectionComponent } from './change-detection.component';
 import { Example1Component } from './example-1/example-1.component';
 import { Example2Component } from './example-2/example-2.component';

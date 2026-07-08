@@ -1,3 +1,4 @@
+import { describe, it, beforeEach, expect } from 'vitest';
 import { CreditCardDirective } from './credit-card.directive';
 
 describe('CreditCardDirective', () => {

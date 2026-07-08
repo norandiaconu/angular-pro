@@ -1,5 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { NgForm } from '@angular/forms';
+import { provideRouter, Routes } from '@angular/router';
+import { describe, it, beforeEach, expect } from 'vitest';
 import { AdvancedComponentsComponent } from './advanced-components/advanced-components.component';
 import { AuthFormComponent } from './advanced-components/auth-form/auth-form.component';
 import { AuthMessageComponent } from './advanced-components/auth-message/auth-message.component';
@@ -18,7 +20,6 @@ import { FilesizePipe } from './custom-pipes/filesize.pipe';
 import { DirectivesComponent } from './directives/directives.component';
 import { MyForDirective } from './directives/my-for/my-for.directive';
 import { TooltipDirective } from './directives/tooltip/tooltip.directive';
-import { provideRouter, Routes } from '@angular/router';
 
 describe('AppComponent', () => {
     const routes: Routes = [];

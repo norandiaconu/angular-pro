@@ -1,7 +1,8 @@
-import { TestBed } from '@angular/core/testing';
-import { TooltipDirective } from './tooltip.directive';
 import { ElementRef } from '@angular/core';
+import { TestBed } from '@angular/core/testing';
+import { describe, it, beforeEach, expect } from 'vitest';
 import { MockElementRef } from '../highlight/highlight.directive.spec';
+import { TooltipDirective } from './tooltip.directive';
 
 describe('TooltipDirective', () => {
     let directive: TooltipDirective;

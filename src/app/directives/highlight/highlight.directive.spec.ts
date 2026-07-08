@@ -1,6 +1,7 @@
 import { ElementRef } from '@angular/core';
-import { HighlightDirective } from './highlight.directive';
 import { TestBed } from '@angular/core/testing';
+import { describe, it, beforeEach, expect } from 'vitest';
+import { HighlightDirective } from './highlight.directive';
 
 export class MockElementRef extends ElementRef {
     override nativeElement = {

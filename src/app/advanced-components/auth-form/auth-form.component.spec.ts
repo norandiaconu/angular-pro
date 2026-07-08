@@ -1,5 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { FormsModule } from '@angular/forms';
+import { describe, it, beforeEach, expect, vi } from 'vitest';
 import { AuthMessageComponent } from '../auth-message/auth-message.component';
 
 import { AuthFormComponent } from './auth-form.component';
