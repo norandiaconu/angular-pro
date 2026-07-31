@@ -4,7 +4,7 @@ import { Directive, ElementRef, inject } from '@angular/core';
     selector: '[highlight]'
 })
 export class HighlightDirective {
-    private el = inject(ElementRef);
+    private readonly el = inject(ElementRef);
 
     constructor() {
         this.el.nativeElement.style.backgroundColor = 'yellow';

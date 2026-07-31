@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { ChangeDetectorRef, Component, inject } from '@angular/core';
 import { CreditCardDirective } from './credit-card/credit-card.directive';
 import { TooltipDirective } from './tooltip/tooltip.directive';
 import { JsonPipe } from '@angular/common';
@@ -12,6 +12,8 @@ import { HighlightDirective } from './highlight/highlight.directive';
     imports: [CreditCardDirective, TooltipDirective, MyForDirective, HighlightDirective, JsonPipe]
 })
 export class DirectivesComponent {
+    private readonly cdRef = inject(ChangeDetectorRef);
+
     protected items = [
         { name: 'Mark Hoppus', age: 48, location: 'California' },
         { name: 'Tom Delonge', age: 45, location: 'California' },
@@ -28,6 +30,7 @@ export class DirectivesComponent {
                     location: 'California'
                 }
             ];
+            this.cdRef.markForCheck();
         }, 5000);
     }
 }

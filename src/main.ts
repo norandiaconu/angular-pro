@@ -1,4 +1,4 @@
-import { enableProdMode, importProvidersFrom, provideZoneChangeDetection } from '@angular/core';
+import { enableProdMode, importProvidersFrom } from '@angular/core';
 import { environment } from './environments/environment';
 import { FilesizePipe } from './app/custom-pipes/filesize.pipe';
 import { BrowserModule, bootstrapApplication } from '@angular/platform-browser';
@@ -14,5 +14,5 @@ if (environment.production) {
 }
 
 bootstrapApplication(AppComponent, {
-    providers: [provideZoneChangeDetection(), importProvidersFrom(BrowserModule, FormsModule), FilesizePipe, provideRouter(routes)]
+    providers: [importProvidersFrom(BrowserModule, FormsModule), FilesizePipe, provideRouter(routes)]
 }).catch((err) => console.error(err));
