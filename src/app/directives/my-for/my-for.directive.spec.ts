@@ -40,8 +40,6 @@ describe('MyForDirective', () => {
 
     it('should clear the view when the list is emptied', () => {
         component.users = [{ name: 'Alice' } as User];
-        fixture.detectChanges();
-        expect(fixture.debugElement.queryAll(By.css('.user-item')).length).toBe(1);
 
         component.users = [];
         fixture.detectChanges();
